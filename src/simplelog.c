@@ -403,11 +403,13 @@ int spl_set_off(int isoff) {
 
 		spl_rel_sem(__simple_log_static__.sem_rwfile);
 		/* -  */
-		if (__simple_log_static__.process_mode) {
-			if (!(__simple_log_static__.creating_mode)) {
-				spl_rel_sem(__simple_log_static__.sem_off);
+		spl_mutex_lock(__simple_log_static__.mtx);
+			if (__simple_log_static__.process_mode) {
+				if (!(__simple_log_static__.creating_mode)) {
+					spl_rel_sem(__simple_log_static__.sem_off);
+				}
 			}
-		}
+		spl_mutex_unlock(__simple_log_static__.mtx);
 #ifndef UNIX_LINUX
 		//errCode = (int) WaitForSingleObject(__simple_log_static__.sem_off, 3 * 1000);
 		errCode = (int) WaitForSingleObject(__simple_log_static__.sem_off, INFINITE);
