@@ -392,6 +392,7 @@ int spl_get_log_levwel() {
 /*=================================================================================================================================================*/
 int spl_set_off(int isoff) {
 	int ret = 0;
+	int raise_off = 0;
 	spl_mutex_lock(__simple_log_static__.mtx_off);
 	do {
 		__simple_log_static__.off = isoff;
@@ -406,12 +407,14 @@ int spl_set_off(int isoff) {
 		spl_mutex_lock(__simple_log_static__.mtx);
 			if (__simple_log_static__.process_mode) {
 				if (!(__simple_log_static__.creating_mode)) {
-					spl_rel_sem(__simple_log_static__.sem_off);
+					raise_off = 1;
 				}
 			}
 		spl_mutex_unlock(__simple_log_static__.mtx);
+		if (raise_off) {
+			spl_rel_sem(__simple_log_static__.sem_off);
+		}
 #ifndef UNIX_LINUX
-		//errCode = (int) WaitForSingleObject(__simple_log_static__.sem_off, 3 * 1000);
 		errCode = (int) WaitForSingleObject(__simple_log_static__.sem_off, INFINITE);
 #else
 		errCode = SPL_sem_wait(__simple_log_static__.sem_off);
@@ -912,6 +915,7 @@ void* spl_written_thread_routine(void* lpParam)
 						}
 						break;
 					}
+					/* Be carefull lock a function. OK*/
 					spl_shm_clear_region(t);
 				} while (0);
 			spl_mutex_unlock(t->mtx);
@@ -1237,6 +1241,10 @@ const char* spl_get_text(int lev) {
 int spl_finish_log() {
 	int ret = 0, err = 0; 
 	spl_set_off(1);
+
+
+#ifndef UNIX_LINUX
+
 	spl_mutex_lock(__simple_log_static__.mtx);
 		if (__simple_log_static__.process_mode) {
 			if (!(__simple_log_static__.creating_mode)) {
@@ -1244,7 +1252,7 @@ int spl_finish_log() {
 			}
 		}
 	spl_mutex_unlock(__simple_log_static__.mtx);
-#ifndef UNIX_LINUX
+
 
 	SPL_CloseHandle(__simple_log_static__.whRWBufferMapFile);
 
