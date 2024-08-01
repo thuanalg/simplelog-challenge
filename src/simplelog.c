@@ -400,7 +400,9 @@ int spl_set_off(int isoff) {
 	
 	if (isoff) {
 		int errCode = 0;
+
 		spl_rel_sem(__simple_log_static__.sem_rwfile);
+		/* -  */
 		if (__simple_log_static__.process_mode) {
 			if (!(__simple_log_static__.creating_mode)) {
 				spl_rel_sem(__simple_log_static__.sem_off);
@@ -908,26 +910,6 @@ void* spl_written_thread_routine(void* lpParam)
 						}
 						break;
 					}
-//					//int done = 0;
-//#ifndef UNIX_LINUX
-//					if (t->buf) {
-//						done = UnmapViewOfFile(t->buf);
-//						if (!done) {
-//							spl_console_log("UnmapViewOfFile: err: %d.", (int)GetLastError());
-//						}
-//						t->buf = 0;
-//					}
-//					for (i = 0; i < t->n_topic; ++i) {
-//						if (t->arr_topic[i].buf) {
-//							t->arr_topic[i].buf = 0;
-//						}
-//					}
-//					if (t->whRWBufferMapFile) {
-//						SPL_CloseHandle(t->whRWBufferMapFile);
-//					}
-//					spl_shm_clear_region(t);
-//#else
-//#endif
 					spl_shm_clear_region(t);
 				} while (0);
 			spl_mutex_unlock(t->mtx);
@@ -1253,11 +1235,13 @@ const char* spl_get_text(int lev) {
 int spl_finish_log() {
 	int ret = 0, err = 0; 
 	spl_set_off(1);
-	if (__simple_log_static__.process_mode) {
-		if (!(__simple_log_static__.creating_mode)) {
-			spl_shm_clear_region(&__simple_log_static__);
+	spl_mutex_lock(__simple_log_static__.mtx);
+		if (__simple_log_static__.process_mode) {
+			if (!(__simple_log_static__.creating_mode)) {
+				spl_shm_clear_region(&__simple_log_static__);
+			}
 		}
-	}
+	spl_mutex_unlock(__simple_log_static__.mtx);
 #ifndef UNIX_LINUX
 
 	SPL_CloseHandle(__simple_log_static__.whRWBufferMapFile);
@@ -1908,16 +1892,9 @@ spl_shm_clear_region(SIMPLE_LOG_ST* t) {
 	int ret = 0, i = 0;
 	int done = 0;
 	do {
-		if (!t->process_mode) {
-			break;
-		}
-		if (t->creating_mode) {
-			break;
-		}
 		if (!t->buf) {
 			break;
 		}
-
 #ifndef UNIX_LINUX
 		if (t->buf) {
 			done = UnmapViewOfFile(t->buf);
