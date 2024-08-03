@@ -141,7 +141,12 @@ typedef struct __spl_local_time_st__ {
 #define SPL_TOPIC_SIZE		32
 
 typedef struct __SHARED_DATA_ST__ {
-	LLU pre_tnow;
+	LLU 
+		pre_tnow;
+		/*Must be sync*/
+	spl_uchar 
+		is_off;
+		/*Must be sync*/
 #ifndef UNIX_LINUX
 
 #else
@@ -204,9 +209,9 @@ struct __SIMPLE_LOG_ST__ {
 	char
 		folder[1024];
 		/*Path of genera folder. No nead SYNC.*/
-	char
-		off;					
-		/*Must be sync*/
+//	char
+//		off;					
+//		/*Must be sync*/
 	void*
 		mtx;					
 		/*mtx: Need to close handle*/
@@ -323,7 +328,7 @@ static int
 static int
 	spl_create_sync(SIMPLE_LOG_ST* t);
 static int
-	spl_shm_clear_region(SIMPLE_LOG_ST* t);
+	spl_shm_clear_win_region(SIMPLE_LOG_ST* t);
 //void* 
 //	spl_mutex_create(char* name);
 
@@ -393,17 +398,17 @@ int spl_get_log_levwel() {
 int spl_set_off(int isoff) {
 	int ret = 0;
 	int raise_off = 0;
-	spl_mutex_lock(__simple_log_static__.mtx_off);
-	do {
-		__simple_log_static__.off = isoff;
-	} while (0);
-	spl_mutex_unlock(__simple_log_static__.mtx_off);
+	spl_mutex_lock(__simple_log_static__.mtx);
+		do {
+			__simple_log_static__.shared_supplement->is_off = (isoff ? 1 : 0);
+		} while (0);
+	spl_mutex_unlock(__simple_log_static__.mtx);
 	
 	if (isoff) {
 		int errCode = 0;
 
 		spl_rel_sem(__simple_log_static__.sem_rwfile);
-		/* -  */
+		/* - Is not master, is slave mode */
 		spl_mutex_lock(__simple_log_static__.mtx);
 			if (__simple_log_static__.process_mode) {
 				if (!(__simple_log_static__.creating_mode)) {
@@ -428,7 +433,7 @@ int spl_get_off() {
 	int ret = 0;
 	spl_mutex_lock(__simple_log_static__.mtx_off);
 	do {
-		ret = __simple_log_static__.off;
+		ret = __simple_log_static__.shared_supplement->is_off;
 	} while (0);
 	spl_mutex_unlock(__simple_log_static__.mtx_off);
 	return ret;
@@ -806,6 +811,7 @@ void* spl_written_thread_routine(void* lpParam)
 	char* buffer = 0;
 	int total_buf_sz = 0;
 	generic_dta_st* tmpBuff = 0;
+	spl_uchar is_now_off = 0;
 	total_buf_sz = t->buff_size * (1 + t->n_topic);
 	spl_malloc(total_buf_sz, buffer, char);
 	
@@ -832,10 +838,9 @@ void* spl_written_thread_routine(void* lpParam)
 #else
 			SPL_sem_wait(t->sem_rwfile);
 #endif
-			off = spl_get_off();
-			if (off) {
-				break;
-			}
+			//if (is_now_off) {
+			//	break;
+			//}
 			ret = spl_gen_file(t, &sz, t->file_limit_size, &(t->index));
 			if (ret) {
 				spl_console_log("--spl_gen_file, ret: %d --\n", ret);
@@ -848,19 +853,18 @@ void* spl_written_thread_routine(void* lpParam)
 			}
 			spl_mutex_lock(t->mtx);
 			do {
-				
+				is_now_off = t->shared_supplement->is_off;
+				if (is_now_off) {
+					break;
+				}
 				if (t->buf->pl > t->buf->pc) {
 					
 					memcpy(buffer, t->buf, sizeof(generic_dta_st) + t->buf->pl + 1);
-					//k = (int)fwrite(t->buf->data, 1, t->buf->pl, t->fp);
-					//sz += k;
 					t->buf->pl = t->buf->pc = 0;
 				}
-				for (i = 0; i < t->n_topic; ++i) {
-					//TO-TEST
+				for (i = 0; i < t->n_topic; ++i) 
+				{
 					if (t->arr_topic[i].buf->pl > t->arr_topic[i].buf->pc) {
-						//k = (int)fwrite(t->arr_topic[i].buf->data, 1, t->arr_topic[i].buf->pl, (FILE*)(t->arr_topic[i].fp));
-						//t->arr_topic[i].fizize += k;
 						memcpy(buffer + (t->buff_size * (i + 1)), t->arr_topic[i].buf, sizeof(generic_dta_st) + t->arr_topic[i].buf->pl + 1);
 						t->arr_topic[i].buf->pl = t->arr_topic[i].buf->pc = 0;
 					}
@@ -892,6 +896,9 @@ void* spl_written_thread_routine(void* lpParam)
 			if (ret) {
 				break;
 			}
+			if (is_now_off) {
+				break;
+			}
 		}
 		if (t->fp) {
 			int werr = 0;
@@ -901,24 +908,25 @@ void* spl_written_thread_routine(void* lpParam)
 					FFCLOSE(t->arr_topic[i].fp, werr);
 				}
 			}
-			spl_mutex_lock(t->mtx);
-				do {
-					//int done = 0;
-					if (!(t->process_mode)) {
-						if (t->buf) {
-							spl_free(t->buf);
-						}
-						for (i = 0; i < t->n_topic; ++i) {
-							if (t->arr_topic[i].buf) {
-								t->arr_topic[i].buf = 0;
-							}
-						}
-						break;
-					}
-					/* Be carefull lock a function. OK*/
-					spl_shm_clear_region(t);
-				} while (0);
-			spl_mutex_unlock(t->mtx);
+
+			//spl_mutex_lock(t->mtx);
+			//	do {
+			//		//int done = 0;
+			//		if (!(t->process_mode)) {
+			//			if (t->buf) {
+			//				spl_free(t->buf);
+			//			}
+			//			for (i = 0; i < t->n_topic; ++i) {
+			//				if (t->arr_topic[i].buf) {
+			//					t->arr_topic[i].buf = 0;
+			//				}
+			//			}
+			//			break;
+			//		}
+			//		/* Be carefull lock a function. OK*/
+			//		spl_shm_clear_win_region(t);
+			//	} while (0);
+			//spl_mutex_unlock(t->mtx);
 		}
 
 		spl_free(buffer);
@@ -1239,20 +1247,34 @@ const char* spl_get_text(int lev) {
 }
 /*=================================================================================================================================================*/
 int spl_finish_log() {
-	int ret = 0, err = 0; 
+	int ret = 0, err = 0, i = 0; 
+	SIMPLE_LOG_ST* t = &__simple_log_static__;
 	spl_set_off(1);
 
+	spl_mutex_lock(t->mtx);
+		do {
+			//int done = 0;
+			if (!(t->process_mode)) {
+				if (t->buf) {
+					spl_free(t->buf);
+				}
+				for (i = 0; i < t->n_topic; ++i) {
+					if (t->arr_topic[i].buf) {
+						t->arr_topic[i].buf = 0;
+					}
+				}
+				break;
+			}
+		} while (0);
+	spl_mutex_unlock(t->mtx);
 
 #ifndef UNIX_LINUX
 
-	spl_mutex_lock(__simple_log_static__.mtx);
-		if (__simple_log_static__.process_mode) {
-			if (!(__simple_log_static__.creating_mode)) {
-				spl_shm_clear_region(&__simple_log_static__);
-			}
-		}
-	spl_mutex_unlock(__simple_log_static__.mtx);
-
+	spl_mutex_lock(t->mtx);
+		do {
+			spl_shm_clear_win_region(t);
+		} while (0);
+	spl_mutex_unlock(t->mtx);
 
 	SPL_CloseHandle(__simple_log_static__.whRWBufferMapFile);
 
@@ -1581,7 +1603,9 @@ spl_get_buf_topic(int* n, int** ppl, int index) {
 	SIMPLE_LOG_ST* tg = &__simple_log_static__;
 	char* ret = 0;
 	do {
-		
+		if (tg->shared_supplement->is_off) {
+			break;
+		}
 		if (index < 0 || ((index + 1) > tg->n_topic)) {
 			ret = spl_get_buf(n, ppl);
 			break;
@@ -1898,11 +1922,11 @@ LLU spl_process_id() {
 }
 /*=================================================================================================================================================*/
 int
-spl_shm_clear_region(SIMPLE_LOG_ST* t) {
+spl_shm_clear_win_region(SIMPLE_LOG_ST* t) {
 	int ret = 0, i = 0;
 	int done = 0;
 	do {
-		if (!t->buf) {
+		if (!t->process_mode) {
 			break;
 		}
 #ifndef UNIX_LINUX
