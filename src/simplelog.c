@@ -1282,13 +1282,15 @@ int spl_finish_log() {
 	SPL_CloseHandle(__simple_log_static__.sem_rwfile);
 	SPL_CloseHandle(__simple_log_static__.sem_off);
 #else
-/*https://linux.die.net/man/3/SPL_sem_destroy
-//https://linux.die.net/man/3/pthread_mutex_init*/
+	/*--
+	https://linux.die.net/man/3/SPL_sem_destroy
+	https://linux.die.net/man/3/pthread_mutex_init
+	---*/
 	SPL_pthread_mutex_destroy(__simple_log_static__.mtx, err);
 	SPL_pthread_mutex_destroy(__simple_log_static__.mtx_off, err);
 	SPL_sem_destroy(__simple_log_static__.sem_rwfile, err);
 	SPL_sem_destroy(__simple_log_static__.sem_off, err);
-
+	spl_sleep(1);
 	spl_mutex_lock(t->mtx);
 		do {
 			spl_shm_clear_win_region(t);
