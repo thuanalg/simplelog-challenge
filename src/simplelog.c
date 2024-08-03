@@ -1289,6 +1289,13 @@ int spl_finish_log() {
 	SPL_pthread_mutex_destroy(__simple_log_static__.mtx_off, err);
 	SPL_sem_destroy(__simple_log_static__.sem_rwfile, err);
 	SPL_sem_destroy(__simple_log_static__.sem_off, err);
+
+	spl_mutex_lock(t->mtx);
+		do {
+			spl_shm_clear_win_region(t);
+		} while (0);
+	spl_mutex_unlock(t->mtx);
+
 #endif
 	memset(&__simple_log_static__, 0, sizeof(__simple_log_static__));
 	return ret;
