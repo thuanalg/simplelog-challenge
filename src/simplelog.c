@@ -1253,7 +1253,6 @@ int spl_finish_log() {
 
 	spl_mutex_lock(t->mtx);
 		do {
-			//int done = 0;
 			if (!(t->process_mode)) {
 				if (t->buf) {
 					spl_free(t->buf);
