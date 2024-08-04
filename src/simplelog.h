@@ -133,7 +133,7 @@ DLL_API_SIMPLE_LOG int
 DLL_API_SIMPLE_LOG int									
 	spl_init_log(char *path, int creating);
 DLL_API_SIMPLE_LOG int									
-	spl_finish_log();
+	spl_finish_log(int);
 DLL_API_SIMPLE_LOG int									
 	spl_fmt_now(char* fmtt, int len);
 DLL_API_SIMPLE_LOG int									
@@ -143,7 +143,7 @@ DLL_API_SIMPLE_LOG int
 DLL_API_SIMPLE_LOG int									
 	spl_mutex_unlock(void* mtx);
 DLL_API_SIMPLE_LOG int									
-	spl_set_off(int );
+	spl_set_off(int, int);
 DLL_API_SIMPLE_LOG int									
 	spl_get_off();
 DLL_API_SIMPLE_LOG void*								

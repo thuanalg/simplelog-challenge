@@ -79,7 +79,7 @@ int main(int argc, char* argv[]) {
 	set_off_process(1);
 	spl_sleep(1);
 	spl_console_log("Main close: spl_finish_log.\n");
-	spl_finish_log();
+	spl_finish_log(1);
 	return EXIT_SUCCESS;
 }
 void dotest() {

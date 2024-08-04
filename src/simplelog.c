@@ -145,8 +145,8 @@ typedef struct __SHARED_DATA_ST__ {
 		pre_tnow;
 		/*Must be sync*/
 	spl_uchar 
-		is_off;
-		/*Must be sync*/
+		is_master_off;
+		/*Must be sync, is used for cross processes.*/
 #ifndef UNIX_LINUX
 
 #else
@@ -209,9 +209,9 @@ struct __SIMPLE_LOG_ST__ {
 	char
 		folder[1024];
 		/*Path of genera folder. No nead SYNC.*/
-//	char
-//		off;					
-//		/*Must be sync*/
+	char
+		off_slave;					
+		/*Must be sync*/
 	void*
 		mtx;					
 		/*mtx: Need to close handle*/
@@ -395,12 +395,15 @@ int spl_get_log_levwel() {
 	return __simple_log_static__.llevel;
 }
 /*=================================================================================================================================================*/
-int spl_set_off(int isoff) {
+int spl_set_off(int isoff, int is_master) {
 	int ret = 0;
 	int raise_off = 0;
 	spl_mutex_lock(__simple_log_static__.mtx);
 		do {
-			__simple_log_static__.shared_supplement->is_off = (isoff ? 1 : 0);
+			if(is_master) {
+				__simple_log_static__.shared_supplement->is_master_off = (isoff ? 1 : 0);
+			}
+			__simple_log_static__.off_slave = (isoff ? 1 : 0);
 		} while (0);
 	spl_mutex_unlock(__simple_log_static__.mtx);
 	
@@ -433,7 +436,7 @@ int spl_get_off() {
 	int ret = 0;
 	spl_mutex_lock(__simple_log_static__.mtx_off);
 	do {
-		ret = __simple_log_static__.shared_supplement->is_off;
+		ret = __simple_log_static__.shared_supplement->is_master_off;
 	} while (0);
 	spl_mutex_unlock(__simple_log_static__.mtx_off);
 	return ret;
@@ -853,7 +856,7 @@ void* spl_written_thread_routine(void* lpParam)
 			}
 			spl_mutex_lock(t->mtx);
 			do {
-				is_now_off = t->shared_supplement->is_off;
+				is_now_off = (t->shared_supplement->is_master_off || t->off_slave);
 				if (is_now_off) {
 					break;
 				}
@@ -1246,10 +1249,10 @@ const char* spl_get_text(int lev) {
 	return val;
 }
 /*=================================================================================================================================================*/
-int spl_finish_log() {
+int spl_finish_log(int is_master) {
 	int ret = 0, err = 0, i = 0; 
 	SIMPLE_LOG_ST* t = &__simple_log_static__;
-	spl_set_off(1);
+	spl_set_off(1, is_master);
 
 	spl_mutex_lock(t->mtx);
 		do {
@@ -1611,7 +1614,7 @@ spl_get_buf_topic(int* n, int** ppl, int index) {
 	SIMPLE_LOG_ST* tg = &__simple_log_static__;
 	char* ret = 0;
 	do {
-		if (tg->shared_supplement->is_off) {
+		if (tg->shared_supplement->is_master_off || tg->off_slave) {
 			break;
 		}
 		if (index < 0 || ((index + 1) > tg->n_topic)) {
