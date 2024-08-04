@@ -1947,7 +1947,7 @@ spl_shm_clear_win_region(SIMPLE_LOG_ST* t) {
 				spl_console_log("UnmapViewOfFile: err: %d.", (int)GetLastError());
 			}
 			t->buf = 0;
-	}
+		}
 		for (i = 0; i < t->n_topic; ++i) {
 			if (t->arr_topic[i].buf) {
 				t->arr_topic[i].buf = 0;
