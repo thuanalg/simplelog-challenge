@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
 		}
 	}
 	// Init log with "pathcfg" path of file, after starting well, ready to use.
-	ret = spl_init_log(pathcfg, 1);
+	ret = spl_init_log(pathcfg, is_master);
 	if (ret) {
 		spl_console_log("spl_init_log ret: %d", ret);
 		exit(1);
@@ -101,7 +101,7 @@ int main(int argc, char* argv[]) {
 	set_off_process(1);
 	spl_sleep(1);
 	spl_console_log("Main close: spl_finish_log.\n");
-	spl_finish_log(1);
+	spl_finish_log(is_master);
 	return EXIT_SUCCESS;
 }
 void dotest() {
