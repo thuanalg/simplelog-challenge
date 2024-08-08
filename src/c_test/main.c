@@ -59,7 +59,7 @@ int main(int argc, char* argv[]) {
 	}
 	spl_console_log("Main thread.\n");
 	char pathcfg[1024];
-	char* path = "simplelog.cfg";
+	char* path = "C:/Users/DEll/Desktop/logoutput/simplelog.cfg";
 	char nowfmt[64];
 	snprintf(pathcfg, 1024, path);
 	n = strlen(pathcfg);
