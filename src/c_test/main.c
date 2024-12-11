@@ -37,15 +37,37 @@ int get_off_process() {
 }
 
 int number = 2;
+#define MY_NUMBER_THREAD		"--n_threaad="
+#define MY_OPT_MASTER			"--is_master="
+int is_master = 0;
+
+#ifndef UNIX_LINUX
+	#define TEST_PATH			"C:/Users/DEll/Desktop/logoutput/"
+
+#else
+	#define TEST_PATH			""
+#endif
+
 int main(int argc, char* argv[]) {
 	int n = 0, ret = 0, i = 0;
+	
 	main_mtx = spl_mutex_create(0);
 	if (argc > 1) {
 		n = sscanf(argv[1], "%d", &number);
 	}
+	for (i = 1; i < argc; ++i) {
+		if (strstr(argv[i], MY_NUMBER_THREAD)) {
+			break;
+		}
+		if (strstr(argv[i], MY_OPT_MASTER)) {
+			sscanf(argv[i], MY_OPT_MASTER"%d", &is_master);
+			is_master = (is_master ? 1 : 0);
+			break;
+		}
+	}
 	spl_console_log("Main thread.\n");
 	char pathcfg[1024];
-	char* path = "simplelog.cfg";
+	char* path = TEST_PATH"simplelog.cfg";
 	char nowfmt[64];
 	snprintf(pathcfg, 1024, path);
 	n = strlen(pathcfg);
@@ -54,7 +76,7 @@ int main(int argc, char* argv[]) {
 			pathcfg[i] = '/';
 		}
 	}
-	ret = spl_init_log(pathcfg, 1);
+	ret = spl_init_log(pathcfg, is_master);
 	if (ret) {
 		spl_console_log("spl_init_log ret: %d", ret);
 		exit(1);
@@ -67,7 +89,12 @@ int main(int argc, char* argv[]) {
 		FILE* fp = 0;
 		spl_sleep(20);
 		spllog(SPL_LOG_INFO, "%s", "<<-->> Wait for loop.");
-		fp = fopen("trigger.txt", "r");
+		if (is_master) {
+			fp = fopen(TEST_PATH"trigger_master.txt", "r");
+		}
+		else {
+			fp = fopen(TEST_PATH"trigger.txt", "r");
+		}
 		if (fp) {
 			fclose(fp);
 			break;
@@ -78,8 +105,8 @@ int main(int argc, char* argv[]) {
 	set_off_process(1);
 	spl_sleep(1);
 	spl_console_log("--Main close--");
-	spl_finish_log();
-	//spl_sleep(1000);
+	spl_finish_log(is_master);
+	spl_sleep(2);
 	spl_console_log("--Main close--");
 	return EXIT_SUCCESS;
 }
@@ -128,6 +155,9 @@ void* posix_thread_routine(void* lpParam)
 		spllognaxyax(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), tpic);
 		spllogsksgn(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), tpic);
 		//spl_sleep(1);
+		if (is_master || 1) {
+			spl_sleep(1);
+		}
 	}
 	return 0;
 }
