@@ -17,6 +17,7 @@
 5. Focus on simplicity.
 6. An sample following [**W. Richard Steven**](https://www.bing.com/search?form=SKPBOT&q=W.%20Richard%20Steven) Unix Network Programming - Volume II, Part 3 - Synchronization, Chapter 7, 8, 9, 10, 11.
 7. Fast and small.
+8. Synchronization of threads are  not easy, plus with many processes get more complex. Therefore, here is the challenge for me.
 
 ## 1. Configuration and build (did test on x86_64 as below, still in progress)
 
