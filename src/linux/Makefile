@@ -1,12 +1,12 @@
 target=libsimplelog.so
-debugFlag=-g -fPIC -Wall -shared 
-releaseFlag=-fPIC -Wall -shared
+debugFlag=-g -fPIC -Wall -shared  -DUNIX_LINUX
+releaseFlag=-fPIC -Wall -shared -DUNIX_LINUX
 LIBS+=-lpthread
 src=../simplelog.c ../simplelog.h ../simplelog_config.h
 INC=-I../
 #CFLAGS=-ansi
-CFLAGS=-std=gnu89
-CPPFLAGS=-std=c++98
+CFLAGS=-std=gnu89 -DUNIX_LINUX
+CPPFLAGS=-std=c++98 -DUNIX_LINUX
 
 debug:
 	gcc ${debugFlag} -o ${target} ${src} ${LIBS} ${CFLAGS}
