@@ -31,6 +31,7 @@ include_directories(./)
 add_executable(simple_cpp_example_direct ${SOURCE_BINCPP_FILES_DIRECT})
 target_compile_definitions(simple_cpp_example_direct PUBLIC _CRT_SECURE_NO_WARNINGS=1)
 target_compile_definitions(simple_cpp_example_direct PRIVATE __SIMPLE_STATIC_LOG__=1)
+target_compile_definitions(simple_cpp_example PUBLIC _HAS_STD_BYTE=0)
 
 target_link_libraries(simple_c_example 
 	simpleloglib
