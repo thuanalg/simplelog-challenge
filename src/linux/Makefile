@@ -1,22 +1,22 @@
 target=libsimplelog.so
-debugFlag=-g -fPIC -Wall -shared  -DUNIX_LINUX
-releaseFlag=-fPIC -Wall -shared -DUNIX_LINUX
+debugFlag=-g -fPIC -Wall -shared  -D UNIX_LINUX
+releaseFlag=-fPIC -Wall -shared -D UNIX_LINUX
 LIBS+=-lpthread
 src=../simplelog.c ../simplelog.h ../simplelog_config.h
 INC=-I../
 #CFLAGS=-ansi
-CFLAGS=-std=gnu89 -DUNIX_LINUX
-CPPFLAGS=-std=c++98 -DUNIX_LINUX
+CFLAGS=-std=gnu89 -D UNIX_LINUX
+CPPFLAGS=-std=c++98 -D UNIX_LINUX
 
 debug:
 	gcc ${debugFlag} -o ${target} ${src} ${LIBS} ${CFLAGS}
-	gcc -g -o simpplelog_sample  ../c_test/main.c ${src} ${LIBS} ${INC}
+	gcc -g -o simpplelog_sample  ../c_test/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
 	g++ -g -o simpplelog_cpp_sample  ../cpp_test/main.cpp ${LIBS} ${CPPFLAGS} ${INC} -L./ -lsimplelog
 	g++ -g -o simpplelog_cpp_direct_sample  ../cpp_test/main.cpp ${src} ${LIBS} ${INC} ${CPPFLAGS}
 
 release:
 	gcc ${releaseFlag} -o ${target} ${src} ${LIBS} ${CFLAGS}
-	gcc -o simpplelog_sample  ../c_test/main.c ${src} ${LIBS} ${INC}
+	gcc -o simpplelog_sample  ../c_test/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
 	g++ -o simpplelog_cpp_sample  ../cpp_test/main.cpp ${LIBS} ${INC} ${CPPFLAGS} -L./ -lsimplelog
 	g++ -o simpplelog_cpp_direct_sample  ../cpp_test/main.cpp ${src} ${LIBS} ${INC} ${CPPFLAGS}
 
