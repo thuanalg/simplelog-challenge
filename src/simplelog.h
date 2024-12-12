@@ -14,7 +14,10 @@
 #define ___SIMPLE_LOG__
 #include <stdio.h>
 #include "simplelog_config.h"
-
+#ifndef __UNIX_LINUX_CPP11_AND_NEWERS__
+#else
+#include <string>
+#endif
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -100,7 +103,7 @@ extern "C" {
 		SPL_END_ERROR,
 	} SPL_LOG_ERR_CODE;
 
-
+#ifndef __UNIX_LINUX_CPP11_AND_NEWERS__
 
 #define spl_console_log(___fmttt___, ...)		{char buf[1024];spl_fmmt_now(buf, 1024);\
 fprintf(stdout, "[%s] [%s:%d] [pid: %llu, thid: %llu] "___fmttt___"\n" , buf, __FUNCTION__, __LINE__, spl_process_id(), spl_get_threadid(), ##__VA_ARGS__);}
@@ -184,6 +187,94 @@ spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
 //}
 
 
+#else
+#define spl_console_log(___fmttt___, ...)		{std::string __c11fmt__="[%s] [%s:%d] [pid: %llu, thid: %llu] ";__c11fmt__+=___fmttt___;__c11fmt__+="\n";\
+char buf[1024];spl_fmmt_now(buf, 1024);\
+fprintf(stdout, __c11fmt__.c_str() , buf, __FUNCTION__, __LINE__, spl_process_id(), spl_get_threadid(), ##__VA_ARGS__);}
+
+
+
+
+
+#define __spl_log_buf__(___fmttt___, ...)	{std::string __c11fmt__="[%s] [pid: %llu, tid: %llu] [%s:%d] ";__c11fmt__+=___fmttt___;__c11fmt__+="\n\n";;;\
+int *__ppl = 0; char tnow[40]; int range=0; char* __p = 0; void *__mtx__ =  spl_get_mtx(); LLU thrid = spl_get_threadid();\
+int len = 0; LLU prid = spl_process_id(); spl_fmt_now(tnow, 40);\
+spl_mutex_lock(__mtx__);\
+__p = spl_get_buf(&range, &__ppl); if (__p && __ppl) { len = snprintf((__p + (*__ppl)), range, \
+__c11fmt__.c_str(), \
+tnow, prid, thrid, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+if(len > 0) (*__ppl) += (len -1);}\
+spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}
+
+
+#define __spl_log_buf_level__(__lv__, ___fmttt___, ...)	{if(spl_get_log_levwel() <= (__lv__) )\
+{std::string __c11fmt__="[%s] [%s] [pid: %llu, tid:%llu]\t[%s:%d] ";__c11fmt__+=___fmttt___;__c11fmt__+="\n\n";;;\
+int *__ppl = 0; char tnow[40]; int range=0; char* __p = 0; void *__mtx__ =  spl_get_mtx(); LLU thrid = spl_get_threadid();\
+int len = 0; const char *lv_text = spl_get_text(__lv__);LLU prid = spl_process_id(); spl_fmt_now(tnow, 40);\
+spl_mutex_lock(__mtx__);\
+__p = spl_get_buf(&range, &__ppl); if (__p && __ppl) { len = snprintf((__p + (*__ppl)), range, \
+__c11fmt__.c_str(), \
+tnow, lv_text, prid, thrid, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+if(len > 0) (*__ppl) += (len -1);}\
+spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
+}
+
+
+
+	//#define __spl_log_buf_level__(__lv__, ___fmttt___, ...)	{if(spl_get_log_levwel() <= (__lv__) )\
+	//{int *__ppl = 0; char tnow[40]; int range=0; char* __p = 0; void *__mtx__ =  spl_get_mtx(); LLU thrid = spl_get_threadid();\
+	//int len = 0; const char *lv_text = spl_get_text(__lv__);spl_fmt_now(tnow, 40);\
+	//spl_mutex_lock(__mtx__);\
+	//__p = spl_get_buf(&range, &__ppl); if (__p && __ppl) { len = snprintf((__p + (*__ppl)), range, \
+	//"[%s] [%s] [tid:\t%llu]\t[%s:%d]\t"___fmttt___"\n\n", \
+	//tnow, lv_text, thrid, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+	//if(len > 0) (*__ppl) += (len -1);}\
+	//spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
+	//}
+
+
+
+#define __spl_log_buf_topic__(__tpic, ___fmttt___, ...)	{std::string __c11fmt__="[%s] [pid: %llu, tid: %llu] [%s:%d] ";__c11fmt__+=___fmttt___;__c11fmt__+="\n\n";;;;\
+int *__ppl = 0; char tnow[40]; int range=0; char* __p = 0; void *__mtx__ =  spl_get_mtx(); LLU thrid = spl_get_threadid();\
+int len = 0; LLU prid = spl_process_id();;spl_fmt_now(tnow, 40);\
+spl_mutex_lock(__mtx__);\
+__p = spl_get_buf_topic(&range, &__ppl, (__tpic)); if (__p && __ppl) { len = snprintf((__p + (*__ppl)), range, \
+__c11fmt__.c_str(), \
+tnow, prid, thrid, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+if(len > 0) (*__ppl) += (len -1);}\
+spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}
+
+
+
+
+
+#define __spl_log_buf_topic_level__(__lv__, __tpic, ___fmttt___, ...)	{if(spl_get_log_levwel() <= (__lv__) )\
+{std::string __c11fmt__="[%s] [%s] [pid: %llu, tid: %llu]\t[%s:%d] ";__c11fmt__+=___fmttt___;__c11fmt__+="\n\n";;;\
+int *__ppl = 0; char tnow[40]; int range=0; char* __p = 0; void *__mtx__ =  spl_get_mtx(); LLU thrid = spl_get_threadid();\
+int len = 0; const char *lv_text = spl_get_text(__lv__);LLU prid = spl_process_id();;spl_fmt_now(tnow, 40);\
+spl_mutex_lock(__mtx__);\
+__p = spl_get_buf_topic(&range, &__ppl, (__tpic)); if (__p && __ppl) { len = snprintf((__p + (*__ppl)), range, \
+__c11fmt__.c_str(), \
+tnow, lv_text, prid, thrid, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+if(len > 0) (*__ppl) += (len -1);}\
+spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
+}
+
+
+
+
+//#define __spl_log_buf_topic_level__(__lv__, __tpic, ___fmttt___, ...)	{ if(spl_get_log_levwel() <= (__lv__) ) \
+//{int *__ppl = 0; char tnow[40]; int range=0; char* __p = 0; void *__mtx__ =  spl_get_mtx(); LLU thrid = spl_get_threadid();\
+//int len = 0; const char *lv_text = spl_get_text(__lv__);spl_fmt_now(tnow, 40);\
+//spl_mutex_lock(__mtx__);\
+//__p = spl_get_buf_topic(&range, &__ppl, (__tpic)); if (__p && __ppl) { len = snprintf((__p + (*__ppl)), range, \
+//"[%s] [%s] [tid:\t%llu]\t[%s:%d]\t"___fmttt___"\n\n", \
+//tnow, lv_text, thrid, __FUNCTION__, __LINE__, ##__VA_ARGS__); \
+//if(len > 0) (*__ppl) += (len -1);}\
+//spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
+//}
+
+#endif
 
 //#define spllog(__lv__, __fmtt__, ...) { if(spl_get_log_levwel() <= (__lv__) ) {__spl_log_buf__("[%s] -->> "__fmtt__, spl_get_text(__lv__), ##__VA_ARGS__);};}
 #define spllog			__spl_log_buf_level__

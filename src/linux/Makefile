@@ -6,7 +6,8 @@ src=../simplelog.c ../simplelog.h ../simplelog_config.h
 INC=-I../
 #CFLAGS=-ansi
 CFLAGS=-std=gnu89 -D UNIX_LINUX
-CPPFLAGS=-std=c++98 -D UNIX_LINUX
+#CPPFLAGS=-std=c++98 -D UNIX_LINUX -D __UNIX_LINUX_CPP11_AND_NEWERS__
+CPPFLAGS=-D UNIX_LINUX -D __UNIX_LINUX_CPP11_AND_NEWERS__
 
 debug:
 	gcc ${debugFlag} -o ${target} ${src} ${LIBS} ${CFLAGS}
