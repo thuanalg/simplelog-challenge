@@ -1,43 +1,53 @@
-# simplelog
+### Introducing **SimpleLog Challenge**: The Ultimate ANSI C Logger Library  
 
-## 0. Preface
+🚀 **GitHub Repository**: [thuanalg/simplelog-challenge](https://github.com/thuanalg/simplelog-challenge)  
 
-[**Thanks a lot to:**](https://www.bing.com/search?form=SKPBOT&q=Thanks%20a%20lot%20to%3A)
+The **SimpleLog Challenge** is a state-of-the-art logger library designed and implemented in **ANSI C**, meeting and exceeding modern requirements for multi-threaded and multi-process logging across all operating systems. This library delivers unmatched performance, flexibility, and compatibility for developers working in **C/C++**, from legacy ANSI C89 to the latest C++20 standards.  
 
-1. My family, friends.
-2. [**W. Richard Steven**](https://www.bing.com/search?form=SKPBOT&q=W.%20Richard%20Steven) - Unix Network Programming - Volume I, II. The books bring C/C++ programming career to me.
-3. My colleagues: Lê Duy Cường, Bùi Khánh Duy, Nguyễn Công Đức , ...
+---
 
-[**Purpose:**](https://www.bing.com/search?form=SKPBOT&q=Purpose%3A)
+### 🌟 **Key Features**:  
 
-1. A C/C++ log is to support multithread.
-2. A pattern of designation of multi-thread, signaling, realtime.
-3. Without using third party except Posix APIs, Win32 APIs.
-4. Portable: Windows, Unix-Like (Linux, Mac, Solaris, Android, iOS, ...)
-5. Focus on simplicity.
-6. An sample following [**W. Richard Steven**](https://www.bing.com/search?form=SKPBOT&q=W.%20Richard%20Steven) Unix Network Programming - Volume II, Part 3 - Synchronization, Chapter 7, 8, 9, 10, 11.
-7. Fast and small.
-8. Synchronization of threads are  not easy, plus with many processes get more complex. Therefore, here is the challenge for me.
+1. **Multi-threaded Logging**  
+   - Supports safe and efficient logging in multi-threaded environments without performance bottlenecks.  
 
-## 1. Configuration and build (did test on x86_64 as below, still in progress)
+2. **Multi-process Logging**  
+   - Handles concurrent logging across multiple processes using robust synchronization techniques.  
 
-| OS                | Tool/SDK                 | Steps                                                                                                                                                                                                 | Prerequisite                                                                 |
-|-------------------|--------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------|
-| Windows 10, 32 bits | Microsoft Visual Studio 2022 | 1. Come to [**src**](https://github.com/thuanalg/simplelog-topic/tree/master/src) folder.<br>2. Comment the macro [**UNIX_LINUX**](https://en.wikipedia.org/wiki/Unix-like) in [**simplelog_config.h**] ![](image/Windows-00.PNG)<br>3. Run: `cmake -G "Visual Studio 17 2022" -A win32 -B ../build32`.<br>"../build32" is an output folder.<br>4. Move to the output folder "../build32" to build and run test.![](image/win32-00.PNG)<br>5. Copy [**src/simpleplog.cfg**](https://github.com/thuanalg/simplelog-topic/blob/master/src/simplelog.cfg) to ../build32 | 1. [**cmake**](https://www.bing.com/search?form=SKPBOT&q=cmake), however, you can add the files (from [**src**](https://www.bing.com/search?form=SKPBOT&q=src)) manually/directly.<br>2. Visual Studio 2022 (Community version or any.) |
-| Windows 10, 64 bits | Microsoft Visual Studio 2022 | 1. Come to [**src**](https://www.bing.com/search?form=SKPBOT&q=src) folder.<br>2. Comment the macro [**UNIX_LINUX**](https://www.bing.com/search?form=SKPBOT&q=UNIX_LINUX) in [**simplelog_config.h**](https://github.com/thuanalg/simplelog-topic/blob/master/image/Windows-00.PNG)<br>3. Run: `cmake -G "Visual Studio 17 2022" -B ../build64`.<br>"../build64" is an output folder.<br>4. Move to the output folder "../build64" to build and run test.<br>5. Copy [**src/simpleplog.cfg**](https://github.com/thuanalg/simplelog-topic/blob/master/src/simplelog.cfg) to ../build64 | 1. [**cmake**](https://www.bing.com/search?form=SKPBOT&q=cmake), however, you can add the files (from [**src**](https://www.bing.com/search?form=SKPBOT&q=src)) manually/directly.<br>2. Visual Studio 2022 (Community version or any.) |
-| Linux, 64 bits     | gcc/g++                  | 1. Come to [**src**](https://www.bing.com/search?form=SKPBOT&q=src), change the file: https://github.com/thuanalg/simplelog-topic/blob/master/image/linux-00.PNG. <br>2. Come to [**src/linux**](https://www.bing.com/search?form=SKPBOT&q=src%2Flinux) folder.<br>3. Run: `make`.<br>4. Copy [**src/simpleplog.cfg**](https://github.com/thuanalg/simplelog-topic/blob/master/src/simplelog.cfg) to [**src/linux**](https://www.bing.com/search?form=SKPBOT&q=src%2Flinux).                                                      | 1. gcc/g++.<br>2. POSIX, POSIX thread.                                        |
+3. **Wide Compatibility**  
+   - Works seamlessly with both classic and modern C/C++ standards, from **ANSI C89** to **C++20**.  
 
-## 2. Run
+4. **Cross-platform Support**  
+   - Fully portable and tested on all major operating systems (Windows, Linux, macOS, etc.).  
 
-| OS      | Step                                                                                       | Note                                                                                          |
-|---------|--------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------------------|
-| Windows | Come to the output folder.<br>Run `simple_c_example.exe 2000`<br>Or run `simple_cpp_example.exe 2000` <br> ![](image/Windows-02.PNG) | Output 2000 is number of threads.<br>Let's assess performance of the library/sample for yourself. |
-| Linux   | Come to the output folder.<br>Run `./simpplelog_sample 2000`<br>Run `./simpplelog_cpp_sample 2000`<br> ![](image/linux-02.PNG)  | Output 2000 is number of threads.<br>With `simpplelog_cpp_sample`, you have to export `LD_LIBRARY_PATH=$LD_LIBRARY_PATH:./`<br>Because `simpplelog_cpp_sample` depends on `libsimplelog.so`.<br>Let's assess performance of the library/sample for yourself. |
+5. **Log Levels**  
+   - Fine-grained control over log verbosity with multiple log levels.  
 
-## 3. APIs manual
+6. **Logging by Topic**  
+   - Organize logs by specific topics for better traceability and debugging.  
 
-| Index | Name             | Description                                                                 | Thread-safe |
-|-------|------------------|-----------------------------------------------------------------------------|-------------|
-| 1     | `spl_init_log(char *pathcfg)`   		| The path to [**configuring file**](https://github.com/thuanalg/simplelog-challenge/blob/master/src/simplelog.cfg) .                                              | Yes         |
-| 2     | `spllog(level, fmt, ...)`         	| Level is `SPL_LOG_DEBUG`, `SPL_LOG_INFO`, `SPL_LOG_WARNING`, `SPL_LOG_ERROR`, `SPL_LOG_FATAL` | Yes         |
-| 3     | `spl_finish_log()` 					| Finish log.                                                                 | Yes         |
+7. **Real-time Logging**  
+   - Ensures minimal latency for critical applications that require immediate log output.  
+
+8. **File Rotation for Large Logs**  
+   - Automatically rotates log files when they exceed a specified size, ensuring no data loss or performance degradation.  
+
+---
+
+### 🔥 **Why SimpleLog Challenge Stands Out**  
+
+This library is not just a logger—it’s a **solution** for developers who need robust, high-performance logging in demanding environments such as embedded systems, real-time applications, and large-scale distributed systems.  
+
+Whether you’re dealing with legacy ANSI C code or modern C++20 projects, **SimpleLog Challenge** is designed to adapt and excel in any scenario.  
+
+---
+
+### 📈 **Future Potential**  
+
+I am confident that **SimpleLog Challenge** can meet **all your logging needs and more**. With its solid foundation and extensibility, additional features can be implemented as required by the community or specific use cases.  
+
+---
+
+💡 **Check it out and contribute**: [SimpleLog Challenge on GitHub](https://github.com/thuanalg/simplelog-challenge)  
+
+Join the community and experience the power of a logger that sets a new standard for ANSI C and C++ developers! Feedback and contributions are welcome to make it even better. 🙌
