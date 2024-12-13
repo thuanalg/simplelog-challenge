@@ -1,6 +1,7 @@
 ### Introducing **SimpleLog Challenge**: The Ultimate ANSI C Logger Library  
 
 🚀 **GitHub Repository**: [thuanalg/simplelog-challenge](https://github.com/thuanalg/simplelog-challenge)  
+🚀 **Demo video**: [Windows demo](https://drive.google.com/file/d/1G8z5JTppjG_O65BfC3FS3m9eyTCdU1Eo/view?usp=sharing)  
 
 The **SimpleLog Challenge** is a state-of-the-art logger library designed and implemented in **ANSI C**, meeting and exceeding modern requirements for multi-threaded and multi-process logging across all operating systems. This library delivers unmatched performance, flexibility, and compatibility for developers working in **C/C++**, from legacy ANSI C89 to the latest C++20 standards.  
 

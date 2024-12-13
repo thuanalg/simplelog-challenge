@@ -14,7 +14,7 @@
 #ifndef ___SIMPLE_LOG__
 #define ___SIMPLE_LOG__
 #include <stdio.h>
-#include "simplelog_config.h"
+//#include "simplelog_config.h"
 #ifndef __UNIX_LINUX_CPP11_AND_NEWERS__
 #else
 #include <string>
@@ -277,23 +277,61 @@ spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
 
 #endif
 
-//#define spllog(__lv__, __fmtt__, ...) { if(spl_get_log_levwel() <= (__lv__) ) {__spl_log_buf__("[%s] -->> "__fmtt__, spl_get_text(__lv__), ##__VA_ARGS__);};}
+/*=================================================================================================================================================*/
+//The(only) main header file to export 3 APIs: [spl_init_log, spllog, spllogtopic, spl_finish_log] .
+/*
+*	The log test will be written into the default/common file.
+*	Base on the level which decide whether the log test is written or not.
+*	Example: spllog(SPL_LOG_INFO, "test: %s, number: %d", "what's it?", 7); //Then, if the level is greater  or equal will be written. 
+*		Others are  not written.
+*/
 #define spllog			__spl_log_buf_level__
-		
-//#define spllogtopic(__lv__, __tpic, __fmtt__, ...) \
-//{ if(spl_get_log_levwel() <= (__lv__) ) {__spl_log_buf_topic__((__tpic), "[%s] -->> "__fmtt__, spl_get_text(__lv__), ##__VA_ARGS__);};}
 
+
+
+/*
+*	The log test will be written into the specified file, it is name of topic.
+*	Base on the level which decide whether the log test is written or not.
+*	You need to know what index of topic and define macro for them. Please see more daitail of the configuring file, 
+*		the number of topics depends on how strong your system:
+*			#define spllogsys(__level__, __fmt__, ...)					spllogtopic(__level__, 0, __fmt__, ##__VA_ARGS__);
+*			#define splloglib(__level__, __fmt__, ...)					spllogtopic(__level__, 1, __fmt__, ##__VA_ARGS__);
+*			#define spllogexe(__level__, __fmt__, ...)					spllogtopic(__level__, 2, __fmt__, ##__VA_ARGS__);
+*	Example: spllogsys(SPL_LOG_INFO, "test: %s, number: %d", "what's it?", 7); //Then, if the level is greater  or equal 
+*		will be written to the specified file.
+*		Others are  not written.
+*/
 #define spllogtopic		__spl_log_buf_topic_level__
 
-	
+
+
+/*
+*	spl_init_log must be initial before using
+*		- path: the of the configuring file.
+*		- "ismaster: If you want multiple processes to use the same .cfg file, 
+*				then only the first process should be initialized as ismaster." And others are is 0.
+*		- Master process: spl_init_log("abc.cfg", 1);
+*		- Slave processes: spl_init_log("abc.cfg", 0);
+*/
+DLL_API_SIMPLE_LOG int
+	spl_init_log(char* path, int ismater);
+
+
+
+/*
+*	spl_finish_log should be invoked at the end of main function. It is thread-safe.
+*		- ismaster: 1/0, if you initiated 1/0. And the master process MUST be ended last.
+*/
+DLL_API_SIMPLE_LOG int
+	spl_finish_log(int ismater);
+
+/*=================================================================================================================================================*/
+
 DLL_API_SIMPLE_LOG int									
 	spl_set_log_levwel(int val);
 DLL_API_SIMPLE_LOG int									
 	spl_get_log_levwel();
-DLL_API_SIMPLE_LOG int									
-	spl_init_log(char *path, int creating);
-DLL_API_SIMPLE_LOG int									
-	spl_finish_log(int);
+
 DLL_API_SIMPLE_LOG int									
 	spl_fmt_now(char* fmtt, int len);
 DLL_API_SIMPLE_LOG int									

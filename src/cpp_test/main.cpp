@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-#ifndef UNIX_LINUX
 
-#include <Windows.h>
+#ifndef UNIX_LINUX
+	#include <Windows.h>
 	DWORD WINAPI win32_thread_routine(LPVOID lpParam);
 #else
 	#include <unistd.h>
@@ -129,9 +129,9 @@ void dotest() {
 #define spllogsksgn(__level__, __fmt__, ...)				spllogtopic(__level__, 4, __fmt__, ##__VA_ARGS__);
 
 #ifndef UNIX_LINUX
-DWORD WINAPI win32_thread_routine(LPVOID lpParam) {
+	DWORD WINAPI win32_thread_routine(LPVOID lpParam) {
 #else
-void* posix_thread_routine(void* lpParam) {
+	void* posix_thread_routine(void* lpParam) {
 #endif // !UNIX_LINUX
 	int k = 0;
 	int tpic = 0;

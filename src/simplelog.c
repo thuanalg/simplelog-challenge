@@ -856,13 +856,17 @@ DWORD WINAPI spl_written_thread_routine(LPVOID lpParam)
 void* spl_written_thread_routine(void* lpParam)
 #endif
 {	
-	int k = 0;
 	SIMPLE_LOG_ST* t = (SIMPLE_LOG_ST*)lpParam;
-	int ret = 0, off = 0, sz = 0, i = 0, err = 0;
+	int ret = 0;
+	int k = 0;
+	int off = 0;
+	int sz = 0;
+	int err = 0;
 	char* buffer = 0;
 	int total_buf_sz = 0;
 	generic_dta_st* tmpBuff = 0;
-	spl_uchar is_now_off = 0;
+	register spl_uchar is_now_off = 0;
+	register int i = 0;
 	total_buf_sz = t->buff_size * (1 + t->n_topic);
 	spl_malloc(total_buf_sz, buffer, char);
 	
