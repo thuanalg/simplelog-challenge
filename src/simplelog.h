@@ -8,7 +8,7 @@
 //		<2024-Aug-22>
 //		<2024-Dec-12>
 // Decription:													
-//		The (only) main header file to export 3 APIs: [spl_init_log, spllog, spllogtopic, spl_finish_log].
+//		The (only) main header file to export 4 APIs: [spl_init_log, spllog, spllogtopic, spl_finish_log].
 //===============================================================================================================
 */
 #ifndef ___SIMPLE_LOG__
@@ -312,6 +312,7 @@ spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
 *				then only the first process should be initialized as ismaster." And others are is 0.
 *		- Master process: spl_init_log("abc.cfg", 1);
 *		- Slave processes: spl_init_log("abc.cfg", 0);
+*		- You can run with thread mode if you set process_mode=0 in configuring file.
 */
 DLL_API_SIMPLE_LOG int
 	spl_init_log(char* path, int ismater);

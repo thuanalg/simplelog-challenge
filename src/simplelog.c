@@ -6,6 +6,7 @@
 *		<2024-July-14>
 * The lasted modified date:									
 *		<2024-Aug-22>
+*		<2024-DEC-13>
 * Decription:													
 *		The (only) main file to implement simple log.
 */
@@ -76,7 +77,7 @@
 	#define SPL_pthread_mutex_unlock(__obj, __err) \
 		{ (__err) = pthread_mutex_unlock((pthread_mutex_t*)(__obj)); if((__err)) spl_console_log("pthread_mutex_unlock errcode: %d. %s\n", (__err), (__err) ? "FALIED": "DONE");}
 	#define spl_shm_unlink(__name__, __err__) { __err__ = shm_unlink(__name__); \
-	if(__err__ || 1) {spl_console_log("shm_unlink: err: %d, errno: %d, text: %s, name: %s.", __err__, errno, strerror(errno), __name__);}}
+		if(__err__) {spl_console_log("shm_unlink: err: %d, errno: %d, text: %s, name: %s.", __err__, errno, strerror(errno), __name__);}}
 #endif
 /*=================================================================================================================================================*/
 
@@ -688,18 +689,28 @@ spl_init_log( char *pathcfg, int creating)
 	}
 	if (ret == 0) {
 		__simple_log_static__.creating_mode = creating;
+		
 		if (!__simple_log_static__.process_mode) {
 			ret = spl_gen_topic_buff(&__simple_log_static__);
+			//If we run with only threads mode, we just initiate memory for only one process, don't need to be in shared memory.
 		} 
 		else {
+			//If we run with only processes mode, we just initiate memory for many process, MUST be in shared memory.
 			do {
 				ret = spl_shm_region(&__simple_log_static__);
 				if(ret) {
 					break;
 				}
 #ifndef UNIX_LINUX
+				//In Windows environment, we cannot embbed the mutexes, semaphores into the shared memory.
+				//spl_sem_create
+				//spl_mutex_create
 #else
+				//In UNIX_LINUX environment, we embbed the mutexes, semaphores into the shared memory.
 				ret = spl_create_sync(&__simple_log_static__);
+				if (ret) {
+					break;
+				}
 #endif				
 			} while(0);
 		}
@@ -707,10 +718,12 @@ spl_init_log( char *pathcfg, int creating)
 	if (ret == 0) {
 		if (__simple_log_static__.process_mode) {
 			if (__simple_log_static__.creating_mode) {
+				//With processes mode, we only need to start the listening thread of the master process.
 				ret = spl_simple_log_thread(&__simple_log_static__);
 			}
 		}
 		else {
+			//With threads mode, we have to start the listening thread of the master process.
 			ret = spl_simple_log_thread(&__simple_log_static__);
 		}
 	}

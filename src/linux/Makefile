@@ -2,7 +2,7 @@ target=libsimplelog.so
 debugFlag=-g -fPIC -Wall -shared  -D UNIX_LINUX
 releaseFlag=-fPIC -Wall -shared -D UNIX_LINUX
 LIBS+=-lpthread
-src=../simplelog.c ../simplelog.h ../simplelog_config.h
+src=../simplelog.c ../simplelog.h
 INC=-I../
 #CFLAGS=-ansi
 CFLAGS=-std=gnu89 -D UNIX_LINUX

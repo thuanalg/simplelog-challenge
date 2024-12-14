@@ -2,6 +2,7 @@
 
 🚀 **GitHub Repository**: [thuanalg/simplelog-challenge](https://github.com/thuanalg/simplelog-challenge)  
 🚀 **Demo video**: [Windows demo](https://drive.google.com/file/d/1G8z5JTppjG_O65BfC3FS3m9eyTCdU1Eo/view?usp=sharing)  
+🚀 **Demo video**: [Linux demo](https://drive.google.com/file/d/1Lbeu1prVZp3Kp7uFjR3ryQWXfuyh-vBA/view?usp=sharing)  
 
 The **SimpleLog Challenge** is a state-of-the-art logger library designed and implemented in **ANSI C**, meeting and exceeding modern requirements for multi-threaded and multi-process logging across all operating systems. This library delivers unmatched performance, flexibility, and compatibility for developers working in **C/C++**, from legacy ANSI C89 to the latest C++20 standards.  
 
@@ -33,6 +34,11 @@ The **SimpleLog Challenge** is a state-of-the-art logger library designed and im
 8. **File Rotation for Large Logs**  
    - Automatically rotates log files when they exceed a specified size, ensuring no data loss or performance degradation.  
 
+9. **Small, Fast, and Simple**
+	- It is designed to be lightweight and efficient, optimizing performance while ensuring simplicity in integration and use.
+
+10. **No External Dependencies**
+	- It requires no external dependencies, reducing complexity and making it easy to integrate into projects without compatibility issues.
 ---
 
 ### 🔥 **Why SimpleLog Challenge Stands Out**  
