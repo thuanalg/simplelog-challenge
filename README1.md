@@ -38,6 +38,6 @@
 
 | Index | Name             | Description                                                                 | Thread-safe |
 |-------|------------------|-----------------------------------------------------------------------------|-------------|
-| 1     | `spl_init_log(char *pathcfg)`   		| The path to [**configuring file**](https://github.com/thuanalg/simplelog-challenge/blob/master/src/simplelog.cfg) .                                              | None         |
+| 1     | `spl_init_log(char *pathcfg)`   		| The path to [**configuring file**](https://github.com/thuanalg/simplelog-challenge/blob/master/src/simplelog.cfg) .                                              | None, should at the beginning of main function         |
 | 2     | `spllog(level, fmt, ...)`         	| Level is `SPL_LOG_DEBUG`, `SPL_LOG_INFO`, `SPL_LOG_WARNING`, `SPL_LOG_ERROR`, `SPL_LOG_FATAL` | Yes         |
-| 3     | `spl_finish_log()` 					| Finish log.                                                                 | None         |
+| 3     | `spl_finish_log()` 					| Finish log.                                                                 | None, should at the the end of main function         |
