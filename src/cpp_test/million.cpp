@@ -147,7 +147,7 @@ void dotest() {
 		if (k) {
 			break;
 		}
-		int count = 0
+		int count = 0;
 		while(count < loop_count) {
 			spllog(SPL_LOG_INFO, "test log: %llu", (LLU)time(0));
 			tpic = (spl_milli_now() % 3);

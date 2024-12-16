@@ -3,7 +3,7 @@ project(simplelog_challenge_project)
 set(SOURCE_LIB_FILES simplelog.c simplelog.h)
 set(SOURCE_BIN_FILES c_test/main.c)
 set(SOURCE_BINCPP_FILES cpp_test/main.cpp)
-set(SOURCE_BINCPP_MILLION_FILES cpp_test/main.cpp)
+set(SOURCE_BINCPP_MILLION_FILES cpp_test/million.cpp)
 set(SOURCE_BINCPP_FILES_DIRECT cpp_test/main.cpp simplelog.c simplelog.h)
 
 # Add executable target with source files listed in SOURCE_FILES variable
@@ -61,5 +61,9 @@ target_link_libraries(simple_c_example
 )
 
 target_link_libraries(simple_cpp_example 
+	simpleloglib
+)
+
+target_link_libraries(simple_cpp_million_example 
 	simpleloglib
 )
