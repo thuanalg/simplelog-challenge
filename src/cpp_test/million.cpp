@@ -46,7 +46,7 @@ int loop_count = 1000;
 
 int main(int argc, char* argv[]) {
 	char pathcfg[1024];
-	char* path = (char*)"simplelog.cfg";
+	char* path = (char*)"C:/z/simplelog-challenge/win32/Debug/simplelog.cfg";
 	char nowfmt[64];
 	int n = 0, ret = 0, i = 0;
 	if (argc < 2) {
@@ -55,15 +55,15 @@ int main(int argc, char* argv[]) {
 	for (i = 1; i < argc; ++i) {
 		if (strstr(argv[i], MY_NUMBER_THREAD)) {
 			sscanf(argv[i], MY_NUMBER_THREAD"%d", &number_thread);
-			break;
+			continue;
 		}
 		if (strstr(argv[i], MY_OPT_MASTER)) {
 			sscanf(argv[i], MY_OPT_MASTER"%d", &is_master);
-			break;
+			continue;
 		}
 		if (strstr(argv[i], MY_LOOP_COUNT)) {
 			sscanf(argv[i], MY_LOOP_COUNT"%d", &loop_count);
-			break;
+			continue;
 		}		
 	}
 
