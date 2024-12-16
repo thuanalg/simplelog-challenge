@@ -287,7 +287,7 @@ spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
 *		- Slave processes: spl_init_log("abc.cfg", 0);
 *		- If you initiate 1/0, then you must stop with 1/0, spl_finish_log(int ismater);
 *		- You can run with thread mode if you set process_mode=0 in configuring file: 
-				https://github.com/thuanalg/simplelog-challenge/blob/main/README.md
+				https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog.cfg
 */
 DLL_API_SIMPLE_LOG int
 	spl_init_log(char* path, int ismater);
