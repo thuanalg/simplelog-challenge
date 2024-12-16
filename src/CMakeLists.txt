@@ -3,6 +3,7 @@ project(simplelog_challenge_project)
 set(SOURCE_LIB_FILES simplelog.c simplelog.h)
 set(SOURCE_BIN_FILES c_test/main.c)
 set(SOURCE_BINCPP_FILES cpp_test/main.cpp)
+set(SOURCE_BINCPP_MILLION_FILES cpp_test/main.cpp)
 set(SOURCE_BINCPP_FILES_DIRECT cpp_test/main.cpp simplelog.c simplelog.h)
 
 # Add executable target with source files listed in SOURCE_FILES variable
@@ -31,6 +32,18 @@ if(DEFINED UNIX_LINUX)
 else()
 	target_compile_definitions(simple_cpp_example PUBLIC _HAS_STD_BYTE=0)
 endif()
+
+
+include_directories(./)
+add_executable(simple_cpp_million_example ${SOURCE_BINCPP_MILLION_FILES})
+target_compile_definitions(simple_cpp_million_example PUBLIC _CRT_SECURE_NO_WARNINGS=1)
+#target_compile_definitions(simple_cpp_example PUBLIC _HAS_STD_BYTE=0)
+if(DEFINED UNIX_LINUX)
+	target_compile_definitions(simple_cpp_million_example PUBLIC __UNIX_LINUX_CPP11_AND_NEWERS__=1)
+else()
+	target_compile_definitions(simple_cpp_million_example PUBLIC _HAS_STD_BYTE=0)
+endif()
+
 
 include_directories(./)
 add_executable(simple_cpp_example_direct ${SOURCE_BINCPP_FILES_DIRECT})

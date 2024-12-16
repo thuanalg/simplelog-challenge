@@ -37,22 +37,24 @@ int get_off_process() {
 }
 //int number = 2;
 int number = 20;
-#define MY_NUMBER_THREAD		"--n_threaad="
+int number_thread = 20;
+#define MY_NUMBER_THREAD		"--n_thread="
 #define MY_OPT_MASTER			"--is_master="
 #define MY_LOOP_COUNT			"--loop_count="
 int is_master = 0;
-int loop_count = 0;
+int loop_count = 1000;
 
 int main(int argc, char* argv[]) {
 	char pathcfg[1024];
 	char* path = (char*)"simplelog.cfg";
 	char nowfmt[64];
 	int n = 0, ret = 0, i = 0;
-	if (argc > 1) {
-		n = sscanf(argv[1], "%d", &number);
+	if (argc < 2) {
+		exit(1);
 	}
 	for (i = 1; i < argc; ++i) {
 		if (strstr(argv[i], MY_NUMBER_THREAD)) {
+			sscanf(argv[i], MY_NUMBER_THREAD"%d", &number_thread);
 			break;
 		}
 		if (strstr(argv[i], MY_OPT_MASTER)) {
@@ -115,12 +117,12 @@ void dotest() {
 #ifndef UNIX_LINUX
 	DWORD dwThreadId = 0;
 	HANDLE hThread = 0;
-	for (i = 0; i < number; ++i) {
+	for (i = 0; i < number_thread; ++i) {
 		hThread = CreateThread(NULL, 0, win32_thread_routine, 0, 0, &dwThreadId);
 	}
 #else
 	pthread_t idd = 0;
-	for (i = 0; i < number; ++i) {
+	for (i = 0; i < number_thread; ++i) {
 		int err = pthread_create(&idd, 0, posix_thread_routine, 0);
 	}
 #endif

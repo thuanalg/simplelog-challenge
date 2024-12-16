@@ -364,7 +364,7 @@ DLL_API_SIMPLE_LOG char*
 DLL_API_SIMPLE_LOG 
 	void* spl_mutex_create(char *);
 DLL_API_SIMPLE_LOG
-	void spl_sleep(unsigned  int);
+	void spl_sleep(unsigned  int microsecond);
 DLL_API_SIMPLE_LOG
 	int spl_standardize_path(char* fname);
 DLL_API_SIMPLE_LOG

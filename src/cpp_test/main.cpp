@@ -112,11 +112,13 @@ void dotest() {
 	HANDLE hThread = 0;
 	for (i = 0; i < number; ++i) {
 		hThread = CreateThread(NULL, 0, win32_thread_routine, 0, 0, &dwThreadId);
+		spl_sleep(200);
 	}
 #else
 	pthread_t idd = 0;
 	for (i = 0; i < number; ++i) {
 		int err = pthread_create(&idd, 0, posix_thread_routine, 0);
+		spl_sleep(200);
 	}
 #endif
 }
@@ -149,7 +151,7 @@ void dotest() {
 		spllogsksgn(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), tpic);
 		//spl_sleep(1);
 		if (is_master || 1) {
-			spl_sleep(1);
+			spl_sleep(1000);
 		}
 	}
 	return 0;
