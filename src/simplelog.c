@@ -1477,11 +1477,11 @@ int spl_folder_sup(char* folder, spl_local_time_st* lctime, char* year_month) {
 	return ret;
 }
 /*=================================================================================================================================================*/
-void spl_sleep(unsigned int sec) {
+void spl_sleep(unsigned int microsecond) {
 #ifndef UNIX_LINUX
-	Sleep( ((DWORD)(sec)) * 1000);
+	Sleep( microsecond);
 #else
-	sleep(sec);
+	usleep(microsecond);
 #endif 
 }
 /*=================================================================================================================================================*/
