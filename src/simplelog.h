@@ -278,6 +278,22 @@ spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
 #endif
 
 /*=================================================================================================================================================*/
+/*
+*	spl_init_log must be initial before using
+*		- path: the of the configuring file.
+*		- "ismaster: If you want multiple processes to use the same .cfg file,
+*				then only the first process should be initialized as ismaster." And others are is 0.
+*		- Master process: spl_init_log("abc.cfg", 1);
+*		- Slave processes: spl_init_log("abc.cfg", 0);
+*		- If you initiate 1/0, then you must stop with 1/0, spl_finish_log(int ismater);
+*		- You can run with thread mode if you set process_mode=0 in configuring file: 
+				https://github.com/thuanalg/simplelog-challenge/blob/main/README.md
+*/
+DLL_API_SIMPLE_LOG int
+	spl_init_log(char* path, int ismater);
+
+
+
 //The(only) main header file to export 3 APIs: [spl_init_log, spllog, spllogtopic, spl_finish_log] .
 /*
 *	The log test will be written into the default/common file.
@@ -302,20 +318,6 @@ spl_mutex_unlock(__mtx__); spl_rel_sem(spl_get_sem_rwfile());}\
 *		Others are  not written.
 */
 #define spllogtopic		__spl_log_buf_topic_level__
-
-
-
-/*
-*	spl_init_log must be initial before using
-*		- path: the of the configuring file.
-*		- "ismaster: If you want multiple processes to use the same .cfg file, 
-*				then only the first process should be initialized as ismaster." And others are is 0.
-*		- Master process: spl_init_log("abc.cfg", 1);
-*		- Slave processes: spl_init_log("abc.cfg", 0);
-*		- You can run with thread mode if you set process_mode=0 in configuring file.
-*/
-DLL_API_SIMPLE_LOG int
-	spl_init_log(char* path, int ismater);
 
 
 
