@@ -124,6 +124,18 @@
 #define				SPL_MEMO_PADDING				2
 /*=================================================================================================================================================*/
 static LLU SPL_proocess_id = 0;
+
+#ifndef __SPINLOCK_SPL_PERFORMANCE__
+//	#ifndef UNIX_LINUX
+//		volatile long* spinlock1 = 0;
+//	#else
+//	#endif 
+#else
+	#ifndef UNIX_LINUX
+		volatile long* spinlock1 = 0;
+	#else
+	#endif 
+#endif 
 /*=================================================================================================================================================*/
 
 typedef 
@@ -178,22 +190,33 @@ typedef struct __SHARED_DATA_ST__ {
 	spl_uchar 
 		is_master_off;
 		/*Must be sync, is used for cross processes.*/
-#ifndef UNIX_LINUX
+
+#ifndef __SPINLOCK_SPL_PERFORMANCE__
+	#ifndef UNIX_LINUX
+		
+	#else
+		pthread_mutex_t
+			mtx_rw;
+		/*mtx_rw: */
+		pthread_mutex_t
+			mtx_off;
+		/*mtx_off: */
+		sem_t
+			sem_off;
+		/*sem_off: Need to close handle*/
+		sem_t
+			sem_rwfile;
+		/*sem_rwfile: Need to close handle*/
+	#endif	
 
 #else
-	pthread_mutex_t
-		mtx_rw;
-		/*mtx_rw: */
-	pthread_mutex_t
-		mtx_off;
-		/*mtx_off: */
-	sem_t
-		sem_off;
-		/*sem_off: Need to close handle*/
-	sem_t
-		sem_rwfile;
-		/*sem_rwfile: Need to close handle*/
-#endif		
+	#ifndef UNIX_LINUX
+		long spinlock;
+	#else
+
+	#endif	
+
+#endif
 } SHARED_DATA_ST;
 
 typedef
