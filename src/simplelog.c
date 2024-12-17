@@ -19,7 +19,6 @@
 #include <time.h>
 #ifndef UNIX_LINUX
 	#include <Windows.h>
-	#include <ntddk.h>
 
 	#define YEAR_PADDING								0
 	#define MONTH_PADDING								0
