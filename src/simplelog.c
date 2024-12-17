@@ -107,9 +107,9 @@
 #define SPL_FMT_HOUR_ADDING \
 	"%.2d:%.2d:%.2d"
 #define SPL_FMT_DELT_ADDING \
-	"%s %s.%.3u (+%.7llu)"
+	"%s %s.%.9u"
 #define SPL_FMT_MILL_ADDING \
-	"%s %s.%.3d"
+	"%s %s.%.9d"
 
 #define				SPL_TEXT_UNKNOWN				"U"
 #define				SPL_TEXT_DEBUG					"D"
@@ -163,8 +163,8 @@ typedef struct __spl_local_time_st__ {
 		sec;
 		/*Comment here*/
 	spl_uint	
-		ms;						
-		/*Millisecond*/
+		nn;						
+		/*Nano second*/
 } spl_local_time_st;
 
 #define SPL_TOPIC_SIZE		32
@@ -393,7 +393,7 @@ int spl_local_time_now(spl_local_time_st*stt) {
 		stt->hour = (unsigned char)lt.wHour;
 		stt->minute = (unsigned char)lt.wMinute;
 		stt->sec = (unsigned char)lt.wSecond;
-		stt->ms = (unsigned int)lt.wMilliseconds;
+		stt->nn = (unsigned int)lt.wMilliseconds * 1000000;
 #else
 /* https://linux.die.net/man/3/localtime*/
 /* https://linux.die.net/man/3/clock_gettime*/
@@ -418,7 +418,8 @@ int spl_local_time_now(spl_local_time_st*stt) {
 		stt->hour = lt->tm_hour;
 		stt->minute = lt->tm_min;
 		stt->sec = lt->tm_sec;
-		stt->ms = (nanosec.tv_nsec/1000000);
+		//stt->ms = (nanosec.tv_nsec/1000000);
+		stt->nn = (nanosec.tv_nsec);
 #endif
 	} while (0);
 	return ret;
@@ -907,7 +908,9 @@ void* spl_written_thread_routine(void* lpParam)
 		}
 		spl_console_log("Mutex: 0x%p.\n", t->mtx);
 		while (1) {
-
+			if (is_now_off) {
+				break;
+			}
 #ifndef UNIX_LINUX
 			WaitForSingleObject(t->sem_rwfile, INFINITE);
 #else
@@ -999,6 +1002,7 @@ void* spl_written_thread_routine(void* lpParam)
 	} while (0);
 	
 	/*Send a signal to the waiting thread.*/
+	spl_rel_sem(t->sem_rwfile);
 	spl_rel_sem(__simple_log_static__.sem_off);
 	return 0;
 }
@@ -1054,23 +1058,23 @@ int spl_fmt_now(char* fmtt, int len) {
 			break;
 		}
 		
-		_tnow = t;
-		_tnow *= 1000;
-		_tnow += stt.ms;
-		do {
-			spl_mutex_lock(__simple_log_static__.mtx_off);
-				do {
-					if (!tp->pre_tnow) {
-						break;
-					}
-					if (_tnow > (tp->pre_tnow)) {
-						_delta = _tnow - (tp->pre_tnow);
-					}					
-				} while (0);
-				(tp->pre_tnow) = _tnow;
-			spl_mutex_unlock(__simple_log_static__.mtx_off);
-			
-		} while (0);
+		//_tnow = t;
+		//_tnow *= 1000;
+		//_tnow += stt.ms;
+		//do {
+		//	spl_mutex_lock(__simple_log_static__.mtx_off);
+		//		do {
+		//			if (!tp->pre_tnow) {
+		//				break;
+		//			}
+		//			if (_tnow > (tp->pre_tnow)) {
+		//				_delta = _tnow - (tp->pre_tnow);
+		//			}					
+		//		} while (0);
+		//		(tp->pre_tnow) = _tnow;
+		//	spl_mutex_unlock(__simple_log_static__.mtx_off);
+		//	
+		//} while (0);
 
 		n = snprintf(buff, 20, SPL_FMT_DATE_ADDING, stt.year + YEAR_PADDING, stt.month + MONTH_PADDING, stt.day);
 		if (n < 1) {
@@ -1078,7 +1082,7 @@ int spl_fmt_now(char* fmtt, int len) {
 			break;
 		}
 		n = snprintf(buff1, 20, SPL_FMT_HOUR_ADDING, stt.hour, stt.minute, stt.sec);
-		n = snprintf(fmtt, len, SPL_FMT_DELT_ADDING, buff, buff1, (unsigned int)stt.ms, _delta);
+		n = snprintf(fmtt, len, SPL_FMT_DELT_ADDING, buff, buff1, (unsigned int)stt.nn);
 
 	} while (0);
 	return ret;
@@ -1110,7 +1114,7 @@ int spl_fmmt_now(char* fmtt, int len) {
 			break;
 		}
 		n = snprintf(buff1, 20, SPL_FMT_HOUR_ADDING, stt.hour, stt.minute, stt.sec);
-		n = snprintf(fmtt, len, SPL_FMT_MILL_ADDING, buff, buff1, (int)stt.ms);
+		n = snprintf(fmtt, len, SPL_FMT_MILL_ADDING, buff, buff1, (int)stt.nn);
 
 	} while (0);
 	return ret;
