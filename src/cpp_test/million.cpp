@@ -107,7 +107,7 @@ int main(int argc, char* argv[]) {
 	}
 	spllog(SPL_LOG_INFO, "%s", "set_off_process.\n");
 	set_off_process(1);
-	spl_sleep(1000 *60);
+	spl_sleep(1000 *10);
 	spl_console_log("Main close: spl_finish_log.\n");
 	spl_finish_log(is_master);
 	return EXIT_SUCCESS;
