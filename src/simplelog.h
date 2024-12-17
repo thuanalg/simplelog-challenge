@@ -23,6 +23,8 @@
 extern "C" {
 #endif
 
+#define __SPINLOCK_SPL_PERFORMANCE__
+
 #define LLU				unsigned long long
 
 #define					SPL_LOG_BASE					0

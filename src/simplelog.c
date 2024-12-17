@@ -19,6 +19,8 @@
 #include <time.h>
 #ifndef UNIX_LINUX
 	#include <Windows.h>
+	#include <ntddk.h>
+
 	#define YEAR_PADDING								0
 	#define MONTH_PADDING								0
 #else
@@ -61,6 +63,7 @@
 #define FFSEEK(__fp, __a, __b)				fseek((FILE*)(__fp), (__a), (__b))
 
 #ifndef UNIX_LINUX
+	KSPIN_LOCK SpinLock;  // Định nghĩa KSPIN_LOCK toàn cục
 	#define SPL_CloseHandle(__obj) \
 		{ if (__obj ) { int bl = CloseHandle((__obj)); spl_console_log("CloseHandle %s", bl ? "DONE": "ERROR"); (__obj) = 0;}}
 #else
