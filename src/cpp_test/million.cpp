@@ -46,7 +46,7 @@ int loop_count = 1000;
 
 int main(int argc, char* argv[]) {
 	char pathcfg[1024];
-	char* path = (char*)"C:/z/simplelog-challenge/win32/Debug/simplelog.cfg";
+	char* path = (char*)"simplelog.cfg";
 	char nowfmt[64];
 	int n = 0, ret = 0, i = 0;
 	if (argc < 2) {
