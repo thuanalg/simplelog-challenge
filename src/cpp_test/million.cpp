@@ -160,7 +160,7 @@ void dotest() {
 			count++;
 		}
 		if (is_master || 1) {
-			spl_sleep(1);
+			spl_sleep(1000 * 3);
 		}
 	}
 	return 0;

@@ -121,6 +121,8 @@
 
 #define				SPL_MEMO_PADDING				2
 /*=================================================================================================================================================*/
+static LLU SPL_proocess_id = 0;
+/*=================================================================================================================================================*/
 
 typedef 
 struct __GENERIC_DATA__ {
@@ -727,7 +729,11 @@ spl_init_log( char *pathcfg, int creating)
 			ret = spl_simple_log_thread(&__simple_log_static__);
 		}
 	}
-
+#ifndef UNIX_LINUX
+	SPL_proocess_id = (LLU)GetCurrentProcessId();
+#else
+	SPL_proocess_id = (LLU)getpid();
+#endif	
 	return ret;
 }
 /*=================================================================================================================================================*/
@@ -1366,18 +1372,22 @@ int spl_finish_log(int is_master) {
 	memset(&__simple_log_static__, 0, sizeof(__simple_log_static__));
 	return ret;
 }
+#define		PSPLSTA					(&__simple_log_static__)
+#define		PSPLSTA_B				(PSPLSTA->buf)
 /*=================================================================================================================================================*/
-char* spl_get_buf(int* n, int** ppl) {
-	SIMPLE_LOG_ST* t = &__simple_log_static__;
-	char* ret = 0;
-	if (t->buf) {
-		if (n && ppl) {
-			*n = (t->buf->total > sizeof(generic_dta_st) + t->buf->pl) ? (t->buf->total - sizeof(generic_dta_st) - t->buf->pl) : 0;
-			ret = t->buf->data;
-			(*ppl) = &(t->buf->pl);
-		}
-	}
-	return ret;
+char* 
+spl_get_buf(int* n, int** ppl) {
+	//SIMPLE_LOG_ST* t = &__simple_log_static__;
+	//char* ret = 0;
+	//if (t->buf) {
+		//if (n && ppl) {
+			(*n) = (PSPLSTA_B->total > (sizeof(generic_dta_st) + PSPLSTA_B->pl)) ? 
+				(PSPLSTA_B->total - (sizeof(generic_dta_st) + PSPLSTA_B->pl)) : 0;
+			(*ppl) = &(PSPLSTA_B->pl);
+			return PSPLSTA_B->data;
+		//}
+	//}
+	//return 0;
 }
 /*=================================================================================================================================================*/
 /*https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createdirectorya*/
@@ -1681,30 +1691,33 @@ spl_gen_topics(SIMPLE_LOG_ST* t) {
 	return ret;
 }
 /*=================================================================================================================================================*/
+#define	SPLTOPC(__i__)			((&(PSPLSTA->arr_topic[__i__]))->buf)
 char*
-spl_get_buf_topic(int* n, int** ppl, int index) {
-	SIMPLE_LOG_ST* tg = &__simple_log_static__;
-	char* ret = 0;
-	do {
-		if (tg->shared_supplement->is_master_off || tg->off_slave) {
+spl_get_buf_topic(int* n, int** ppl, int i) {
+	//SIMPLE_LOG_ST* tg = &__simple_log_static__;
+	//char* ret = 0;
+	//do {
+		if (PSPLSTA->shared_supplement->is_master_off || PSPLSTA->off_slave) {
 			//spl_console_log("is_master_off: %d, off_slave: %d", 
 			//	tg->shared_supplement->is_master_off, tg->off_slave);
-			break;
+			return 0;
 		}
-		if (index < 0 || ((index + 1) > tg->n_topic)) {
-			ret = spl_get_buf(n, ppl);
-			break;
+		if (i < 0 || ((i + 1) > PSPLSTA->n_topic)) {
+			return spl_get_buf(n, ppl);
+			//break;
 		}
-		if (tg->arr_topic) {
-			SIMPLE_LOG_TOPIC_ST* obj = &(tg->arr_topic[index]);
+		if (PSPLSTA->arr_topic) {
+			//SIMPLE_LOG_TOPIC_ST* obj = &(PSPLSTA->arr_topic[i]);
 			if (n && ppl) {
-				*n = (obj->buf->total > sizeof(generic_dta_st) + obj->buf->pl) ? (obj->buf->total - sizeof(generic_dta_st) - obj->buf->pl) : 0;
-				ret = obj->buf->data;
-				(*ppl) = &(obj->buf->pl);
+				*n = (SPLTOPC(i)->total > (sizeof(generic_dta_st) + SPLTOPC(i)->pl)) ? 
+					(SPLTOPC(i)->total - (sizeof(generic_dta_st) + SPLTOPC(i)->pl)) : 0;
+				//ret = obj->buf->data;
+				(*ppl) = &(SPLTOPC(i)->pl);
+				return SPLTOPC(i)->data;
 			}
 		}
-	} while (0);
-	return ret;
+	//} while (0);
+	return 0;
 }
 /*=================================================================================================================================================*/
 LLU
@@ -2104,13 +2117,7 @@ spl_create_sync(SIMPLE_LOG_ST* t) {
 }
 /*=================================================================================================================================================*/
 LLU spl_process_id() {
-	LLU ret = 0;
-#ifndef UNIX_LINUX
-	ret = (LLU)GetCurrentProcessId();
-#else
-	ret = (LLU)getpid();
-#endif	
-	return ret;
+	return SPL_proocess_id;
 }
 /*=================================================================================================================================================*/
 int
