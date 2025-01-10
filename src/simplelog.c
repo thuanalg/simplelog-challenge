@@ -1692,6 +1692,7 @@ int spl_del_memory()
 int spl_create_memory(void** output, char* shared_key, int size_shared, char isCreating) {
 	int ret = 0;
 	char* p = 0;
+	SIMPLE_LOG_ST* t = &__simple_log_static__;
 	do {
 #ifndef UNIX_LINUX
 		HANDLE hMapFile = 0;
@@ -1760,6 +1761,7 @@ int spl_create_memory(void** output, char* shared_key, int size_shared, char isC
 			break;
 		}
 #endif
+		t->hd = hMapFile;
 		memset(p, 0, size_shared);
 		*output = (void*)p;
 
