@@ -617,9 +617,13 @@ int spl_init_log( char *pathcfg)
 		if (ret) {
 			break;
 		}
-		ret = spl_simple_log_thread(&__simple_log_static__);
-		if (ret) {
-			break;
+		if (__simple_log_static__.isProcessMode) {
+			if (__simple_log_static__.is_master) {
+				ret = spl_simple_log_thread(&__simple_log_static__);
+				if (ret) {
+					break;
+				}
+			}
 		}
 	} while (0);
 

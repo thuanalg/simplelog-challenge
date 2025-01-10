@@ -176,9 +176,17 @@ int main(int argc, char* argv[]) {
 		//spllogsksgn(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sksg");
 	}
 	//spl_milli_sleep( 1000 * 100);
-	spl_console_log("====================Start.\n");
-	dotest();
-	spl_console_log("==================End.\n");
+	if (!ismaster) {
+		spl_console_log("====================Start.\n");
+		dotest();
+		spl_console_log("==================End.\n");
+	}
+	else {
+		while (1) {
+			spl_sleep(5);
+			spllog(SPL_LOG_INFO, "this is master process.");
+		}
+	}
 	spl_finish_log();
 	//spl_milli_sleep(100 * 1000);
 	return 0;
