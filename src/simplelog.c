@@ -1757,15 +1757,21 @@ int spl_create_memory(void** output, char* shared_key, int size_shared, char isC
 #else
 		int hMapFile = 0;
 		int err = 0;
-		hMapFile = shm_open(shared_key, SPL_LOG_UNIX_CREATE_MODE, SPL_LOG_UNIX__SHARED_MODE);
-		if (hMapFile > 0) {
-			break;
+		if (isCreating) {
+			hMapFile = shm_open(shared_key, SPL_LOG_UNIX_CREATE_MODE, SPL_LOG_UNIX__SHARED_MODE);
+			if (hMapFile < 0) {
+				spl_console_log("shm_open/creating, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_SHM_UNIX_CREATE;
+				break;
+			}
 		}
-		hMapFile = shm_open(shared_key, SPL_LOG_UNIX_OPEN_MODE, SPL_LOG_UNIX__SHARED_MODE);
-		if (hMapFile < 1) {
-			spl_console_log("SPL_LOG_SHM_UNIX_OPEN option creating");
-			ret = SPL_LOG_SHM_UNIX_OPEN;
-			break;
+		else {
+			hMapFile = shm_open(shared_key, SPL_LOG_UNIX_OPEN_MODE, SPL_LOG_UNIX__SHARED_MODE);
+			if (hMapFile < 0) {
+				spl_console_log("shm_open/open, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_SHM_UNIX_OPEN;
+				break;
+			}
 		}
 		err = ftruncate(hMapFile, size_shared);
 		if (err) {
@@ -1857,7 +1863,7 @@ int spl_calculate_size() {
 		/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
 		//int spl_create_memory(void** output, char* shared_key, int size_shared, char isCreating) {
 		if (t->isProcessMode) {
-			spl_create_memory((void**) & buff, t->shared_key, n, t->is_master);
+			spl_create_memory((void**) &buff, t->shared_key, n, t->is_master);
 		}
 		else {
 			spl_malloc(n, buff, char);
