@@ -1712,7 +1712,6 @@ int spl_del_memory()
 				}
 			}
 	#else
-
 			/*Clean Mutex*/
 			ret = pthread_mutex_destroy((pthread_mutex_t*)t->mtx_rw);
 			if (ret) {
