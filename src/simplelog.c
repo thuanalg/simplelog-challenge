@@ -112,6 +112,8 @@
 	"trigger="
 #define	SPLOG_PROCESS_MODE \
 	"process_mode="
+#define	SPLOG_SHARED_KEY \
+	"shared_key="
 #define	SPLOG_END_CFG \
 	"end_configuring="
 
@@ -184,6 +186,7 @@ static const char* __splog_pathfolder[] = {
 		SPLOG_NCPU, 
 		SPLOG_TRIGGER,
 		SPLOG_PROCESS_MODE,
+		SPLOG_SHARED_KEY,
 		SPLOG_END_CFG, 
 		0 
 };
@@ -472,6 +475,16 @@ int spl_init_log_parse(char* buff, char *key, char *isEnd) {
 			__simple_log_static__.isProcessMode = n ? 1 : 0;
 			break;
 		}
+		if (strcmp(key, SPLOG_SHARED_KEY) == 0) {
+			int n = 0, count = 0;
+			char* p = 0;
+			n = (int)strlen(buff);
+			if (n < 1) {
+				break;
+			}
+			snprintf(__simple_log_static__.shared_key, SPL_SHARED_KEY_LEN, "%s", buff);
+			break;
+		}
 		if (strcmp(key, SPLOG_END_CFG) == 0) {
 #ifdef SPL_SHOW_CONSOLE
 			spl_console_log("End configuration.\n");
@@ -492,6 +505,7 @@ int spl_init_log_ext(SPL_INPUT_ARG* input)
 	int ret = 0;
 	do {
 		memcpy(__simple_log_static__.id_name, input->id_name, SPL_IDD_NAME);
+		__simple_log_static__.is_master = input->is_master;
 		ret = spl_init_log(input->folder);;
 		if (ret) {
 			spl_console_log("Cannot initiate log.");
