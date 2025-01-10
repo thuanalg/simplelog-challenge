@@ -155,10 +155,10 @@
 	#define SplLockSpinlock(__p__)				splLockSpinlock((volatile long*)(__p__))
 	#define SplUnlockSpinlock(__p__)			splUnlockSpinlock((volatile long*)(__p__))
 	
-	static
-		volatile long spl_rw_spin = 0;
+	/*static
+		volatile long spl_rw_spin = 0;*/
 #else
-	pthread_spinlock_t	spl_rw_spin;
+	/*pthread_spinlock_t	spl_rw_spin; */
 #endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
@@ -641,7 +641,7 @@ int spl_init_log( char *pathcfg)
 }
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-void* spl_mutex_create() {
+/*void* spl_mutex_create() {
 	void *ret = 0;
 	do {
 #ifndef UNIX_LINUX
@@ -652,7 +652,6 @@ void* spl_mutex_create() {
 	#endif
 #else
 #ifndef SPL_USING_SPIN_LOCK
-	/*https://linux.die.net/man/3/pthread_mutex_init*/
 		spl_malloc(sizeof(pthread_mutex_t), ret, void);
 		if (!ret) {
 			break;
@@ -666,7 +665,7 @@ void* spl_mutex_create() {
 #endif 
 	} while (0);
 	return ret;
-}
+}*/
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int spl_mutex_lock(void* obj) {
 	int ret = 0;
@@ -1742,8 +1741,8 @@ int spl_del_memory()
 				ret = SPL_LOG_SHM_UNIX_UNMAP;
 				spl_console_log("munmap: err: %d, errno: %d, text: %s, name: %s.", ret, errno, strerror(errno), "__name__");
 			}		
-			spl_shm_unlink(t->shared_key, ret);
 		}
+		spl_shm_unlink(t->shared_key, ret);
 #endif
 	} while (0);
 	return ret;
