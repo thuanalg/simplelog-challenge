@@ -2233,7 +2233,10 @@ int spl_clean_sync_tool() {
 #endif
 		spl_free(t->arr_mtx);
 		if (t->isProcessMode) {
-			spl_del_memory();
+			ret = spl_del_memory();
+			if (ret) {
+				spl_console_log("spl_del_memory, ret: %d", ret);
+			}
 		}
 		else {
 			spl_free(t->buf);
