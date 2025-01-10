@@ -1698,8 +1698,22 @@ int spl_del_memory()
 		}
 #else
 		int i = 0;
-		/*Clean Mutex*/
 		if (t->is_master) {
+	#ifdef SPL_USING_SPIN_LOCK
+			/*Clean spinlock*/
+			ret = pthread_spin_destroy((pthread_spinlock_t*)t->mtx_rw);
+			if (ret) {
+				spl_console_log("pthread_spin_destroy/mtx_rw: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
+			}
+			for (i = 0; i < t->ncpu; ++i) {
+				ret = pthread_spin_destroy((pthread_spinlock_t*)t->arr_mtx[i]);
+				if (ret) {
+					spl_console_log("pthread_spin_destroy/arr_mtx: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
+				}
+			}
+	#else
+
+			/*Clean Mutex*/
 			ret = pthread_mutex_destroy((pthread_mutex_t*)t->mtx_rw);
 			if (ret) {
 				spl_console_log("pthread_mutex_destroy/mtx_rw: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
@@ -1710,6 +1724,7 @@ int spl_del_memory()
 					spl_console_log("pthread_mutex_destroy/arr_mtx: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
 				}
 			}
+	#endif
 			/*Clean Semaphore*/
 			ret = sem_destroy((sem_t*)t->sem_rwfile);
 			if (ret) {
@@ -1934,11 +1949,13 @@ int spl_calculate_size() {
 		if (t->mtx_rw) {
 			pthread_spinlock_t* mtx = (pthread_spinlock_t*)t->mtx_rw;
 			if (t->isProcessMode) {
-				int err = 0;
-				err = pthread_spin_init(mtx, PTHREAD_PROCESS_SHARED);
-				if (err) {
-					ret = SPL_LOG_SPINLOCK_INIT_SHARED;
-					spl_console_log("pthread_spin_init, errno: %d, errno_text: %s.", errno, strerror(errno));
+				if (t->is_master) {
+					int err = 0;
+					err = pthread_spin_init(mtx, PTHREAD_PROCESS_SHARED);
+					if (err) {
+						ret = SPL_LOG_SPINLOCK_INIT_SHARED;
+						spl_console_log("pthread_spin_init, errno: %d, errno_text: %s.", errno, strerror(errno));
+					}
 				}
 			}
 			else {
@@ -1958,10 +1975,20 @@ int spl_calculate_size() {
 			t->arr_mtx[i] = (void*)(p + i * step_size);
 			mtx = (pthread_spinlock_t*)t->arr_mtx[i];
 			if (t->isProcessMode) {
-				pthread_spin_init(mtx, PTHREAD_PROCESS_SHARED);
+				if (t->is_master) {
+					ret = pthread_spin_init(mtx, PTHREAD_PROCESS_SHARED);
+					if (ret) {
+						spl_console_log("pthread_spin_init, errno: %d, errno_text: %s.", errno, strerror(errno));
+						break;
+;					}
+				}
 			}
 			else {
-				pthread_spin_init(mtx, PTHREAD_PROCESS_PRIVATE);
+				ret = pthread_spin_init(mtx, PTHREAD_PROCESS_PRIVATE);
+				if (ret) {
+					spl_console_log("pthread_spin_init, errno: %d, errno_text: %s.", errno, strerror(errno));
+					break;
+				}
 			}
 		}
 	#else
@@ -1982,6 +2009,9 @@ int spl_calculate_size() {
 			}
 		}
 	#endif
+		if (ret) {
+			break;
+		}
 		/*Semaphore UNIX_LINUX*/
 		p = buff + k + mtxsize;
 		t->sem_rwfile = (void *)p;
