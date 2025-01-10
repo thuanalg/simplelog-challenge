@@ -1722,6 +1722,7 @@ int spl_del_memory()
 		}
 
 		ret = munmap((void*)t->buf, (size_t) t->map_mem_size);
+		
 		if (t->is_master) {
 			if (ret) {
 				ret = SPL_LOG_SHM_UNIX_UNMAP;
@@ -1818,7 +1819,14 @@ int spl_create_memory(void** output, char* shared_key, int size_shared, char isC
 		}
 #endif
 		t->hd = hMapFile;
-		memset(p, 0, size_shared);
+		if (t->isProcessMode) {
+			if (t->is_master) {
+				memset(p, 0, size_shared);
+			}
+		}
+		else {
+			memset(p, 0, size_shared);
+		}
 		*output = (void*)p;
 
 	} while (0);
