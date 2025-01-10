@@ -158,7 +158,7 @@ struct __GENERIC_DATA__ {
 #define spl_uint			unsigned int
 
 typedef struct __spl_local_time_st__ {
-	spl_uint	
+	spl_uint
 		year;
 		/*Comment here*/
 	spl_uchar	
