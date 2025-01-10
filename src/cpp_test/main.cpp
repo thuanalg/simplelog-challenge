@@ -16,12 +16,14 @@
 void dotest();
 int num_threads = 10;
 int loop_count = 1000 * 1000;
+int ismaster = 0;
 
 #define		TNUMBEER_OF_THREADS					"--nthread="	
 #define		TCONFIG_FILE						"--cfg="	
 #define		TLOOP_COUNT							"--loopcount="	
+#define		TMASTER_MODE						"--is_master="	
 
-int main(int argc, char* argv[]) {
+int main__(int argc, char* argv[]) {
 	int ret = 0, i = 0;
 	char cfgpath[1024];
 	for (i = 1; i < argc; ++i) {
@@ -33,9 +35,13 @@ int main(int argc, char* argv[]) {
 			ret = sscanf(argv[i], TLOOP_COUNT"%d", &loop_count);
 			continue;
 		}
+		if (strstr(argv[i], TMASTER_MODE) == argv[i]) {
+			ret = sscanf(argv[i], TMASTER_MODE"%d", &ismaster);
+			continue;
+		}
 	}
 #ifndef UNIX_LINUX
-	snprintf(cfgpath, 1024, "C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
+	snprintf(cfgpath, 1024, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
 #else
 	snprintf(cfgpath, 1024, "simplelog.cfg");
 #endif
@@ -127,16 +133,30 @@ void* posix_thread_routine(void* lpParam) {
 	return 0;
 }
 
-int main__(int argc, char* argv[]) {
-	int ret = 0;
+int main(int argc, char* argv[]) {
+	int ret = 0, i = 0;
 	SPL_INPUT_ARG input;
 	int count = 2;
+	for (i = 1; i < argc; ++i) {
+		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
+			ret = sscanf(argv[i], TNUMBEER_OF_THREADS"%d", &num_threads);
+			continue;
+		}
+		if (strstr(argv[i], TLOOP_COUNT) == argv[i]) {
+			ret = sscanf(argv[i], TLOOP_COUNT"%d", &loop_count);
+			continue;
+		}
+		if (strstr(argv[i], TMASTER_MODE) == argv[i]) {
+			ret = sscanf(argv[i], TMASTER_MODE"%d", &ismaster);
+			continue;
+		}
+	}
 	memset(&input, 0, sizeof(input));
 	snprintf(input.id_name, SPL_IDD_NAME, "testlog");
 	//int ret = spl_init_log((char *)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
 #ifndef UNIX_LINUX
 	//ret = spl_init_log((char*)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
-	snprintf(input.folder, SPL_PATH_FOLDER, "C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
+	snprintf(input.folder, SPL_PATH_FOLDER, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
 #else
 	//ret = spl_init_log((char*)"simplelog.cfg");
 	snprintf(input.folder, SPL_PATH_FOLDER, "simplelog.cfg");
