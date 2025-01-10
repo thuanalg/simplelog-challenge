@@ -1697,6 +1697,27 @@ int spl_del_memory()
 			ret = SPL_LOG_WIN_SHM_CLOSE;
 		}
 #else
+		int i = 0;
+		/*Clean Mutex*/
+		ret = pthread_mutex_destroy((pthread_mutex_t*)t->mtx_rw);
+		if (ret) {
+			spl_console_log("pthread_mutex_destroy/mtx_rw: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
+		}
+		for (i = 0; i < t->ncpu; ++i) {
+			ret = pthread_mutex_destroy((pthread_mutex_t*)t->arr_mtx[i]);
+			if (ret) {
+				spl_console_log("pthread_mutex_destroy/arr_mtx: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
+			}
+		}
+		/*Clean Semaphore*/
+		ret = sem_destroy((sem_t*)t->sem_rwfile);
+		if (ret) {
+			spl_console_log("sem_destroy/sem_rwfile: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
+		}
+		ret = sem_destroy((sem_t*)t->sem_off);
+		if (ret) {
+			spl_console_log("sem_destroy/sem_off: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
+		}
 		ret = munmap((void*)t->buf, (size_t) t->map_mem_size);
 		if (ret) {
 			ret = SPL_LOG_SHM_UNIX_UNMAP;
