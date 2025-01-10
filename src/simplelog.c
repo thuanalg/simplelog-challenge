@@ -1700,9 +1700,11 @@ int spl_del_memory()
 		ret = munmap((void*)t->buf, (size_t) t->map_mem_size);
 		if (ret) {
 			ret = SPL_LOG_SHM_UNIX_UNMAP;
-			spl_console_log("shm_unlink: err: %d, errno: %d, text: %s, name: %s.", ret, errno, strerror(errno), "__name__");
+			spl_console_log("munmap: err: %d, errno: %d, text: %s, name: %s.", ret, errno, strerror(errno), "__name__");
 		}
-		spl_shm_unlink(t->shared_key, ret);
+		if (t->is_master) {
+			spl_shm_unlink(t->shared_key, ret);
+		}
 #endif
 	} while (0);
 	return ret;
@@ -1761,8 +1763,12 @@ int spl_create_memory(void** output, char* shared_key, int size_shared, char isC
 			hMapFile = shm_open(shared_key, SPL_LOG_UNIX_CREATE_MODE, SPL_LOG_UNIX__SHARED_MODE);
 			if (hMapFile < 0) {
 				spl_console_log("shm_open/creating, errno: %d, errno_text: %s.", errno, strerror(errno));
-				ret = SPL_LOG_SHM_UNIX_CREATE;
-				break;
+				hMapFile = shm_open(shared_key, SPL_LOG_UNIX_OPEN_MODE, SPL_LOG_UNIX__SHARED_MODE);
+				if (hMapFile < 0) {
+					spl_console_log("shm_open/creating+open, errno: %d, errno_text: %s.", errno, strerror(errno));
+					ret = SPL_LOG_SHM_UNIX_CREATE;
+					break;
+				}
 			}
 		}
 		else {
