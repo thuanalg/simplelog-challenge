@@ -625,6 +625,12 @@ int spl_init_log( char *pathcfg)
 				}
 			}
 		}
+		else {
+			ret = spl_simple_log_thread(&__simple_log_static__);
+			if (ret) {
+				break;
+			}
+		}
 	} while (0);
 
 	if (fp) {
