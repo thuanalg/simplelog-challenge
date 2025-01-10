@@ -168,7 +168,7 @@ int main(int argc, char* argv[]) {
 	for (int i = 0; i < count; ++i) {
 		//spl_console_log("spl_milli_sleep ------------------------------ ");
 		//spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), 0);
-		spllog(SPL_LOG_INFO, "test log test log test log test log %d", i);
+		//spllog(SPL_LOG_INFO, "test log test log test log test log %d", i);
 		//spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
 		//splloglib(SPL_LOG_INFO, "test log: %llu, topic: %s", time(0), "lib");
 		//spllogexe(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "exe");
