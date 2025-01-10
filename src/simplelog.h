@@ -438,7 +438,8 @@ DLL_API_SIMPLE_LOG
 	LLU spl_milli_now();
 DLL_API_SIMPLE_LOG
 	SIMPLE_LOG_ST *spl_control_obj();
-
+DLL_API_SIMPLE_LOG
+	LLU spl_process_id();
 //DLL_API_SIMPLE_LOG
 //	char *spl_prefmt_now(FMT_FOR_OUTPUT* p);
 //

@@ -194,6 +194,9 @@ static const char* __splog_pathfolder[] = {
 static	SIMPLE_LOG_ST
 	__simple_log_static__;;
 
+static char __spl_process_id[32];
+static int __spl_process_id_len;
+
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 static int	
@@ -528,6 +531,8 @@ int spl_init_log( char *pathcfg)
 	char isEnd = 0;
 	__simple_log_static__.ncpu = 1;
 	do {
+		snprintf(__spl_process_id, 32, "[pid \t %llu]\t", spl_process_id());
+		__spl_process_id_len = (int)strlen(__spl_process_id);
 		memset(buf, 0, sizeof(buf));
 		//fp = fopen(pathcfg, "r");
 		FFOPEN(fp, pathcfg, "r");
@@ -1006,7 +1011,12 @@ char* spl_fmt_now_ext(char* fmtt, int len, int lv,
 			ret = SPL_LOG_PRINTF_ERROR;
 			return p;
 		}
+
+		memcpy(fmtt + n, __spl_process_id, __spl_process_id_len);
+		n += __spl_process_id_len;
+
 		*outlen = n;
+
 		
 		//*outlen += snprintf(fmtt + n, len - n, "[%s:%s:%d] [r: %d]\t",
 		//	filename, funcname, line, (int)*r);
@@ -2219,6 +2229,16 @@ int spl_clean_sync_tool() {
 			spl_free(t->buf);
 		}
 	} while (0);
+	return ret;
+}
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+LLU spl_process_id() {
+	LLU ret = 0;
+#ifndef UNIX_LINUX
+	ret = (LLU)GetCurrentProcessId();
+#else
+	ret = (LLU)getpid();
+#endif	
 	return ret;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
