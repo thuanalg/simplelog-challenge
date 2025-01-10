@@ -182,12 +182,25 @@ int main(int argc, char* argv[]) {
 		spl_console_log("==================End.\n");
 	}
 	else {
+		FILE* fp = 0;
 		while (1) {
+			spl_console_log("this is master process.");
 			spl_sleep(5);
 			spllog(SPL_LOG_INFO, "this is master process.");
+			
+#ifndef UNIX_LINUX
+			fp = fopen("trigger_master.txt", "r");
+#else
+			fp = fopen("trigger_master.txt", "r");
+#endif
+			if (fp) {
+				break;
+			}
+		}
+		if (fp) {
+			fclose(fp);
 		}
 	}
 	spl_finish_log();
-	//spl_milli_sleep(100 * 1000);
 	return 0;
 }
