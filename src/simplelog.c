@@ -110,6 +110,8 @@
 	"ncpu="
 #define	SPLOG_TRIGGER \
 	"trigger="
+#define	SPLOG_PROCESS_MODE \
+	"process_mode="
 #define	SPLOG_END_CFG \
 	"end_configuring="
 
@@ -181,6 +183,7 @@ static const char* __splog_pathfolder[] = {
 		SPLOG_TOPIC, 
 		SPLOG_NCPU, 
 		SPLOG_TRIGGER,
+		SPLOG_PROCESS_MODE,
 		SPLOG_END_CFG, 
 		0 
 };
@@ -456,6 +459,17 @@ int spl_init_log_parse(char* buff, char *key, char *isEnd) {
 				break;
 			}
 			__simple_log_static__.trigger_thread = n;
+			break;
+		}
+		if (strcmp(key, SPLOG_PROCESS_MODE) == 0) {
+			int n = 0, sz = 0;
+			sz = sscanf(buff, "%d", &n);
+			if (sz < 1) {
+				__simple_log_static__.isProcessMode = 0;
+				spl_console_log("SPLOG_PROCESS_MODE error.");
+				break;
+			}
+			__simple_log_static__.isProcessMode = n ? 1 : 0;
 			break;
 		}
 		if (strcmp(key, SPLOG_END_CFG) == 0) {
