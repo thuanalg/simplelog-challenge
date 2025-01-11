@@ -1738,12 +1738,11 @@ int spl_del_memory()
 		}
 
 		ret = munmap((void*)t->buf, (size_t) t->map_mem_size);
-		
+		if (ret) {
+			ret = SPL_LOG_SHM_UNIX_UNMAP;
+			spl_console_log("munmap: err: %d, errno: %d, text: %s, name: %s.", ret, errno, strerror(errno), "__name__");
+		}
 		if (t->is_master) {
-			if (ret) {
-				ret = SPL_LOG_SHM_UNIX_UNMAP;
-				spl_console_log("munmap: err: %d, errno: %d, text: %s, name: %s.", ret, errno, strerror(errno), "__name__");
-			}
 			/*https://linux.die.net/man/3/shm_unlink*/
 			spl_shm_unlink(t->shared_key, ret);
 		}
