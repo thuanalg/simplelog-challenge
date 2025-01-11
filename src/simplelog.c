@@ -60,8 +60,8 @@
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-#define SPL_FCLOSE(__fp__, __n) { if(__fp__){ (__n) = fclose((FILE*)(__fp__)) ; if(__n) { spl_fclose_err(__n, __fp__); } \
-	else { /*spl_console_log("Close FILE 0x%p DONE.", (__fp__));;(__fp__) = 0;*/;}}}
+#define SPL_FCLOSE(__fp__, __n) { if(__fp__){ (__n) = fclose((FILE*)(__fp__)) ; if(__n) { spl_console_log("Close FILE error.");spl_fclose_err(__n, __fp__); } \
+	else { /*spl_console_log("Close FILE 0x%p DONE.", (__fp__));*/;(__fp__) = 0;;}}}
 
 #define SPL_FFLUSH(__fp__, __n) { if(__fp__){ (__n) = fflush((FILE*)(__fp__)) ; if(__n) { spl_fflush_err(__n, __fp__); }}}
 
@@ -877,13 +877,14 @@ void* spl_written_thread_routine(void* lpParam)
 					//} while (0);
 					spl_mutex_unlock(t->arr_mtx[i]);
 				}
-				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+
 				if (only_cast->pl > 0) {
 					k = (int)fwrite(only_cast->data, 1, only_cast->pl, t->fp);
 					only_cast->pl = 0;
 					sz += k;
 					SPL_FFLUSH((t->fp), err);
 				}
+				/*only_cast->pl*/
 				if (err) {
 					ret = SPL_LOG_TOPIC_FLUSH;
 					spl_console_log("--fflush, ret: %d --\n", err);
@@ -892,8 +893,10 @@ void* spl_written_thread_routine(void* lpParam)
 				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
 				if (t->n_topic > 0) {
 					char* src = 0;
-					for (i = 0; i < t->n_topic; ++i) {
-						for (j = 0; j < t->ncpu; ++j) {
+					for (i = 0; i < t->n_topic; ++i) 
+					{
+						for (j = 0; j < t->ncpu; ++j) 
+						{
 							src = src_topic_thrd_buf[i][j];
 							spl_mutex_lock(t->arr_mtx[j]);
 							/*//do */
@@ -904,19 +907,21 @@ void* spl_written_thread_routine(void* lpParam)
 								}
 							/*//} while (0);*/
 							spl_mutex_unlock(t->arr_mtx[j]);
-							if (only_cast->pl) {
-								k = (int)fwrite(only_cast->data, 1, only_cast->pl, (FILE*)(t->arr_topic[i].fp));
-								t->arr_topic[i].fizize += k;
-								only_cast->pl = 0;
-								SPL_FFLUSH((t->arr_topic[i].fp), err);
-								if (err) {
-									spl_console_log("--fflush, ret: %d --\n", err);
-									ret = SPL_LOG_TOPIC_FLUSH;
-									break;
-								}
-							}
-
 						}
+
+						if (only_cast->pl) 
+						{
+							k = (int)fwrite(only_cast->data, 1, only_cast->pl, (FILE*)(t->arr_topic[i].fp));
+							t->arr_topic[i].fizize += k;
+							only_cast->pl = 0;
+							SPL_FFLUSH((t->arr_topic[i].fp), err);
+							if (err) {
+								spl_console_log("--fflush, ret: %d --\n", err);
+								ret = SPL_LOG_TOPIC_FLUSH;
+								break;
+							}
+						}
+						/*only_cast->pl*/
 					}
 				}
 				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/

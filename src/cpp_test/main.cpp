@@ -123,7 +123,7 @@ void* posix_thread_routine(void* lpParam) {
 	while (count < loop_count) {
 			//spllog(SPL_LOG_INFO, "test log: %d", count);
 			spllog(SPL_LOG_INFO, "test log test log test log: %d", count);
-			//spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
+			spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
 			//splloglib(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "lib");
 			//spllogexe(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "exe");
 			//spllognaxyax(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "nayax");
@@ -185,9 +185,8 @@ int main(int argc, char* argv[]) {
 		FILE* fp = 0;
 		while (1) {
 			spl_console_log("this is master process.");
-			spl_sleep(5);
 			spllog(SPL_LOG_INFO, "this is master process.");
-			
+			spl_sleep(5);
 #ifndef UNIX_LINUX
 			fp = fopen("trigger_master.txt", "r");
 #else
