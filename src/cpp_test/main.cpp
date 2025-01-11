@@ -3,9 +3,9 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
-
 #ifndef UNIX_LINUX
-	#include <Windows.h>
+
+#include <Windows.h>
 	DWORD WINAPI win32_thread_routine(LPVOID lpParam);
 #else
 	#include <unistd.h>
@@ -14,112 +14,94 @@
 #endif // !UNIX_LINUX
 
 void dotest();
-void* main_mtx = 0;
-int off_process = 0;
-int set_off_process(int val) {
-	int ret = 0;
-	spl_mutex_lock(main_mtx);
-	do {
-		off_process = val;
-	} while (0);
-	spl_mutex_unlock(main_mtx);
-	return ret;
-}
+int num_threads = 10;
+int loop_count = 1000 * 1000;
+int ismaster = 0;
 
-int get_off_process() {
-	int ret = 0;
-	spl_mutex_lock(main_mtx);
-	do {
-		ret = off_process;
-	} while (0);
-	spl_mutex_unlock(main_mtx);
-	return ret;
-}
-//int number = 2;
-int number = 2;
-#define MY_NUMBER_THREAD		"--n_threaad="
-#define MY_OPT_MASTER			"--is_master="
-int is_master = 0;
+#define		TNUMBEER_OF_THREADS					"--nthread="	
+#define		TCONFIG_FILE						"--cfg="	
+#define		TLOOP_COUNT							"--loopcount="	
+#define		TMASTER_MODE						"--is_master="	
 
-int main(int argc, char* argv[]) {
-	char pathcfg[1024];
-	char* path = (char*)"simplelog.cfg";
-	char nowfmt[64];
-	int n = 0, ret = 0, i = 0;
-	if (argc > 1) {
-		n = sscanf(argv[1], "%d", &number);
-	}
+int main__(int argc, char* argv[]) {
+	int ret = 0, i = 0;
+	char cfgpath[1024];
 	for (i = 1; i < argc; ++i) {
-		if (strstr(argv[i], MY_NUMBER_THREAD)) {
-			break;
+		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
+			ret = sscanf(argv[i], TNUMBEER_OF_THREADS"%d", &num_threads);
+			continue;
 		}
-		if (strstr(argv[i], MY_OPT_MASTER)) {
-			sscanf(argv[i], MY_OPT_MASTER"%d", &is_master);
-			break;
+		if (strstr(argv[i], TLOOP_COUNT) == argv[i]) {
+			ret = sscanf(argv[i], TLOOP_COUNT"%d", &loop_count);
+			continue;
+		}
+		if (strstr(argv[i], TMASTER_MODE) == argv[i]) {
+			ret = sscanf(argv[i], TMASTER_MODE"%d", &ismaster);
+			continue;
 		}
 	}
+#ifndef UNIX_LINUX
+	snprintf(cfgpath, 1024, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
+#else
+	snprintf(cfgpath, 1024, "simplelog.cfg");
+#endif
+	ret = spl_init_log(cfgpath);
 
-	main_mtx = spl_mutex_create(0);
-	spl_console_log("Main thread.\n");
-
-	snprintf(pathcfg, 1024, path);
-	n = strlen(pathcfg);
-	for (i = 0; i < n; ++i) {
-		if (pathcfg[i] == '\\') {
-			pathcfg[i] = '/';
-		}
-	}
-	// Init log with "pathcfg" path of file, after starting well, ready to use.
-	ret = spl_init_log(pathcfg, is_master);
-	if (ret) {
-		spl_console_log("spl_init_log ret: %d", ret);
-		exit(1);
-	}
-	n = 0;
+	spl_console_log("====================Start.\n");
 	dotest();
-	while (1) {
-		FILE* fp = 0;
-		
-		spl_sleep(10);
-		
-		spllog(SPL_LOG_DEBUG, "%s", "Looping for waiting trigger.\n");
-
-		if (is_master) {
-			fp = fopen("trigger_master.txt", "r");
-		}
-		else {
-			fp = fopen("trigger.txt", "r");
-		}
-
-		if (fp) {
-			fclose(fp);
-			break;
-		}
-
-	}
-	spllog(SPL_LOG_INFO, "%s", "set_off_process.\n");
-	set_off_process(1);
-	spl_sleep(1000);
-	spl_console_log("Main close: spl_finish_log.\n");
-	spl_finish_log(is_master);
+	spl_console_log("==================End.\n");
+	spl_finish_log();
 	return EXIT_SUCCESS;
 }
 void dotest() {
 	int i = 0;
 #ifndef UNIX_LINUX
 
-	DWORD dwThreadId = 0;
-	HANDLE hThread = 0;
-	for (i = 0; i < number; ++i) {
-		hThread = CreateThread(NULL, 0, win32_thread_routine, 0, 0, &dwThreadId);
-		spl_sleep(200);
+	DWORD *dwpThreadId = 0, dwEvent = 0;
+	HANDLE *hpThread = 0;
+
+	dwpThreadId = (DWORD*)malloc(num_threads * sizeof(DWORD));
+	if (!dwpThreadId) {
+		exit(1);
 	}
+	memset(dwpThreadId, 0, num_threads * sizeof(DWORD));
+
+	hpThread = (HANDLE*)malloc(num_threads * sizeof(HANDLE));
+	if (!hpThread) {
+		exit(1);
+	}
+	memset(hpThread, 0, num_threads * sizeof(HANDLE));
+	
+	for (i = 0; i < num_threads; ++i) {
+		hpThread[i] = CreateThread(NULL, 0, win32_thread_routine, 0, 0, (dwpThreadId + i));
+	}
+	//https://learn.microsoft.com/en-us/windows/win32/api/synchapi/nf-synchapi-waitformultipleobjects
+	//https://learn.microsoft.com/en-us/windows/win32/sync/waiting-for-multiple-objects
+	dwEvent = WaitForMultipleObjects(
+			num_threads,			// number of objects in array
+			hpThread,				// array of objects
+			TRUE,					// wait for any object
+			INFINITE);				// five-second wait
+	free(dwpThreadId);
+	free(hpThread);
 #else
-	pthread_t idd = 0;
-	for (i = 0; i < number; ++i) {
-		int err = pthread_create(&idd, 0, posix_thread_routine, 0);
-		spl_sleep(200);
+	//https://man7.org/linux/man-pages/man3/pthread_create.3.html
+	pthread_t *pidds = 0;
+	pidds = (pthread_t*) malloc(num_threads * sizeof(pthread_t));
+	if(!pidds) {
+		exit(1);
 	}
+	for (i = 0; i < num_threads; ++i) {
+		int err = pthread_create(pidds + i, 0, posix_thread_routine, 0);
+	}
+	for (int i = 0; i < num_threads; i++) {
+		int s = pthread_join(pidds[i], 0);
+		if (s != 0) {
+			spl_console_log("pthread_join error.\n");
+		}
+	}
+	free(pidds);
+
 #endif
 }
 
@@ -129,30 +111,96 @@ void dotest() {
 #define spllogexe(__level__, __fmt__, ...)					spllogtopic(__level__, 2, __fmt__, ##__VA_ARGS__);
 #define spllognaxyax(__level__, __fmt__, ...)				spllogtopic(__level__, 3, __fmt__, ##__VA_ARGS__);
 #define spllogsksgn(__level__, __fmt__, ...)				spllogtopic(__level__, 4, __fmt__, ##__VA_ARGS__);
-
+//https://github.com/gabime/spdlog, 10 thread
 #ifndef UNIX_LINUX
-	DWORD WINAPI win32_thread_routine(LPVOID lpParam) {
+DWORD WINAPI win32_thread_routine(LPVOID lpParam) {
 #else
-	void* posix_thread_routine(void* lpParam) {
+void* posix_thread_routine(void* lpParam) {
 #endif // !UNIX_LINUX
 	int k = 0;
 	int tpic = 0;
-	while (1) {
-		k = get_off_process();
-		if (k) {
-			break;
+	int count = 0;
+	while (count < loop_count) {
+			//spllog(SPL_LOG_INFO, "test log: %d", count);
+			spllog(SPL_LOG_INFO, "test log test log test log: %d", count);
+			//spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
+			//splloglib(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "lib");
+			//spllogexe(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "exe");
+			//spllognaxyax(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "nayax");
+			//spllogsksgn(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sksg");
+			++count;
+	}
+	return 0;
+}
+
+int main(int argc, char* argv[]) {
+	int ret = 0, i = 0;
+	SPL_INPUT_ARG input;
+	int count = 2;
+	for (i = 1; i < argc; ++i) {
+		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
+			ret = sscanf(argv[i], TNUMBEER_OF_THREADS"%d", &num_threads);
+			continue;
 		}
-		spllog(SPL_LOG_INFO, "test log: %llu", (LLU)time(0));
-		tpic = (spl_milli_now() % 3);
-		spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), tpic);
-		splloglib(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), tpic);
-		spllogexe(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), tpic);
-		spllognaxyax(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), tpic);
-		spllogsksgn(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), tpic);
-		//spl_sleep(1);
-		if (is_master || 1) {
-			spl_sleep(1000);
+		if (strstr(argv[i], TLOOP_COUNT) == argv[i]) {
+			ret = sscanf(argv[i], TLOOP_COUNT"%d", &loop_count);
+			continue;
+		}
+		if (strstr(argv[i], TMASTER_MODE) == argv[i]) {
+			ret = sscanf(argv[i], TMASTER_MODE"%d", &ismaster);
+			continue;
 		}
 	}
+	memset(&input, 0, sizeof(input));
+	snprintf(input.id_name, SPL_IDD_NAME, "testlog");
+	//int ret = spl_init_log((char *)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
+#ifndef UNIX_LINUX
+	//ret = spl_init_log((char*)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
+	snprintf(input.folder, SPL_PATH_FOLDER, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
+#else
+	//ret = spl_init_log((char*)"simplelog.cfg");
+	snprintf(input.folder, SPL_PATH_FOLDER, "simplelog.cfg");
+#endif
+	input.is_master = ismaster ? 1 : 0;
+	ret = spl_init_log_ext(&input);
+	
+	//spl_milli_sleep(1000 * 5);
+	for (int i = 0; i < count; ++i) {
+		//spl_console_log("spl_milli_sleep ------------------------------ ");
+		//spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), 0);
+		//spllog(SPL_LOG_INFO, "test log test log test log test log %d", i);
+		//spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
+		//splloglib(SPL_LOG_INFO, "test log: %llu, topic: %s", time(0), "lib");
+		//spllogexe(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "exe");
+		//spllognaxyax(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "nayax");
+		//spllogsksgn(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sksg");
+	}
+	//spl_milli_sleep( 1000 * 100);
+	if (!ismaster) {
+		spl_console_log("====================Start.\n");
+		dotest();
+		spl_console_log("==================End.\n");
+	}
+	else {
+		FILE* fp = 0;
+		while (1) {
+			spl_console_log("this is master process.");
+			spl_sleep(5);
+			spllog(SPL_LOG_INFO, "this is master process.");
+			
+#ifndef UNIX_LINUX
+			fp = fopen("trigger_master.txt", "r");
+#else
+			fp = fopen("trigger_master.txt", "r");
+#endif
+			if (fp) {
+				break;
+			}
+		}
+		if (fp) {
+			fclose(fp);
+		}
+	}
+	spl_finish_log();
 	return 0;
 }
