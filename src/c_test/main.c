@@ -187,8 +187,6 @@ int main(int argc, char* argv[]) {
 			spl_console_log("this is master process.");
 			spllog(SPL_LOG_INFO, "this is master process.");
 			spl_sleep(5);
-			
-			
 #ifndef UNIX_LINUX
 			fp = fopen("trigger_master.txt", "r");
 #else
