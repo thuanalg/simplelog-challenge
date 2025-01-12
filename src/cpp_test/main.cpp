@@ -17,13 +17,15 @@ void dotest();
 int num_threads = 10;
 int loop_count = 1000 * 1000;
 int ismaster = 0;
+int topicindex = 0;
 
 #define		TNUMBEER_OF_THREADS					"--nthread="	
 #define		TCONFIG_FILE						"--cfg="	
 #define		TLOOP_COUNT							"--loopcount="	
 #define		TMASTER_MODE						"--is_master="	
+#define		TTOPIC_INDEX						"--topic_index="	
 
-int main__(int argc, char* argv[]) {
+int ______main__(int argc, char* argv[]) {
 	int ret = 0, i = 0;
 	char cfgpath[1024];
 	for (i = 1; i < argc; ++i) {
@@ -37,6 +39,10 @@ int main__(int argc, char* argv[]) {
 		}
 		if (strstr(argv[i], TMASTER_MODE) == argv[i]) {
 			ret = sscanf(argv[i], TMASTER_MODE"%d", &ismaster);
+			continue;
+		}
+		if (strstr(argv[i], TTOPIC_INDEX) == argv[i]) {
+			ret = sscanf(argv[i], TTOPIC_INDEX"%d", &topicindex);
 			continue;
 		}
 	}
@@ -121,13 +127,12 @@ void* posix_thread_routine(void* lpParam) {
 	int tpic = 0;
 	int count = 0;
 	while (count < loop_count) {
-			//spllog(SPL_LOG_INFO, "test log: %d", count);
-			spllog(SPL_LOG_INFO, "test log test log test log: %d", count);
-			spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
-			//splloglib(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "lib");
-			//spllogexe(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "exe");
-			//spllognaxyax(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "nayax");
-			//spllogsksgn(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sksg");
+			if (topicindex < 1) {
+				spllog(SPL_LOG_INFO, "test log test log test log: %d", count);
+			}
+			else {
+				spllogtopic(SPL_LOG_INFO, topicindex - 1, "test log test log test log: %d", count);
+			}
 			++count;
 	}
 	return 0;
@@ -150,6 +155,10 @@ int main(int argc, char* argv[]) {
 			ret = sscanf(argv[i], TMASTER_MODE"%d", &ismaster);
 			continue;
 		}
+		if (strstr(argv[i], TTOPIC_INDEX) == argv[i]) {
+			ret = sscanf(argv[i], TTOPIC_INDEX"%d", &topicindex);
+			continue;
+		}
 	}
 	memset(&input, 0, sizeof(input));
 	snprintf(input.id_name, SPL_IDD_NAME, "testlog");
@@ -163,19 +172,7 @@ int main(int argc, char* argv[]) {
 #endif
 	input.is_master = ismaster ? 1 : 0;
 	ret = spl_init_log_ext(&input);
-	
-	//spl_milli_sleep(1000 * 5);
-	for (int i = 0; i < count; ++i) {
-		//spl_console_log("spl_milli_sleep ------------------------------ ");
-		//spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %d.", (LLU)time(0), 0);
-		//spllog(SPL_LOG_INFO, "test log test log test log test log %d", i);
-		//spllogsys(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
-		//splloglib(SPL_LOG_INFO, "test log: %llu, topic: %s", time(0), "lib");
-		//spllogexe(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "exe");
-		//spllognaxyax(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "nayax");
-		//spllogsksgn(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sksg");
-	}
-	//spl_milli_sleep( 1000 * 100);
+
 	if (!ismaster) {
 		spl_console_log("====================Start.\n");
 		dotest();
