@@ -128,10 +128,10 @@ void* posix_thread_routine(void* lpParam) {
 	int count = 0;
 	while (count < loop_count) {
 			if (topicindex < 1) {
-				spllog(SPL_LOG_INFO, "test log test log test log: %d", count);
+				spllog(SPL_LOG_INFO, "My test log: %d", count);
 			}
 			else {
-				spllogtopic(SPL_LOG_INFO, topicindex - 1, "test log test log test log: %d", count);
+				spllogtopic(SPL_LOG_INFO, topicindex - 1, "My test log: %d", count);
 			}
 			++count;
 	}

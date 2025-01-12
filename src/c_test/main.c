@@ -137,7 +137,7 @@ void* posix_thread_routine(void* lpParam) {
 				spllog(SPL_LOG_INFO, "My test log: %d", count);
 			}
 			else {
-				spllogtopic(SPL_LOG_INFO, topicindex - 1, "My test log: %d", count);
+				spllogtopic(SPL_LOG_INFO, topicindex - 1, "Test log: %d", count);
 			}
 			++count;
 	}
