@@ -7,7 +7,7 @@ If you have a problem of configuration/running or suspecting about honesty.
 Spdlog test file: https://github.com/thuanalg/simplelog-topic/blob/main/src/spd_example.cpp
 
 simplelog-challenge: https://github.com/thuanalg/simplelog-challenge/blob/main/src/c_test/main.c
-	configred file: https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-win64-msvc-2022.cfg
+	Configuration file: performance/250113-MSVC_2022_100million-multi-processes.cfg
 	
 Environment for both:
 	- MSVC 2022, ISO C++14/++20 Standard
