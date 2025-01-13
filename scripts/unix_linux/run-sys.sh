@@ -1,1 +1,2 @@
-simple_cpp_example_direct.exe --loopcount=1000000 --topic_index=1
+echo "You can increase --loopcount up to 1-100 millions."
+simple_cpp_example_direct --loopcount=1000 --topic_index=1

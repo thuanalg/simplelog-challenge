@@ -25,40 +25,7 @@ int topicindex = 0;
 #define		TMASTER_MODE						"--is_master="	
 #define		TTOPIC_INDEX						"--topic_index="	
 
-int ______main__(int argc, char* argv[]) {
-	int ret = 0, i = 0;
-	char cfgpath[1024];
-	for (i = 1; i < argc; ++i) {
-		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
-			ret = sscanf(argv[i], TNUMBEER_OF_THREADS"%d", &num_threads);
-			continue;
-		}
-		if (strstr(argv[i], TLOOP_COUNT) == argv[i]) {
-			ret = sscanf(argv[i], TLOOP_COUNT"%d", &loop_count);
-			continue;
-		}
-		if (strstr(argv[i], TMASTER_MODE) == argv[i]) {
-			ret = sscanf(argv[i], TMASTER_MODE"%d", &ismaster);
-			continue;
-		}
-		if (strstr(argv[i], TTOPIC_INDEX) == argv[i]) {
-			ret = sscanf(argv[i], TTOPIC_INDEX"%d", &topicindex);
-			continue;
-		}
-	}
-#ifndef UNIX_LINUX
-	snprintf(cfgpath, 1024, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
-#else
-	snprintf(cfgpath, 1024, "simplelog.cfg");
-#endif
-	ret = spl_init_log(cfgpath);
 
-	spl_console_log("====================Start.\n");
-	dotest();
-	spl_console_log("==================End.\n");
-	spl_finish_log();
-	return EXIT_SUCCESS;
-}
 void dotest() {
 	int i = 0;
 #ifndef UNIX_LINUX
@@ -123,8 +90,6 @@ DWORD WINAPI win32_thread_routine(LPVOID lpParam) {
 #else
 void* posix_thread_routine(void* lpParam) {
 #endif // !UNIX_LINUX
-	int k = 0;
-	int tpic = 0;
 	int count = 0;
 	while (count < loop_count) {
 			/*You can mix any topic togther. No problem.*/

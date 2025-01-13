@@ -123,8 +123,6 @@ DWORD WINAPI win32_thread_routine(LPVOID lpParam) {
 #else
 void* posix_thread_routine(void* lpParam) {
 #endif // !UNIX_LINUX
-	int k = 0;
-	int tpic = 0;
 	int count = 0;
 	while (count < loop_count) {
 			//spllog(SPL_LOG_INFO, "test log: %d", count);
@@ -136,10 +134,10 @@ void* posix_thread_routine(void* lpParam) {
 
 			/*You can mix any topic togther. No problem.*/
 			if (topicindex < 1) {
-				spllog(SPL_LOG_INFO, "My test log: %d", count);
+				spllog(SPL_LOG_INFO, "Log: %d", count);
 			}
 			else {
-				spllogtopic(SPL_LOG_INFO, topicindex - 1, "Test log: %d", count);
+				spllogtopic(SPL_LOG_INFO, topicindex - 1, "Log: %d", count);
 			}
 			++count;
 	}
