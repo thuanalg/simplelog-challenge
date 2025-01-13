@@ -38,7 +38,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
 1. **Windows10/MSVC 2022 with 10 Threads and 10 Million Records:**
 
-   - **SimpleLog-Challenge:** **16 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-MSVC-2022-performance.txt)
+   - **SimpleLog-Challenge:** **15 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-MSVC-2022-performance-multi-processes.txt)
    - **spdlog:** **66 seconds**
 
    In this test, **SimpleLog-Challenge** logged **10 million records** in just **16 seconds**, compared to **66 seconds** taken by **spdlog**. This demonstrates **4x faster performance** in multithreaded environments, showing that SimpleLog-Challenge efficiently manages logging tasks without unnecessary performance bottlenecks.
