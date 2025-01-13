@@ -15,8 +15,8 @@ At its core, SimpleLog-Challenge follows the **Unix Philosophy** of **KISS (Keep
 2. **Cross-Platform Support**  
    SimpleLog-Challenge works across multiple platforms, including **Windows**, **Linux**, **macOS**, **Android**, and various **embedded systems**. This ensures your logging infrastructure is consistent regardless of the underlying operating system or hardware architecture.
 
-3. **Optimized for both Multithreading and <span style="color: red;">multi-process</span>**  
-	With both <span style="color: red;">multithreaded and processed</span> logging support, SimpleLog-Challenge performs exceptionally well in high-concurrency environments. It enables multiple threads/processes to log messages concurrently without significant performance degradation, making it ideal for both small-scale and distributed systems.
+3. **Optimized for both Multithreading and multi-process**  
+	With both multithreaded and processed logging support, SimpleLog-Challenge performs exceptionally well in high-concurrency environments. It enables multiple **threads/processes** to log messages concurrently without significant performance degradation, making it ideal for both small-scale and distributed systems.
 
 4. **Memory-Efficient and Configurable**  
    SimpleLog-Challenge is highly configurable, allowing developers to adjust memory usage according to the system’s resources. Whether running on **low-memory embedded devices** or **high-performance servers**, it can be optimized for minimal resource consumption.
