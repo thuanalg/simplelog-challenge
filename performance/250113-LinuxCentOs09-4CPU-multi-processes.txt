@@ -1,0 +1,96 @@
+Env: Linux centos09 Virtual Box Machine
+	- 10 threads
+	- 10 million records
+spdlog tested file: https://github.com/thuanalg/simplelog-topic/blob/main/src/spd_example.cpp
+simplelog-challenge, run with command "simpplelog_cpp_direct_sample"
+	- simplelog-challenge tested file: https://github.com/thuanalg/simplelog-challenge/blob/main/src/cpp_test/main.cpp
+	- Configured file: https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-VM-CentOsS9-64bit.cfg
+
+#==========================================================================================================================================	
+A-With 4 CPUs
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 01 (first round)
+[2025-01-13 18:49:59.026] [A] [info] [example.cpp:log_messages:432] [Threadid 140518575031872] test log: 999999
+[2025-01-13 18:49:43.797] [A] [info] [example.cpp:log_messages:432] [Threadid 140518600209984] test log: 0
+Time:15.229s
+File size: 1118888900(bytes)
+
+
+
+simplelog-challenge 01 (first round)
+[2025-01-13 18:42:35.811868444] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:42:40.840717468] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:42:46.005383256] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:42:48.435741120] [I] [tid        139810426721856]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:2
+[2025-01-13 18:42:48.435744450] [I] [tid        139810418329152]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:1
+[2025-01-13 18:42:48.435749580] [I] [tid        139810418329152]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:3
+--->>>
+[2025-01-13 18:43:00.996410804] [I] [tid        139810384758336]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:999981
+[2025-01-13 18:43:00.996418379] [I] [tid        139810384758336]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:999983
+[2025-01-13 18:43:00.996473294] [I] [tid        139810384758336]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:999997
+[2025-01-13 18:43:01.007446173] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:43:06.009031421] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:43:11.010073466] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+
+Time: 12.561s
+File size: 1168890595(bytes)
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 02  (second round)
+[2025-01-13 19:09:21.893] [A] [info] [example.cpp:log_messages:432] [Threadid 139709344892480] test log: 999999
+[2025-01-13 19:09:06.732] [A] [info] [example.cpp:log_messages:432] [Threadid 139709370070592] test log: 0
+
+Time: 15.161s
+File size: 1118888900(bytes)
+
+
+
+simplelog-challenge 02 (second round)
+[2025-01-13 18:54:26.497622048] [I] [tid        139861522634560]        [pid     2861]  [main.c:main:192] this is master process.
+[2025-01-13 18:54:46.971344179] [I] [tid        139852678960960]        [pid     2872]  [main.c:main:192] this is master process.
+[2025-01-13 18:54:50.698419590] [I] [tid        140124076779072]        [pid     2876]  [main.cpp:posix_thread_routine:98] Log:4
+[2025-01-13 18:54:50.698439585] [I] [tid        140124068386368]        [pid     2876]  [main.cpp:posix_thread_routine:98] Log:4
+[2025-01-13 18:54:50.698445450] [I] [tid        140124076779072]        [pid     2876]  [main.cpp:posix_thread_routine:98] Log:10
+[2025-01-13 18:54:50.698450850] [I] [tid        140124068386368]        [pid     2876]  [main.cpp:posix_thread_routine:98] Log:16
+--->>>
+[2025-01-13 18:55:03.027498103] [I] [tid        140124018030144]        [pid     2876]  [main.cpp:posix_thread_routine:98] Log:999999
+[2025-01-13 18:55:03.027394349] [I] [tid        140124018030144]        [pid     2876]  [main.cpp:posix_thread_routine:98] Log:999972
+[2025-01-13 18:55:03.027425099] [I] [tid        140124018030144]        [pid     2876]  [main.cpp:posix_thread_routine:98] Log:999980
+[2025-01-13 18:55:06.994371575] [I] [tid        139852678960960]        [pid     2872]  [main.c:main:192] this is master process.
+[2025-01-13 18:55:12.098566995] [I] [tid        139852678960960]        [pid     2872]  [main.c:main:192] this is master process.
+[2025-01-13 18:55:17.103288367] [I] [tid        139852678960960]        [pid     2872]  [main.c:main:192] this is master process.
+
+
+Time:  12.329 s
+File size: 1168889804 (bytes)
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 03 (third round)
+[2025-01-13 19:11:35.156] [A] [info] [example.cpp:log_messages:432] [Threadid 139658994382400] test log: 999999
+[2025-01-13 19:11:20.197] [A] [info] [example.cpp:log_messages:432] [Threadid 139658994382400] test log: 0
+Time: 14.959s
+File size: 1118888900(bytes)
+
+
+
+simplelog-challenge 03 (third round)
+[2025-01-13 19:00:50.992020748] [I] [tid        140689805408064]        [pid     2946]  [main.c:main:192] this is master process.
+[2025-01-13 19:00:56.022762193] [I] [tid        140689805408064]        [pid     2946]  [main.c:main:192] this is master process.
+[2025-01-13 19:01:01.033366504] [I] [tid        140689805408064]        [pid     2946]  [main.c:main:192] this is master process.
+[2025-01-13 19:01:03.639925980] [I] [tid        140649102972480]        [pid     2969]  [main.cpp:posix_thread_routine:98] Log:8
+[2025-01-13 19:01:03.640032000] [I] [tid        140649111365184]        [pid     2969]  [main.cpp:posix_thread_routine:98] Log:42
+[2025-01-13 19:01:03.640040715] [I] [tid        140649111365184]        [pid     2969]  [main.cpp:posix_thread_routine:98] Log:44
+--->>>
+[2025-01-13 19:01:16.391014809] [I] [tid        140649052616256]        [pid     2969]  [main.cpp:posix_thread_routine:98] Log:999973
+[2025-01-13 19:01:16.391106909] [I] [tid        140649052616256]        [pid     2969]  [main.cpp:posix_thread_routine:98] Log:999996
+[2025-01-13 19:01:21.143873213] [I] [tid        140689805408064]        [pid     2946]  [main.c:main:192] this is master process.
+[2025-01-13 19:01:26.160080085] [I] [tid        140689805408064]        [pid     2946]  [main.c:main:192] this is master process.
+
+
+Time:  12.752s
+File size: 1168889804 (bytes)
+#---------------------------------------------------------------------------------------------------------------------
+Conclusion:
+	Average:
+		- simplelog-challenge: 12.547
+		- spdlog: 15.116
+	This environment, simplelog-challenge is 2.569 (~20%) second faster than spdlog.
+	

@@ -45,13 +45,9 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
 2. **Linux Performance Benchmark (10 Threads and 10 Million Records), VM CentOs9:**  
 	
-	**With 3CPUs:**
-   - **SimpleLog-Challenge:** **15-16 seconds**
-   - **spdlog:** **15 seconds** (https://github.com/thuanalg/SimpleLog-Challenge/blob/main/LinuxCentOs09-performance.txt)  
-	
-	**With 5CPUs:**	
-	- **SimpleLog-Challenge: ~13 seconds** (https://github.com/thuanalg/SimpleLog-Challenge/blob/main/LinuxCentOs09-performance.txt)
-	- **spdlog: ~17 seconds**  
+	**With 4 CPUs:**	
+	- **SimpleLog-Challenge: ~12.5 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-LinuxCentOs09-4CPU-multi-processes.txt)
+	- **spdlog: ~15 seconds**  
    
    On **Linux**, both SimpleLog-Challenge and spdlog performed similarly, completing the test in **16 seconds**. This consistency across platforms demonstrates that SimpleLog-Challenge provides **reliable performance** in both Windows and Linux environments. If **number of CPUs** are more, then SimpleLog-Challenge becomes more effective.
 
@@ -120,3 +116,9 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 **Video Install/Demo:**  
 	- For Windows 10 64bit: (https://drive.google.com/file/d/1Ls4aD8fd65qcc7qgRKns2SlWw6RAhH5l/view?usp=sharing)  
 	- For VM Linux CentOs9 64bit: (https://drive.google.com/file/d/1wxBjI6654wZqL7vTCZtvyiIRkJk-68HF/view?usp=sharing)  
+
+---
+**Thanks a lot to:**
+
+1. My family, friends.
+2. My colleagues: Lê Duy Cường, Bùi Khánh Duy, Nguyễn Công Đức , ... in FPT (https://fpt.com/).
