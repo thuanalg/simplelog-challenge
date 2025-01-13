@@ -16,7 +16,7 @@ At its core, SimpleLog-Challenge follows the **Unix Philosophy** of **KISS (Keep
    SimpleLog-Challenge works across multiple platforms, including **Windows**, **Linux**, **macOS**, **Android**, and various **embedded systems**. This ensures your logging infrastructure is consistent regardless of the underlying operating system or hardware architecture.
 
 3. **Optimized for both Multithreading and multi-process**  
-	With both multithreaded and processed logging support, SimpleLog-Challenge performs exceptionally well in high-concurrency environments. It enables multiple threads to log messages concurrently without significant performance degradation, making it ideal for both small-scale and distributed systems.
+	With both multithreaded and processed logging support, SimpleLog-Challenge performs exceptionally well in high-concurrency environments. It enables multiple **threads/processes** to log messages concurrently without significant performance degradation, making it ideal for both small-scale and distributed systems.
 
 4. **Memory-Efficient and Configurable**  
    SimpleLog-Challenge is highly configurable, allowing developers to adjust memory usage according to the system’s resources. Whether running on **low-memory embedded devices** or **high-performance servers**, it can be optimized for minimal resource consumption.
@@ -38,7 +38,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
 1. **Windows10/MSVC 2022 with 10 Threads and 10 Million Records:**
 
-   - **SimpleLog-Challenge:** **16 seconds** (https://github.com/thuanalg/SimpleLog-Challenge/blob/main/MSVC-2022-performance.txt)
+   - **SimpleLog-Challenge:** **16 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-MSVC-2022-performance.txt)
    - **spdlog:** **66 seconds**
 
    In this test, **SimpleLog-Challenge** logged **10 million records** in just **16 seconds**, compared to **66 seconds** taken by **spdlog**. This demonstrates **4x faster performance** in multithreaded environments, showing that SimpleLog-Challenge efficiently manages logging tasks without unnecessary performance bottlenecks.
@@ -58,7 +58,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 3. **Large-Scale Logging Test (1 Billion Records, 10 Threads):**
 
    - **Time Taken:** **31 minutes** (**1860 seconds**)
-   - **Log Size:** **Size on disk: 102 GB (110,389,039,104 bytes)**: (https://github.com/thuanalg/simplelog-challenge/blob/xx1/performance/250113-1billion-multi-processes.txt)
+   - **Log Size:** **Size on disk: 102 GB (110,389,039,104 bytes)**: (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-1billion-multi-processes.txt)
 
    In an extreme scenario, SimpleLog-Challenge processed **1 billion records** across **10 threads**, generating **113 GB of log data** in just **36 minutes**. This performance indicates that SimpleLog-Challenge can scale to handle **massive volumes** of log data, making it suitable for both **high-frequency** and **large-scale logging** applications.
 
