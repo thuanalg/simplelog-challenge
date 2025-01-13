@@ -1,3 +1,8 @@
+
+If you have a problem of configuration/running or suspect about honesty.
+	Please contact me: <nguyenthaithuanalg@gmail.com>/Skype:<nguyenthaithuanalg>/Phone: +084.799.324.179
+
+------------------------------------------------------------------------------------------------------------------
 1 BILLION records/Windows 10/x64/MSVC 2022
 Configuration file: performance/250113-1billion-multi-processes.cfg
 ------------------------------------------------------------------------------------------------------------------
