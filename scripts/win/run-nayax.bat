@@ -1,0 +1,1 @@
+simple_cpp_example_direct.exe --loopcount=1000 --topic_index=4
