@@ -121,4 +121,4 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 **Thanks a lot to:**
 
 1. My family, friends.
-2. My colleagues: Lê Duy Cường, Bùi Khánh Duy, Nguyễn Công Đức , ... in FPT (https://fpt.com/).
+2. My colleagues: Lê Duy Cường, Bùi Khánh Duy, Nguyễn Công Đức , ... in my old company FPT (https://fpt.com/).
