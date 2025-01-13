@@ -93,7 +93,7 @@ void* posix_thread_routine(void* lpParam) {
 	int count = 0;
 	while (count < loop_count) {
 			/*You can mix any topic togther. No problem.*/
-			#define	TEXT_PERFORMMANCE_TEXT		"My log: %d"
+			#define	TEXT_PERFORMMANCE_TEXT		"Log:%d"
 			if (topicindex < 1) {
 				spllog(SPL_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
 			}
