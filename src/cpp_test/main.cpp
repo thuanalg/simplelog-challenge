@@ -127,6 +127,7 @@ void* posix_thread_routine(void* lpParam) {
 	int tpic = 0;
 	int count = 0;
 	while (count < loop_count) {
+			/*You can mix any topic togther. No problem.*/
 			if (topicindex < 1) {
 				spllog(SPL_LOG_INFO, "My test log: %d", count);
 			}
