@@ -4,7 +4,7 @@ If you have a problem of configuration/running or suspecting about honesty.
 
 ------------------------------------------------------------------------------------------------------------------
 1 BILLION records/Windows 10/x64/MSVC 2022
-Configuration file: performance/250113-MSVC_2022_100million.cfg
+Configuration file: performance/250113-1billion-multi-processes.cfg
 ------------------------------------------------------------------------------------------------------------------
 simple_c_example.exe --nthread=10 --loopcount=100000000
 ------------------------------------------------------------------------------------------------------------------
