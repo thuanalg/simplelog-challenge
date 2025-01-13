@@ -2,36 +2,49 @@ Env: Linux centos09 Virtual Box Machine
 	- 10 threads
 	- 10 million records
 spdlog tested file: https://github.com/thuanalg/simplelog-topic/blob/main/src/spd_example.cpp
-simplelog-topic, run with command "simpplelog_cpp_direct_sample"
-	- simplelog-topic tested file: https://github.com/thuanalg/simplelog-topic/blob/main/src/cpp_test/main.cpp
-	- Configured file: https://github.com/thuanalg/simplelog-topic/blob/main/src/simplelog-VM-CentOsS9-64bit.cfg
+simplelog-challenge, run with command "simpplelog_cpp_direct_sample"
+	- simplelog-challenge tested file: https://github.com/thuanalg/simplelog-challenge/blob/main/src/cpp_test/main.cpp
+	- Configured file: https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-VM-CentOsS9-64bit.cfg
 
 #==========================================================================================================================================	
-A-With 3 CPUs
+A-With 4 CPUs
 #---------------------------------------------------------------------------------------------------------------------
 Spdlog 01 (first round)
-[2024-12-31 17:57:42.421] [A] [info] [example.cpp:log_messages:432] [Threadid 140501474862656] test log: 999999
-[2024-12-31 17:57:27.542] [A] [info] [example.cpp:log_messages:432] [Threadid 140501483255360] test log: 0
-Time:15.1s
+[2025-01-13 18:49:59.026] [A] [info] [example.cpp:log_messages:432] [Threadid 140518575031872] test log: 999999
+[2025-01-13 18:49:43.797] [A] [info] [example.cpp:log_messages:432] [Threadid 140518600209984] test log: 0
+Time:15.229s
 File size: 1118888900(bytes)
 
 
 
-simplelog-topic 01 (first round)
-[2024-12-31 17:57:00.772414424] [I] [tid        140453441676864]        [main.cpp:posix_thread_routine:121] test log test log test log: 999997
-[2024-12-31 17:56:45.151496715] [I] [tid        140453483640384]        [main.cpp:posix_thread_routine:121] test log test log test log: 8
-Time: 15.6s
-File size: 1288888900(bytes)
+simplelog-challenge 01 (first round)
+[2025-01-13 18:42:35.811868444] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:42:40.840717468] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:42:46.005383256] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:42:48.435741120] [I] [tid        139810426721856]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:2
+[2025-01-13 18:42:48.435744450] [I] [tid        139810418329152]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:1
+[2025-01-13 18:42:48.435749580] [I] [tid        139810418329152]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:3
+--->>>
+[2025-01-13 18:43:00.996410804] [I] [tid        139810384758336]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:999981
+[2025-01-13 18:43:00.996418379] [I] [tid        139810384758336]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:999983
+[2025-01-13 18:43:00.996473294] [I] [tid        139810384758336]        [pid     2702]  [main.cpp:posix_thread_routine:98] Log:999997
+[2025-01-13 18:43:01.007446173] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:43:06.009031421] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+[2025-01-13 18:43:11.010073466] [I] [tid        139730357737280]        [pid     2698]  [main.c:main:192] this is master process.
+
+Time: 12.561s
+File size: 1168890595(bytes)
 #---------------------------------------------------------------------------------------------------------------------
 Spdlog 02  (second round)
 [2024-12-31 18:03:51.193] [A] [info] [example.cpp:log_messages:432] [Threadid 140220171265600] test log: 999999
-[2024-12-31 18:03:36.354] [A] [info] [example.cpp:log_messages:432] [Threadid 140220305503808] test log: 0
+[2025-01-13 18:49:43.797] [A] [info] [example.cpp:log_messages:432] [Threadid 140518600209984] test log: 0
+
 Time: 14.8s
 File size: 1118888900(bytes)
 
 
 
-simplelog-topic 02 (second round)
+simplelog-challenge 02 (second round)
 [2024-12-31 18:06:00.514986434] [I] [tid        140252597720640]        [main.cpp:posix_thread_routine:121] test log test log test log: 999999
 [2024-12-31 18:05:44.895784385] [I] [tid        140252625901120]        [main.cpp:posix_thread_routine:121] test log test log test log: 4
 Time:  15.7 s
@@ -45,14 +58,14 @@ File size: 1118888900(bytes)
 
 
 
-simplelog-topic 03 (third round)
+simplelog-challenge 03 (third round)
 [2024-12-31 18:11:04.361593929] [I] [tid        140197203535424]        [main.cpp:posix_thread_routine:121] test log test log test log: 999952
 [2024-12-31 18:10:48.601215255] [I] [tid        140197256894016]        [main.cpp:posix_thread_routine:121] test log test log test log: 7
 Time:  15.7 s
 File size: 1288888900 (bytes)
 #---------------------------------------------------------------------------------------------------------------------
 Conclusion:
-	This environment, spdlog is 0.75 (~5%) second faster than simplelog-topic.
+	This environment, spdlog is 0.75 (~5%) second faster than simplelog-challenge.
 	
 
 
@@ -79,7 +92,7 @@ File size: 1118888900(bytes)
 
 
 
-simplelog-topic 01 (first round)
+simplelog-challenge 01 (first round)
 [2025-01-07 12:13:21.819492581] [I] [tid        140078462522944]        [main.cpp:posix_thread_routine:121] test log test log test log: 999999
 [2025-01-07 12:13:08.824502924] [I] [tid        140078575257152]        [main.cpp:posix_thread_routine:121] test log test log test log: 0
 Time: 12.995s
@@ -93,7 +106,7 @@ File size: 1118888900(bytes)
 
 
 
-simplelog-topic 02 (second round)
+simplelog-challenge 02 (second round)
 [2025-01-07 12:19:50.572643180] [I] [tid        139692183901760]        [main.cpp:posix_thread_routine:121] test log test log test log: 999950
 [2025-01-07 12:19:37.687320812] [I] [tid        139692277761600]        [main.cpp:posix_thread_routine:121] test log test log test log: 0
 Time:  12.885 s
@@ -107,11 +120,11 @@ File size: 1118888900(bytes)
 
 
 
-simplelog-topic 03 (third round)
+simplelog-challenge 03 (third round)
 [2025-01-07 12:24:07.758196922] [I] [tid        139698657285696]        [main.cpp:posix_thread_routine:121] test log test log test log: 999976
 [2025-01-07 12:23:54.659190861] [I] [tid        139698682463808]        [main.cpp:posix_thread_routine:121] test log test log test log: 6
 Time:  13.099 s
 File size: 1288888900 (bytes)
 #---------------------------------------------------------------------------------------------------------------------
 Conclusion:
-	This environment, simplelog-topic is 4.00 (~30%) second faster than spdlog.
+	This environment, simplelog-challenge is 4.00 (~30%) second faster than spdlog.
