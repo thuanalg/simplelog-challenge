@@ -1,1 +1,0 @@
-simple_cpp_example_direct.exe --loopcount=1000
