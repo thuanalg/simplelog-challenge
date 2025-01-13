@@ -12,15 +12,15 @@ CPPFLAGS=-D UNIX_LINUX -D __UNIX_LINUX_CPP11_AND_NEWERS__
 
 debug:
 	gcc ${debugFlag} -o ${target} ${src} ${LIBS} ${CFLAGS}
-	gcc -g -o simpplelog_sample  ../c_test/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
-	g++ -g -o simpplelog_cpp_sample  ../cpp_test/main.cpp ${LIBS} ${CPPFLAGS} ${INC} -L./ -lsimplelog
-	g++ -g -o simpplelog_cpp_direct_sample  ../cpp_test/main.cpp ${src} ${LIBS} ${INC} ${CPPFLAGS}
+	gcc -g -o simple_c_example  ../c_test/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
+	g++ -g -o simple_cpp_example  ../cpp_test/main.cpp ${LIBS} ${CPPFLAGS} ${INC} -L./ -lsimplelog
+	g++ -g -o simple_cpp_example_direct  ../cpp_test/main.cpp ${src} ${LIBS} ${INC} ${CPPFLAGS}
 
 release:
 	gcc ${releaseFlag} -o ${target} ${src} ${LIBS} ${CFLAGS}
-	gcc -o simpplelog_sample  ../c_test/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
-	g++ -o simpplelog_cpp_sample  ../cpp_test/main.cpp ${LIBS} ${INC} ${CPPFLAGS} -L./ -lsimplelog
-	g++ -o simpplelog_cpp_direct_sample  ../cpp_test/main.cpp ${src} ${LIBS} ${INC} ${CPPFLAGS}
+	gcc -o simple_c_example  ../c_test/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
+	g++ -o simple_cpp_example  ../cpp_test/main.cpp ${LIBS} ${INC} ${CPPFLAGS} -L./ -lsimplelog
+	g++ -o simple_cpp_example_direct  ../cpp_test/main.cpp ${src} ${LIBS} ${INC} ${CPPFLAGS}
 
 clean:
-	rm -rf ${target} libsimplelog.so simpplelog_sample simpplelog_cpp_sample simpplelog_cpp_direct_sample
+	rm -rf ${target} libsimplelog.so simple_c_example simple_cpp_example simple_cpp_example_direct

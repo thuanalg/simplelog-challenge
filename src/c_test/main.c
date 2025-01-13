@@ -133,11 +133,12 @@ void* posix_thread_routine(void* lpParam) {
 			//spllogsksgn(SPL_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sksg");
 
 			/*You can mix any topic togther. No problem.*/
+			#define	TEXT_PERFORMMANCE_TEXT		"Log: %d"
 			if (topicindex < 1) {
-				spllog(SPL_LOG_INFO, "Log: %d", count);
+				spllog(SPL_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
 			}
 			else {
-				spllogtopic(SPL_LOG_INFO, topicindex - 1, "Log: %d", count);
+				spllogtopic(SPL_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
 			}
 			++count;
 	}
