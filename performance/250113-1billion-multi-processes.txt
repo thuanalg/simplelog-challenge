@@ -16,6 +16,7 @@ simple_c_example.exe --nthread=10 --loopcount=100000000
 --->>>
 31 minutes = 1860 second
 Size on disk: 102 GB (110,389,039,104 bytes)
+Speed: 58 MB/s, 537.000 messages/s
 <<<---
 
 
