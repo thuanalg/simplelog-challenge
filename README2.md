@@ -58,7 +58,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 3. **Large-Scale Logging Test (1 Billion Records, 10 Threads):**
 
    - **Time Taken:** **31 minutes** (**1860 seconds**)
-   - **Log Size:** **Size on disk: 102 GB (110,389,039,104 bytes)**: (https://github.com/thuanalg/SimpleLog-Challenge/blob/main/One_Billion_records-performance.txt)
+   - **Log Size:** **Size on disk: 102 GB (110,389,039,104 bytes)**: (https://github.com/thuanalg/simplelog-challenge/blob/xx1/performance/250113-1billion-multi-processes.txt)
 
    In an extreme scenario, SimpleLog-Challenge processed **1 billion records** across **10 threads**, generating **113 GB of log data** in just **36 minutes**. This performance indicates that SimpleLog-Challenge can scale to handle **massive volumes** of log data, making it suitable for both **high-frequency** and **large-scale logging** applications.
 
