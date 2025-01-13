@@ -1,0 +1,108 @@
+#---------------------------------------------------------------------------------------------------------------------
+
+If you have a problem of configuration/running or suspecting about honesty.
+	Please contact me: <nguyenthaithuanalg@gmail.com>/Skype:<nguyenthaithuanalg>/Phone: +084.799.324.179
+
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog test file: https://github.com/thuanalg/simplelog-topic/blob/main/src/spd_example.cpp
+
+simplelog-challenge: https://github.com/thuanalg/simplelog-challenge/blob/main/src/c_test/main.c
+	configred file: https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-win64-msvc-2022.cfg
+	
+Environment for both:
+	- MSVC 2022, ISO C++14/++20 Standard
+	- Windows 10, 64bit
+	- 10 threads
+------------------
+System Information
+------------------
+      Time of this report: 12/31/2024, 12:37:06
+             Machine name: DESKTOP-C1R7H0U
+               Machine Id: {E3AEBCFB-0191-4437-994B-EC3128028876}
+         Operating System: Windows 10 Home 64-bit (10.0, Build 19045) (19041.vb_release.191206-1406)
+                 Language: English (Regional Setting: English)
+      System Manufacturer: Gigabyte Technology Co., Ltd.
+             System Model: Z87M-D3H
+                     BIOS: F9 (type: UEFI)
+                Processor: Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz (8 CPUs), ~3.4GHz
+                   Memory: 16384MB RAM
+      Available OS Memory: 16272MB RAM
+                Page File: 10589MB used, 8113MB available
+              Windows Dir: C:\Windows
+          DirectX Version: DirectX 12
+      DX Setup Parameters: Not found
+         User DPI Setting: 96 DPI (100 percent)
+       System DPI Setting: 96 DPI (100 percent)
+          DWM DPI Scaling: Disabled
+                 Miracast: Available, with HDCP
+Microsoft Graphics Hybrid: Not Supported
+ DirectX Database Version: 1.0.8
+           DxDiag Version: 10.00.19041.5198 64bit Unicode	
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 01 (first round)
+[2024-12-31 12:09:31.073] [A] [info] [example.cpp:log_messages:432] [Threadid 27896] test log: 0
+[2024-12-31 12:10:39.742] [A] [info] [example.cpp:log_messages:432] [Threadid 1712] test log: 999999
+Time:68.7s
+File size: 1,002,822KB
+
+
+
+simplelog-challenge 01 (first round)
+[2025-01-13 15:55:48.616784645] [I] [tid	1284]	[pid 	 21340]	[main.c:main:191] this is master process.
+[2025-01-13 15:55:53.623849705] [I] [tid	1284]	[pid 	 21340]	[main.c:main:191] this is master process.
+[2025-01-13 15:55:54.609713850] [I] [tid	13756]	[pid 	 18260]	[main.c:win32_thread_routine:137] Log: 0
+--->>>
+[2025-01-13 15:56:09.483451604] [I] [tid	13336]	[pid 	 18260]	[main.c:win32_thread_routine:137] Log: 999983
+[2025-01-13 15:56:13.669310348] [I] [tid	1284]	[pid 	 21340]	[main.c:main:191] this is master process.
+[2025-01-13 15:56:18.685464027] [I] [tid	1284]	[pid 	 21340]	[main.c:main:191] this is master process.
+[2025-01-13 15:56:23.690522785] [I] [tid	1284]	[pid 	 21340]	[main.c:main:191] this is master process.
+
+Time: 14.8s
+File size: 1.01 GB (1,086,889,732 bytes)
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 02  (second round)
+[2024-12-31 12:21:07.207] [A] [info] [example.cpp:log_messages:432] [Threadid 9504] test log: 999999
+[2024-12-31 12:19:57.690] [A] [info] [example.cpp:log_messages:432] [Threadid 27504] test log: 0
+Time: 69s
+File size: 1,003,798 KB
+
+
+
+simplelog-challenge 02 (second round)
+[2025-01-13 16:00:25.616779701] [I] [tid	21124]	[pid 	 18048]	[main.c:main:191] this is master process.
+[2025-01-13 16:00:30.625866868] [I] [tid	21124]	[pid 	 18048]	[main.c:main:191] this is master process.
+[2025-01-13 16:00:31.698599140] [I] [tid	13900]	[pid 	 5980]	[main.c:win32_thread_routine:137] Log: 0
+[2025-01-13 16:00:31.699600600] [I] [tid	10252]	[pid 	 5980]	[main.c:win32_thread_routine:137] Log: 0
+--->>>
+[2025-01-13 16:00:46.574354694] [I] [tid	2688]	[pid 	 5980]	[main.c:win32_thread_routine:137] Log: 999908
+[2025-01-13 16:00:46.574354994] [I] [tid	2688]	[pid 	 5980]	[main.c:win32_thread_routine:137] Log: 999913
+[2025-01-13 16:00:46.574355234] [I] [tid	2688]	[pid 	 5980]	[main.c:win32_thread_routine:137] Log: 999917
+[2025-01-13 16:00:50.662235535] [I] [tid	21124]	[pid 	 18048]	[main.c:main:191] this is master process.
+[2025-01-13 16:00:55.670318206] [I] [tid	21124]	[pid 	 18048]	[main.c:main:191] this is master process.
+
+Time:  14.876 s
+File size: 1.00 GB (1,073,893,376 bytes)
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 03 (third round)
+[2024-12-31 12:29:38.088] [A] [info] [example.cpp:log_messages:432] [Threadid 18868] test log: 999999
+[2024-12-31 12:28:30.020] [A] [info] [example.cpp:log_messages:432] [Threadid 9172] test log: 0
+Time: 68s
+File size: 999,892 KB
+
+
+
+simplelog-challenge 01 (third round)
+[2025-01-13 16:04:07.440016603] [I] [tid	14436]	[pid 	 17664]	[main.c:main:191] this is master process.
+[2025-01-13 16:04:12.448099528] [I] [tid	14436]	[pid 	 17664]	[main.c:main:191] this is master process.
+[2025-01-13 16:04:13.105667935] [I] [tid	2784]	[pid 	 15548]	[main.c:win32_thread_routine:137] Log: 3
+[2025-01-13 16:04:13.105669600] [I] [tid	13716]	[pid 	 15548]	[main.c:win32_thread_routine:137] Log: 1
+--->>>
+[2025-01-13 16:04:27.989504699] [I] [tid	11452]	[pid 	 15548]	[main.c:win32_thread_routine:137] Log: 999990
+[2025-01-13 16:04:27.989504759] [I] [tid	11452]	[pid 	 15548]	[main.c:win32_thread_routine:137] Log: 999991
+[2025-01-13 16:04:32.490520304] [I] [tid	14436]	[pid 	 17664]	[main.c:main:191] this is master process.
+
+Time:  14.884 s
+File size: 1.01 GB (1,086,889,984 bytes)
+#---------------------------------------------------------------------------------------------------------------------
+Conclusion:
+	This environment, simplelog-challenge is 4 TIMES faster than spdlog.

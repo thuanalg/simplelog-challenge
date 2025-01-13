@@ -4,7 +4,7 @@ releaseFlag=-fPIC -Wall -shared
 LIBS+=-lpthread
 src=../simplelog.c ../simplelog.h
 INC=-I../
-#CFLAGS=-ansi
+#CFLAGS=-ansi -D UNIX_LINUX
 CFLAGS=-std=gnu89 -D UNIX_LINUX
 #CPPFLAGS=-std=c++98 
 #CPPFLAGS=-std=c++98 -D UNIX_LINUX -D __UNIX_LINUX_CPP11_AND_NEWERS
