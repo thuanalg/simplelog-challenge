@@ -1,1 +1,1 @@
-simple_c_example --is_master=1
+./simple_c_example --is_master=1
