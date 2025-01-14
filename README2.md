@@ -29,6 +29,9 @@ At its core, SimpleLog-Challenge follows the **Unix Philosophy** of **KISS (Keep
 
 7. **No dependence**  
    Just use POSIX APIs and Win32 APIs.
+
+8. **Message safety feature**  
+   The **message safety feature** in your logger allows users to configure a size limit for each log message (e.g., 10,000 bytes). If a message exceeds this size, it will be truncated, but the first 10,000 bytes will still be logged. This ensures that large messages do not cause memory overflow or uncontrolled log writing, while still preserving the beginning of the message for logging. This feature is particularly useful in resource-constrained environments like embedded devices, providing both flexibility and safety in log management..
    
 ### **Performance Highlights: Speed and Efficiency**
 
