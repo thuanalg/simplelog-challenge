@@ -95,8 +95,7 @@
 #define SPL_MTX_NAME_RW				"_MTX_RW"
 #define SPL_MTX_NAME_OFF			"_MTX_OFF"
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-#define SPL_MIN_AB(a,b)			((a) < (b)) ? (a) : (b) 
-#define SPL_MAX_AB(a,b)			((a) > (b)) ? (a) : (b) 
+
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #define	SPLOG_PATHFOLDR \
@@ -801,7 +800,6 @@ void* spl_written_thread_routine(void* lpParam)
 	int k = 0;
 	SIMPLE_LOG_ST* t = (SIMPLE_LOG_ST*)lpParam;
 	int ret = 0, sz = 0, err = 0;
-	int max_sx_seg_write = 0;
 
 	register char is_off = 0;
 	register int i = 0, j = 0;
@@ -820,7 +818,6 @@ void* spl_written_thread_routine(void* lpParam)
 	only_cast->total = (t->buff_size * t->ncpu);
 	//only_cast->range = only_cast->total - sizeof(generic_dta_st);
 	only_cast->pl = only_cast->pc = 0;
-	max_sx_seg_write = t->buff_size - sizeof(generic_dta_st);
 
 	spl_malloc(t->ncpu * sizeof(char*), main_src_thrd_buf, char*);
 	for (i = 0; i < t->ncpu; ++i) {
@@ -895,8 +892,7 @@ void* spl_written_thread_routine(void* lpParam)
 							/*SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(main_src_thrd_buf[i])->pl);*/
 							/*MYCASTGEN(main_src_thrd_buf[i])->pl*/
 							memcpy(only_cast->data + only_cast->pl, MYCASTGEN(main_src_thrd_buf[i])->data, 
-								SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(main_src_thrd_buf[i])->pl));
-							only_cast->pl += SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(main_src_thrd_buf[i])->pl);
+								MYCASTGEN(main_src_thrd_buf[i])->pl);
 							MYCASTGEN(main_src_thrd_buf[i])->pl = 0;
 						}
 					//} while (0);
@@ -929,8 +925,8 @@ void* spl_written_thread_routine(void* lpParam)
 									/*SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(src)->pl);*/
 									/*MYCASTGEN(src)->pl*/
 									memcpy(only_cast->data + only_cast->pl, MYCASTGEN(src)->data, 
-										SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(src)->pl));
-									only_cast->pl += SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(src)->pl);
+										MYCASTGEN(src)->pl);
+									only_cast->pl += MYCASTGEN(src)->pl;
 									MYCASTGEN(src)->pl = 0;
 								}
 							/*//} while (0);*/

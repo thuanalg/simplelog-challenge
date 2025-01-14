@@ -92,15 +92,15 @@ void* posix_thread_routine(void* lpParam) {
 #endif // !UNIX_LINUX
 	int count = 0;
 	while (count < loop_count) {
-			/*You can mix any topic togther. No problem.*/
-			#define	TEXT_PERFORMMANCE_TEXT		"Log:%d"
-			if (topicindex < 1) {
-				spllog(SPL_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
-			}
-			else {
-				spllogtopic(SPL_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
-			}
-			++count;
+		/*You can mix any topic togther. No problem.*/
+		#define	TEXT_PERFORMMANCE_TEXT		"Log:%d"
+		if (topicindex < 1) {
+			spllog(SPL_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
+		}
+		else {
+			spllogtopic(SPL_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
+		}
+		++count;
 	}
 	return 0;
 }

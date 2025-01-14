@@ -180,7 +180,7 @@ extern "C" {
 	} spl_local_time_st;
 
 #define				SPL_TOPIC_SIZE					32
-#define				SPL_MEMO_PADDING				2048
+#define				SPL_MEMO_PADDING				1024
 #define				SPL_SHARED_KEY_LEN				64
 #define				SPL_SHARED_NAME_LEN				128
 
@@ -300,6 +300,9 @@ __p__ = __FILE__;} while(0);
 	{ /*spl_console_log("Free: 0x%p.\n", (__obj__));*/; free(__obj__); ; (__obj__) = 0;} 
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+#define SPL_MIN_AB(a,b)			((a) < (b)) ? (a) : (b) 
+#define SPL_MAX_AB(a,b)			((a) > (b)) ? (a) : (b) 
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #define SPLKEYBUF(__t__, __i__)				((generic_dta_st*)( (char*)__t__->buf + (t->buff_size * __i__)))
 #define __spl_log_buf_level__(__lv__, ___fmttt___, ...)	\
@@ -319,18 +322,23 @@ __p__ = __FILE__;} while(0);
 				spl_mutex_lock(t->arr_mtx[r]);\
 					;\
 						if(t->range > SPLKEYBUF(t, r)->pl) {\
-							;memcpy(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, pprefmt, outlen);SPLKEYBUF(t, r)->pl += outlen;\
+							;memcpy(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, pprefmt, outlen);\
+							;SPLKEYBUF(t, r)->pl += outlen;\
 							;len = snprintf(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, \
 								t->krange - SPLKEYBUF(t, r)->pl,\
 								___fmttt___, ##__VA_ARGS__); ;\
-							if(len > 0) SPLKEYBUF(t, r)->pl += (len); ;\
+							if(len > 0) {\
+								;/*spl_console_log("len: %d", len);*/\
+								;;outlen = SPL_MIN_AB(len, t->krange - SPLKEYBUF(t, r)->pl);;\
+								;/*spl_console_log("outlen: %d", outlen);*/\
+								;SPLKEYBUF(t, r)->pl += outlen;\
+							;} ;\
 							\
 						}\
 					\
 				spl_mutex_unlock(t->arr_mtx[r]); \
 				\
 				if(len > 0) break;\
-				;/*spl_console_log("---------------------------OVERRRRRRRRRRRRRRRRRRR======================, r: %d", (int)r);*/\
 				;r++; r%=t->ncpu;\
 				;;continue;\
 			}\
@@ -367,8 +375,13 @@ __p__ = __FILE__;} while(0);
 							;len = snprintf(STSPLOGBUFTOPIC_RANGE(t,tpp, r)->data + STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl, \
 								t->krange - STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl, \
 								___fmttt___, ##__VA_ARGS__);\
-							;/*spl_console_log("--------------lllllllennnnnnnnnnnnnnnnn---r: %d, len: %d", (int)r, len);*/;\
-							if(len > 0) STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl += len;\
+							;;\
+							if(len > 0) { \
+								;/*spl_console_log("len: %d", len);*/;\
+								;outlen = SPL_MIN_AB(len, t->krange - STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl);\
+								;/*spl_console_log("outlen: %d", outlen);*/;;\
+								;STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl += outlen;\
+							}\
 						}\
 					/*}*/\
 				/*}\
