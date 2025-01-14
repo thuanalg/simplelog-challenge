@@ -78,6 +78,7 @@ extern "C" {
 		SPL_ERROR_CREATE_MUTEX,
 		SPL_ERROR_CREATE_SEM,
 		SPL_LOG_BUFF_SIZE_ERROR,
+		SPL_LOG_MAX_SZ_MSG_ERROR,
 		SPL_LOG_BUFF_MALLOC_ERROR,
 		SPL_LOG_FOLDER_ERROR,
 		SPL_LOG_CREATE_THREAD_ERROR,
@@ -206,6 +207,8 @@ extern "C" {
 			file_limit_size;			/*Limitation of each log file. No nead SYNC.*/
 		int
 			buff_size;					/*Buffer size for each buffer. No nead SYNC.*/
+		int 
+			max_sz_msg;					/*If the size of the message is less than the number, it is safe to write. If not, it may be truncated.*/
 		int
 			index;						/*Index of default log, not in a topic. No nead SYNC.*/
 		char
