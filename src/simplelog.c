@@ -801,6 +801,7 @@ void* spl_written_thread_routine(void* lpParam)
 	int k = 0;
 	SIMPLE_LOG_ST* t = (SIMPLE_LOG_ST*)lpParam;
 	int ret = 0, sz = 0, err = 0;
+	int max_sx_seg_write = 0;
 
 	register char is_off = 0;
 	register int i = 0, j = 0;
@@ -819,6 +820,7 @@ void* spl_written_thread_routine(void* lpParam)
 	only_cast->total = (t->buff_size * t->ncpu);
 	//only_cast->range = only_cast->total - sizeof(generic_dta_st);
 	only_cast->pl = only_cast->pc = 0;
+	max_sx_seg_write = t->buff_size - sizeof(generic_dta_st);
 
 	spl_malloc(t->ncpu * sizeof(char*), main_src_thrd_buf, char*);
 	for (i = 0; i < t->ncpu; ++i) {
@@ -890,9 +892,11 @@ void* spl_written_thread_routine(void* lpParam)
 					spl_mutex_lock(t->arr_mtx[i]);
 					//do {
 						if (MYCASTGEN(main_src_thrd_buf[i])->pl > 0) {
+							/*SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(main_src_thrd_buf[i])->pl);*/
+							/*MYCASTGEN(main_src_thrd_buf[i])->pl*/
 							memcpy(only_cast->data + only_cast->pl, MYCASTGEN(main_src_thrd_buf[i])->data, 
-								MYCASTGEN(main_src_thrd_buf[i])->pl);
-							only_cast->pl += MYCASTGEN(main_src_thrd_buf[i])->pl;
+								SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(main_src_thrd_buf[i])->pl));
+							only_cast->pl += SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(main_src_thrd_buf[i])->pl);
 							MYCASTGEN(main_src_thrd_buf[i])->pl = 0;
 						}
 					//} while (0);
@@ -922,8 +926,11 @@ void* spl_written_thread_routine(void* lpParam)
 							spl_mutex_lock(t->arr_mtx[j]);
 							/*//do */
 								if (MYCASTGEN(src)->pl > 0) {
-									memcpy(only_cast->data + only_cast->pl, MYCASTGEN(src)->data, MYCASTGEN(src)->pl);
-									only_cast->pl += MYCASTGEN(src)->pl;
+									/*SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(src)->pl);*/
+									/*MYCASTGEN(src)->pl*/
+									memcpy(only_cast->data + only_cast->pl, MYCASTGEN(src)->data, 
+										SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(src)->pl));
+									only_cast->pl += SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(src)->pl);
 									MYCASTGEN(src)->pl = 0;
 								}
 							/*//} while (0);*/
@@ -2241,8 +2248,8 @@ int spl_mtx_init(void* obj, char shared)
 static void spl_fmt_segment(generic_dta_st* sgment) {
 	SIMPLE_LOG_ST* t = &__simple_log_static__;
 	sgment->total = t->buff_size;
-	//sgment->range = sgment->total - (sizeof(generic_dta_st) + t->max_sz_msg + SPL_RL_BUF);
 	sgment->pl = 0;
+	sgment->pc = 0;
 }
 int spl_init_segments() {
 	int ret = 0;
@@ -2261,9 +2268,6 @@ int spl_init_segments() {
 		for (i = 0; i < t->ncpu; ++i) {
 			seg = p + i * t->buff_size;
 			sgment = (generic_dta_st*)seg;
-			//sgment->total = t->buff_size;
-			//sgment->range = sgment->total - sizeof(generic_dta_st) - SPL_MEMO_PADDING;
-			//sgment->pl = 0;
 			spl_fmt_segment(sgment);
 		}
 		step = t->buff_size * t->ncpu;
@@ -2273,9 +2277,6 @@ int spl_init_segments() {
 			for (i = 0; i < t->ncpu; ++i) {
 				seg = p + i * t->buff_size;
 				sgment = (generic_dta_st*)seg;
-				//sgment->total = t->buff_size;
-				//sgment->range = sgment->total - sizeof(generic_dta_st) - SPL_MEMO_PADDING;
-				//sgment->pl = 0;
 				spl_fmt_segment(sgment);
 			}
 			
