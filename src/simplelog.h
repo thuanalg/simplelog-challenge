@@ -208,6 +208,8 @@ extern "C" {
 			buff_size;					/*Buffer size for each buffer. No nead SYNC.*/
 		int
 			range;						/*The limitation of usage buffer.*/
+		int
+			krange;						/*The limitation of usage buffer.*/
 		int 
 			max_sz_msg;					/*If the size of the message is less than the number, it is safe to write. If not, it may be truncated.*/
 		int
@@ -319,7 +321,7 @@ __p__ = __FILE__;} while(0);
 						if(t->range > SPLKEYBUF(t, r)->pl) {\
 							;memcpy(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, pprefmt, outlen);SPLKEYBUF(t, r)->pl += outlen;\
 							;len = snprintf(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, \
-								t->range + t->max_sz_msg - SPLKEYBUF(t, r)->pl,\
+								t->krange - SPLKEYBUF(t, r)->pl,\
 								___fmttt___, ##__VA_ARGS__); ;\
 							if(len > 0) SPLKEYBUF(t, r)->pl += (len); ;\
 							\
@@ -363,7 +365,7 @@ __p__ = __FILE__;} while(0);
 							;memcpy(STSPLOGBUFTOPIC_RANGE(t,tpp, r)->data + STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl, pprefmt, outlen);\
 							;STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl += outlen;;\
 							;len = snprintf(STSPLOGBUFTOPIC_RANGE(t,tpp, r)->data + STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl, \
-								t->range + t->max_sz_msg - STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl, \
+								t->krange - STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl, \
 								___fmttt___, ##__VA_ARGS__);\
 							;/*spl_console_log("--------------lllllllennnnnnnnnnnnnnnnn---r: %d, len: %d", (int)r, len);*/;\
 							if(len > 0) STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl += len;\

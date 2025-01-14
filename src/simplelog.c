@@ -2263,6 +2263,7 @@ int spl_init_segments() {
 	p = (char *)t->buf;
 	if (!t->range) {
 		t->range = t->buff_size - (sizeof(generic_dta_st) + t->max_sz_msg + SPL_RL_BUF);
+		t->krange = t->range + t->max_sz_msg;
 	}
 	do {
 		for (i = 0; i < t->ncpu; ++i) {
