@@ -889,10 +889,9 @@ void* spl_written_thread_routine(void* lpParam)
 					spl_mutex_lock(t->arr_mtx[i]);
 					//do {
 						if (MYCASTGEN(main_src_thrd_buf[i])->pl > 0) {
-							/*SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(main_src_thrd_buf[i])->pl);*/
-							/*MYCASTGEN(main_src_thrd_buf[i])->pl*/
 							memcpy(only_cast->data + only_cast->pl, MYCASTGEN(main_src_thrd_buf[i])->data, 
 								MYCASTGEN(main_src_thrd_buf[i])->pl);
+							only_cast->pl += MYCASTGEN(main_src_thrd_buf[i])->pl;
 							MYCASTGEN(main_src_thrd_buf[i])->pl = 0;
 						}
 					//} while (0);
@@ -922,8 +921,6 @@ void* spl_written_thread_routine(void* lpParam)
 							spl_mutex_lock(t->arr_mtx[j]);
 							/*//do */
 								if (MYCASTGEN(src)->pl > 0) {
-									/*SPL_MIN_AB(max_sx_seg_write, MYCASTGEN(src)->pl);*/
-									/*MYCASTGEN(src)->pl*/
 									memcpy(only_cast->data + only_cast->pl, MYCASTGEN(src)->data, 
 										MYCASTGEN(src)->pl);
 									only_cast->pl += MYCASTGEN(src)->pl;
