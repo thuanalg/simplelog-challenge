@@ -157,8 +157,7 @@ extern "C" {
 		struct __GENERIC_DATA__ {
 		int
 			total;						/*Total size*/
-		int
-			range;						/*Total size*/
+		/*int range;					Total size*/
 		int
 			pc;							/*Point to the current*/
 		int
@@ -207,6 +206,8 @@ extern "C" {
 			file_limit_size;			/*Limitation of each log file. No nead SYNC.*/
 		int
 			buff_size;					/*Buffer size for each buffer. No nead SYNC.*/
+		int
+			range;						/*The limitation of usage buffer.*/
 		int 
 			max_sz_msg;					/*If the size of the message is less than the number, it is safe to write. If not, it may be truncated.*/
 		int
@@ -315,10 +316,12 @@ __p__ = __FILE__;} while(0);
 				;;;\
 				spl_mutex_lock(t->arr_mtx[r]);\
 					;\
-						if(SPLKEYBUF(t, r)->range > SPLKEYBUF(t, r)->pl) {\
+						if(t->range > SPLKEYBUF(t, r)->pl) {\
 							;memcpy(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, pprefmt, outlen);SPLKEYBUF(t, r)->pl += outlen;\
-							;len = snprintf( SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, (SPLKEYBUF(t, r)->range + SPL_MEMO_PADDING - SPLKEYBUF(t, r)->pl), \
-								___fmttt___, ##__VA_ARGS__); if(len > 0) SPLKEYBUF(t, r)->pl += (len); ;\
+							;len = snprintf(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, \
+								t->range + t->max_sz_msg - SPLKEYBUF(t, r)->pl,\
+								___fmttt___, ##__VA_ARGS__); ;\
+							if(len > 0) SPLKEYBUF(t, r)->pl += (len); ;\
 							\
 						}\
 					\
@@ -356,11 +359,11 @@ __p__ = __FILE__;} while(0);
 				{*/\
 					/*if(t->arr_topic){*/;;\
 						;;\
-						if(STSPLOGBUFTOPIC_RANGE(t,tpp, r)->range > STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl) {\
+						if(t->range > STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl) {\
 							;memcpy(STSPLOGBUFTOPIC_RANGE(t,tpp, r)->data + STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl, pprefmt, outlen);\
 							;STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl += outlen;;\
 							;len = snprintf(STSPLOGBUFTOPIC_RANGE(t,tpp, r)->data + STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl, \
-								STSPLOGBUFTOPIC_RANGE(t, tpp, r)->range + SPL_MEMO_PADDING - STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl, \
+								t->range + t->max_sz_msg - STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl, \
 								___fmttt___, ##__VA_ARGS__);\
 							;/*spl_console_log("--------------lllllllennnnnnnnnnnnnnnnn---r: %d, len: %d", (int)r, len);*/;\
 							if(len > 0) STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl += len;\
