@@ -52,7 +52,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 	- **SimpleLog-Challenge: ~12.5 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-LinuxCentOs09-4CPU-multi-processes.txt)
 	- **spdlog: ~15 seconds**  
    
-   On **Linux**, SimpleLog-Challenge is faster spdlog about 2.5s (20%). This consistency across platforms demonstrates that SimpleLog-Challenge provides **reliable performance** in both Windows and Linux environments. If **number of CPUs** are more, then SimpleLog-Challenge becomes more effective.
+   On **Linux**, SimpleLog-Challenge is **faster** spdlog about **2.5s (20%)**. This consistency across platforms demonstrates that SimpleLog-Challenge provides **reliable performance** in both Windows and Linux environments. If **number of CPUs** are more, then SimpleLog-Challenge becomes more effective.
 
 3. **Large-Scale Logging Test (1 Billion Records, 10 Threads):**
 
