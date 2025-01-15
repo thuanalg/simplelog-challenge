@@ -110,9 +110,24 @@ This tool is a **tribute to his legacy**—a small way to express **gratitude** 
 **Open-Source on GitHub**  (https://github.com/thuanalg/SimpleLog-Challenge/)
 SimpleLog-Challenge is open-source and available on GitHub. Feel free to contribute, modify, or integrate it into your projects, and be part of a community that values **simplicity**, **performance**, and the principles of **Unix**.
 
+By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging solution—you’re embracing the legacy of **Richard Stevens**, honoring his work in **Unix network programming**, and following his principles of creating clear, efficient, and practical tools.
+
 ---
 
-By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging solution—you’re embracing the legacy of **Richard Stevens**, honoring his work in **Unix network programming**, and following his principles of creating clear, efficient, and practical tools.
+
+**APIs - Focus on Simplicity and Ease of Use**:  
+  - **5 simple APIs** for usage:  
+    - **Initialization** (at the start of `main`):  
+	    		    - `spl_init_log(char *pathcfg)`  
+	    		    - `spl_init_log_ext(SPL_INPUT_ARG *input)`  
+    - **Logging** (in any thread):  
+	    	    - `spllog(level, fmt, ...)`  
+	    	    - **Levels**: `SPL_LOG_DEBUG`, `SPL_LOG_INFO`, `SPL_LOG_WARNING`, `SPL_LOG_ERROR`, `SPL_LOG_FATAL`  
+    - **Topic-based Logging**:  
+	    	    - `spllogtopic(level, topic_index, fmt, ...)`  
+    - **Finalization** (at the end of `main`):  
+		   - `spl_finish_log()`  
+
 
 ---
 
