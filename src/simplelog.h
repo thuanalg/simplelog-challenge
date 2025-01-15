@@ -78,6 +78,7 @@ extern "C" {
 		SPL_ERROR_CREATE_MUTEX,
 		SPL_ERROR_CREATE_SEM,
 		SPL_LOG_BUFF_SIZE_ERROR,
+		SPL_LOG_MAX_SZ_MSG_ERROR,
 		SPL_LOG_BUFF_MALLOC_ERROR,
 		SPL_LOG_FOLDER_ERROR,
 		SPL_LOG_CREATE_THREAD_ERROR,
@@ -156,8 +157,7 @@ extern "C" {
 		struct __GENERIC_DATA__ {
 		int
 			total;						/*Total size*/
-		int
-			range;						/*Total size*/
+		/*int range;					Total size*/
 		int
 			pc;							/*Point to the current*/
 		int
@@ -180,7 +180,7 @@ extern "C" {
 	} spl_local_time_st;
 
 #define				SPL_TOPIC_SIZE					32
-#define				SPL_MEMO_PADDING				2048
+#define				SPL_MEMO_PADDING				1024
 #define				SPL_SHARED_KEY_LEN				64
 #define				SPL_SHARED_NAME_LEN				128
 
@@ -206,6 +206,12 @@ extern "C" {
 			file_limit_size;			/*Limitation of each log file. No nead SYNC.*/
 		int
 			buff_size;					/*Buffer size for each buffer. No nead SYNC.*/
+		int
+			range;						/*The limitation of usage buffer.*/
+		int
+			krange;						/*The limitation of usage buffer.*/
+		int 
+			max_sz_msg;					/*If the size of the message is less than the number, it is safe to write. If not, it may be truncated.*/
 		int
 			index;						/*Index of default log, not in a topic. No nead SYNC.*/
 		char
@@ -294,6 +300,9 @@ __p__ = __FILE__;} while(0);
 	{ /*spl_console_log("Free: 0x%p.\n", (__obj__));*/; free(__obj__); ; (__obj__) = 0;} 
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+#define SPL_MIN_AB(a,b)			((a) < (b)) ? (a) : (b) 
+#define SPL_MAX_AB(a,b)			((a) > (b)) ? (a) : (b) 
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #define SPLKEYBUF(__t__, __i__)				((generic_dta_st*)( (char*)__t__->buf + (t->buff_size * __i__)))
 #define __spl_log_buf_level__(__lv__, ___fmttt___, ...)	\
@@ -312,17 +321,24 @@ __p__ = __FILE__;} while(0);
 				;;;\
 				spl_mutex_lock(t->arr_mtx[r]);\
 					;\
-						if(SPLKEYBUF(t, r)->range > SPLKEYBUF(t, r)->pl) {\
-							;memcpy(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, pprefmt, outlen);SPLKEYBUF(t, r)->pl += outlen;\
-							;len = snprintf( SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, (SPLKEYBUF(t, r)->range + SPL_MEMO_PADDING - SPLKEYBUF(t, r)->pl), \
-								___fmttt___, ##__VA_ARGS__); if(len > 0) SPLKEYBUF(t, r)->pl += (len); ;\
+						if(t->range > SPLKEYBUF(t, r)->pl) {\
+							;memcpy(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, pprefmt, outlen);\
+							;SPLKEYBUF(t, r)->pl += outlen;\
+							;len = snprintf(SPLKEYBUF(t, r)->data + SPLKEYBUF(t, r)->pl, \
+								t->krange - SPLKEYBUF(t, r)->pl,\
+								___fmttt___, ##__VA_ARGS__); ;\
+							if(len > 0) {\
+								;/*spl_console_log("len: %d", len);*/\
+								;;outlen = SPL_MIN_AB(len, t->krange - SPLKEYBUF(t, r)->pl);;\
+								;/*spl_console_log("outlen: %d", outlen);*/\
+								;SPLKEYBUF(t, r)->pl += outlen;\
+							;} ;\
 							\
 						}\
 					\
 				spl_mutex_unlock(t->arr_mtx[r]); \
 				\
 				if(len > 0) break;\
-				;/*spl_console_log("---------------------------OVERRRRRRRRRRRRRRRRRRR======================, r: %d", (int)r);*/\
 				;r++; r%=t->ncpu;\
 				;;continue;\
 			}\
@@ -353,14 +369,19 @@ __p__ = __FILE__;} while(0);
 				{*/\
 					/*if(t->arr_topic){*/;;\
 						;;\
-						if(STSPLOGBUFTOPIC_RANGE(t,tpp, r)->range > STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl) {\
+						if(t->range > STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl) {\
 							;memcpy(STSPLOGBUFTOPIC_RANGE(t,tpp, r)->data + STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl, pprefmt, outlen);\
 							;STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl += outlen;;\
 							;len = snprintf(STSPLOGBUFTOPIC_RANGE(t,tpp, r)->data + STSPLOGBUFTOPIC_RANGE(t,tpp, r)->pl, \
-								STSPLOGBUFTOPIC_RANGE(t, tpp, r)->range + SPL_MEMO_PADDING - STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl, \
+								t->krange - STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl, \
 								___fmttt___, ##__VA_ARGS__);\
-							;/*spl_console_log("--------------lllllllennnnnnnnnnnnnnnnn---r: %d, len: %d", (int)r, len);*/;\
-							if(len > 0) STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl += len;\
+							;;\
+							if(len > 0) { \
+								;/*spl_console_log("len: %d", len);*/;\
+								;outlen = SPL_MIN_AB(len, t->krange - STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl);\
+								;/*spl_console_log("outlen: %d", outlen);*/;;\
+								;STSPLOGBUFTOPIC_RANGE(t, tpp, r)->pl += outlen;\
+							}\
 						}\
 					/*}*/\
 				/*}\
