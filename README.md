@@ -1,4 +1,4 @@
-### **SimpleLog-Challenge: A Fast, Lightweight, and Flexible Logger for C and C++ Applications (Introduction written by ChatGPT, and I accepted.)**
+### **SimpleLog-Challenge: A Fast, Lightweight, and Flexible Logger for C and C++ Applications (Introduction written by ChatGPT)**
 
 
 Logging is an essential part of any software system, helping developers gain insights into application behavior, debug issues, and monitor production systems. However, many logging libraries often introduce unnecessary complexity and performance overhead. **SimpleLog-Challenge** was designed to address these issues, offering a **fast, efficient, and easy-to-use logging solution** for both **C** and **C++** applications. 
@@ -52,7 +52,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 	- **SimpleLog-Challenge: ~12.5 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-LinuxCentOs09-4CPU-multi-processes.txt)
 	- **spdlog: ~15 seconds**  
    
-   On **Linux**, both SimpleLog-Challenge and spdlog performed similarly, completing the test in **16 seconds**. This consistency across platforms demonstrates that SimpleLog-Challenge provides **reliable performance** in both Windows and Linux environments. If **number of CPUs** are more, then SimpleLog-Challenge becomes more effective.
+   On **Linux**, SimpleLog-Challenge is **faster** spdlog about **2.5s (20%)**. This consistency across platforms demonstrates that SimpleLog-Challenge provides **reliable performance** in both Windows and Linux environments. If **number of CPUs** are more, then SimpleLog-Challenge becomes more effective.
 
 3. **Large-Scale Logging Test (1 Billion Records, 10 Threads):**
 
@@ -97,7 +97,7 @@ This tool is a **tribute to his legacy**—a small way to express **gratitude** 
 
 - **Embedded Systems**: With low memory consumption and flexible configuration options, SimpleLog-Challenge is an excellent choice for **embedded devices** with limited resources.
   
-- **Multithreaded and Distributed Systems**: SimpleLog-Challenge handles **high-concurrency environments** efficiently, making it ideal for **multithreaded applications** and **distributed systems** where logging overhead needs to be minimized.
+- **Multithreaded/Multi-process and Distributed Systems**: SimpleLog-Challenge handles **high-concurrency environments** efficiently, making it ideal for **multithreaded/Multi-process applications** and **distributed systems** where logging overhead needs to be minimized.
 
 - **Real-Time Systems**: For **real-time applications** that require precise timestamps and low-latency logging, SimpleLog-Challenge’s **nanosecond precision timestamps** are crucial for accurate tracking and performance monitoring.
 
