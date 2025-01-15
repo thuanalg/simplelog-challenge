@@ -132,7 +132,7 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 ---
 
 **Video Install/Demo:**  
-	- For Windows 10 64bit: (https://drive.google.com/file/d/1Ls4aD8fd65qcc7qgRKns2SlWw6RAhH5l/view?usp=sharing)  
+	- For Windows 10 64bit: (https://drive.google.com/file/d/1gccgtO84U7_R9a1WuPcLnT3Iw7hBN7Wr/view?usp=sharing)  
 	- For VM Linux CentOs9 64bit: (https://drive.google.com/file/d/1wxBjI6654wZqL7vTCZtvyiIRkJk-68HF/view?usp=sharing)  
 
 ---
