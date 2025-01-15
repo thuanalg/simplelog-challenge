@@ -1,4 +1,4 @@
-### **SimpleLog-Challenge: A Fast, Lightweight, and Flexible Logger for C and C++ Applications (Introduction written by ChatGPT, and I accepted.)**
+### **SimpleLog-Challenge: A Fast, Lightweight, and Flexible Logger for C and C++ Applications (Introduction written by ChatGPT)**
 
 
 Logging is an essential part of any software system, helping developers gain insights into application behavior, debug issues, and monitor production systems. However, many logging libraries often introduce unnecessary complexity and performance overhead. **SimpleLog-Challenge** was designed to address these issues, offering a **fast, efficient, and easy-to-use logging solution** for both **C** and **C++** applications. 
@@ -97,7 +97,7 @@ This tool is a **tribute to his legacy**—a small way to express **gratitude** 
 
 - **Embedded Systems**: With low memory consumption and flexible configuration options, SimpleLog-Challenge is an excellent choice for **embedded devices** with limited resources.
   
-- **Multithreaded and Distributed Systems**: SimpleLog-Challenge handles **high-concurrency environments** efficiently, making it ideal for **multithreaded applications** and **distributed systems** where logging overhead needs to be minimized.
+- **Multithreaded/Multi-process and Distributed Systems**: SimpleLog-Challenge handles **high-concurrency environments** efficiently, making it ideal for **multithreaded/Multi-process applications** and **distributed systems** where logging overhead needs to be minimized.
 
 - **Real-Time Systems**: For **real-time applications** that require precise timestamps and low-latency logging, SimpleLog-Challenge’s **nanosecond precision timestamps** are crucial for accurate tracking and performance monitoring.
 
