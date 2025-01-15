@@ -116,9 +116,8 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 
 
 **APIs - Focus on Simplicity and Ease of Use**:  
-  - **5 simple APIs** for usage:  
+  - **4 simple APIs** for usage:  
     - **Initialization** (at the start of `main`):  
-	    		    - `spl_init_log(char *pathcfg)`  
 	    		    - `spl_init_log_ext(SPL_INPUT_ARG *input)`  
     - **Logging** (in any thread):  
 	    	    - `spllog(level, fmt, ...)`  
@@ -132,8 +131,8 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 ---
 
 **Video Install/Demo:**  
-	- For Windows 10 64bit: (https://drive.google.com/file/d/1Ls4aD8fd65qcc7qgRKns2SlWw6RAhH5l/view?usp=sharing)  
-	- For VM Linux CentOs9 64bit: (https://drive.google.com/file/d/1wxBjI6654wZqL7vTCZtvyiIRkJk-68HF/view?usp=sharing)  
+	- For Windows 10 64bit: (https://drive.google.com/file/d/1gccgtO84U7_R9a1WuPcLnT3Iw7hBN7Wr/view?usp=sharing)  
+	- For VM Linux CentOs9 64bit: (https://drive.google.com/file/d/1a2OWwSoa1bIbzYvhhoFKDAhS3eTXkPv9/view?usp=sharing)  
 
 ---
 **Thanks a lot to:**
