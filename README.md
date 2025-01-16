@@ -139,3 +139,9 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 
 1. My family, friends.
 2. My colleagues: Lê Duy Cường, Bùi Khánh Duy, Nguyễn Công Đức , ... in my old company FPT (https://fpt.com/).
+
+---
+
+Reference & Dedication:
+   - "UNIX Network Programming, Volume 2: Interprocess Communications, Second Edition": https://www.amazon.com/UNIX-Network-Programming-Interprocess-Communications/dp/0130810819
+   - "Unix Network Programming: The Sockets Networking API": https://www.amazon.com/Unix-Network-Programming-Sockets-Networking/dp/0131411551
