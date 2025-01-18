@@ -265,6 +265,10 @@ static int
 	spl_gen_sync_tool();
 static int 
 	spl_clean_sync_tool();
+static int
+	spl_set_off(int);
+static int 
+	spl_standardize_path(char* fname);
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 SIMPLE_LOG_ST* spl_control_obj() {
 	//spl_con

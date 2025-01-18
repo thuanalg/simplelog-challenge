@@ -435,20 +435,14 @@ DLL_API_SIMPLE_LOG int
 	spl_mutex_lock(void* mtx);
 DLL_API_SIMPLE_LOG int									
 	spl_mutex_unlock(void* mtx);
-DLL_API_SIMPLE_LOG int									
-	spl_set_off(int );
-
 DLL_API_SIMPLE_LOG LLU									
 	spl_get_threadid();
 DLL_API_SIMPLE_LOG int									
 	spl_rel_sem(void* sem);
-
 DLL_API_SIMPLE_LOG
 	void spl_sleep(unsigned  int);
 DLL_API_SIMPLE_LOG
 	void spl_milli_sleep(unsigned  int);
-DLL_API_SIMPLE_LOG
-	int spl_standardize_path(char* fname);
 DLL_API_SIMPLE_LOG
 	LLU spl_milli_now();
 DLL_API_SIMPLE_LOG
