@@ -1707,6 +1707,7 @@ int spl_del_memory()
 	#else
 			/*Clean Mutex*/
 			/*https://linux.die.net/man/3/pthread_mutex_destroy*/
+			spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 			ret = pthread_mutex_destroy((pthread_mutex_t*)t->mtx_rw);
 			if (ret) {
 				spl_console_log("pthread_mutex_destroy/mtx_rw: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
@@ -1720,6 +1721,7 @@ int spl_del_memory()
 	#endif
 			/*Clean Semaphore*/
 			/*https://linux.die.net/man/3/sem_destroy*/
+			spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 			ret = sem_destroy((sem_t*)t->sem_rwfile);
 			if (ret) {
 				spl_console_log("sem_destroy/sem_rwfile: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
@@ -1729,8 +1731,9 @@ int spl_del_memory()
 				spl_console_log("sem_destroy/sem_off: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
 			}
 		}
-
+		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 		ret = munmap((void*)t->buf, (size_t) t->map_mem_size);
+		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 		if (ret) {
 			ret = SPL_LOG_SHM_UNIX_UNMAP;
 			spl_console_log("munmap: err: %d, errno: %d, text: %s, name: %s.", ret, errno, strerror(errno), "__name__");
@@ -2326,7 +2329,7 @@ int spl_clean_sync_tool() {
 #else	
 		
 #endif
-		
+		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 		if (t->isProcessMode) {
 			ret = spl_del_memory();
 			if (ret) {
