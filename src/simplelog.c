@@ -246,7 +246,8 @@ static int
 #else
 	static int
 		spl_mtx_init(void* mtx, char shared);
-
+	static void* 
+		spl_trigger_routine(void* arg)
 #endif
 
 static int
@@ -1759,12 +1760,12 @@ int spl_create_memory(void** output, char* shared_key, int size_shared, char isC
 		}
 		if (isCreating) {
 			hMapFile = CreateFileMappingA(
-				INVALID_HANDLE_VALUE,    // use paging file
-				NULL,                    // default security
-				PAGE_READWRITE,          // read/write access
-				0,                       // maximum object size (high-order DWORD)
-				size_shared,                // maximum object size (low-order DWORD)
-				shared_key);                 // name of mapping object
+				INVALID_HANDLE_VALUE,    
+				NULL,                    
+				PAGE_READWRITE,          
+				0,                       
+				size_shared,             
+				shared_key);             
 
 			if (!hMapFile) {
 				spl_console_log("Cannot create SHM. error: %d\n", (int)GetLastError());
