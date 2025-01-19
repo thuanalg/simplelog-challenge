@@ -17,6 +17,7 @@
 *		<2025-Jan-06>
 *		<2025-Jan-08>
 *		<2025-Jan-10>
+*		<2025-Jan-18>
 * Decription:
 *		The (only) main header file to export 5 APIs: [spl_init_log, spl_init_log_ext, spllog, spllogtopic, spl_finish_log].
 */
@@ -425,10 +426,7 @@ DLL_API_SIMPLE_LOG int
 	spl_finish_log();
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-DLL_API_SIMPLE_LOG int									
-	spl_set_log_levwel(int val);
-DLL_API_SIMPLE_LOG int									
-	spl_get_log_levwel();
+
 DLL_API_SIMPLE_LOG char *
 	spl_fmt_now_ext(char* fmtt, int len, int lv, 
 		const char *filename, const char* funcname, int  line, unsigned short* r, int *);
@@ -438,33 +436,21 @@ DLL_API_SIMPLE_LOG int
 	spl_mutex_lock(void* mtx);
 DLL_API_SIMPLE_LOG int									
 	spl_mutex_unlock(void* mtx);
-DLL_API_SIMPLE_LOG int									
-	spl_set_off(int );
-DLL_API_SIMPLE_LOG void*								
-	spl_get_mtx();
-DLL_API_SIMPLE_LOG void*								
-	spl_get_sem_rwfile();
 DLL_API_SIMPLE_LOG LLU									
 	spl_get_threadid();
 DLL_API_SIMPLE_LOG int									
 	spl_rel_sem(void* sem);
-/*DLL_API_SIMPLE_LOG
-	void* spl_mutex_create();*/
 DLL_API_SIMPLE_LOG
 	void spl_sleep(unsigned  int);
 DLL_API_SIMPLE_LOG
 	void spl_milli_sleep(unsigned  int);
-DLL_API_SIMPLE_LOG
-	int spl_standardize_path(char* fname);
 DLL_API_SIMPLE_LOG
 	LLU spl_milli_now();
 DLL_API_SIMPLE_LOG
 	SIMPLE_LOG_ST *spl_control_obj();
 DLL_API_SIMPLE_LOG
 	LLU spl_process_id();
-//DLL_API_SIMPLE_LOG
-//	char *spl_prefmt_now(FMT_FOR_OUTPUT* p);
-//
+
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #ifdef __cplusplus

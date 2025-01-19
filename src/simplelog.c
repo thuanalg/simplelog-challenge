@@ -17,7 +17,7 @@
 *		<2024-Dec-30>
 *		<2025-Jan-03>
 *		<2025-Jan-06>
-*		<2025-Jan-08>
+*		<2025-Jan-18>
 * Decription:													
 *		The (only) main file to implement simple log.
 */
@@ -246,10 +246,12 @@ static int
 #else
 	static int
 		spl_mtx_init(void* mtx, char shared);
-	static int
-		spl_create_thread(THREAD_ROUTINE f, void* arg);
+	static void* 
+		spl_trigger_routine(void* arg);
 #endif
 
+static int
+	spl_create_thread(THREAD_ROUTINE f, void* arg);
 static int 
 	spl_create_memory(void** output, char* shared_key, int size_shared, char isCreating);
 static int
@@ -264,6 +266,10 @@ static int
 	spl_gen_sync_tool();
 static int 
 	spl_clean_sync_tool();
+static int
+	spl_set_off(int);
+static int 
+	spl_standardize_path(char* fname);
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 SIMPLE_LOG_ST* spl_control_obj() {
 	//spl_con
@@ -335,15 +341,7 @@ int spl_local_time_now(spl_local_time_st*stt) {
 	} while (0);
 	return ret;
 }
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-int spl_set_log_levwel(int val) {
-	__simple_log_static__.llevel = val;
-	return 0;
-}
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-int spl_get_log_levwel() {
-	return __simple_log_static__.llevel;
-}
+
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int spl_set_off(int isoff) {
 	int ret = 0;
@@ -384,6 +382,7 @@ int spl_set_off(int isoff) {
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int spl_init_log_parse(char* buff, char *key, char *isEnd) {
 	int ret = SPL_NO_ERROR;
+	SIMPLE_LOG_ST* t = &__simple_log_static__;
 	do {
 
 		if (strcmp(key, SPLOG_PATHFOLDR) == 0) {
@@ -402,7 +401,8 @@ int spl_init_log_parse(char* buff, char *key, char *isEnd) {
 				ret = SPL_LOG_LEVEL_ERROR;
 				break;
 			}
-			spl_set_log_levwel(n);
+			/*spl_set_log_levwel(n);*/
+			t->llevel = n;
 			break;
 		}
 		if (strcmp(key, SPLOG_BUFF_SIZE) == 0) {
@@ -657,32 +657,6 @@ int spl_init_log( char *pathcfg)
 	return ret;
 }
 
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-/*void* spl_mutex_create() {
-	void *ret = 0;
-	do {
-#ifndef UNIX_LINUX
-	#ifndef SPL_USING_SPIN_LOCK
-		ret = (void*) CreateMutexA(0, 0, 0);
-	#else
-		ret = (void*) & spl_rw_spin;
-	#endif
-#else
-#ifndef SPL_USING_SPIN_LOCK
-		spl_malloc(sizeof(pthread_mutex_t), ret, void);
-		if (!ret) {
-			break;
-		}
-		memset(ret, 0, sizeof(pthread_mutex_t));
-		pthread_mutex_init((pthread_mutex_t*)ret, 0);
-#else
-		ret = (void *) &spl_rw_spin;
-		pthread_spin_init((pthread_spinlock_t*)ret, PTHREAD_PROCESS_PRIVATE);
-#endif
-#endif 
-	} while (0);
-	return ret;
-}*/
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int spl_mutex_lock(void* obj) {
 	int ret = 0;
@@ -1223,14 +1197,7 @@ int spl_gen_file(SIMPLE_LOG_ST* t, int *sz, int limit, int *index) {
 	} while (0);
 	return ret;
 }
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-void* spl_get_mtx() {
-	return __simple_log_static__.mtx_rw;
-}
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-void* spl_get_sem_rwfile() {
-	return __simple_log_static__.sem_rwfile;
-}
+
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 LLU	spl_get_threadid() {
 #ifndef UNIX_LINUX
@@ -1254,12 +1221,15 @@ int spl_rel_sem(void *sem) {
 #ifndef UNIX_LINUX
 		ReleaseSemaphore(sem, 1, 0);
 #else
+		/*
 		err = sem_getvalue((sem_t*)sem, &val);
 		if (!err) {
 			if (val < 1) {
 				SPL_sem_post(sem);
 			}
 		}
+		*/
+		SPL_sem_post(sem);
 #endif 
 	} while (0);
 	return ret;
@@ -1268,6 +1238,7 @@ int spl_rel_sem(void *sem) {
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int spl_finish_log() {
 	int ret = 0; 
+	SIMPLE_LOG_ST* t = &__simple_log_static__;
 	ret = spl_set_off(1);
 	if (ret) {
 		spl_console_log("spl_set_off ret: %d", ret);
@@ -1276,7 +1247,7 @@ int spl_finish_log() {
 	if (ret) {
 		spl_console_log("spl_clean_sync_tool ret: %d", ret);
 	}
-	memset(&__simple_log_static__, 0, sizeof(__simple_log_static__));
+	memset(t, 0, sizeof(SIMPLE_LOG_ST));
 	return ret;
 }
 
@@ -1762,7 +1733,6 @@ int spl_del_memory()
 				spl_console_log("sem_destroy/sem_off: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
 			}
 		}
-
 		ret = munmap((void*)t->buf, (size_t) t->map_mem_size);
 		if (ret) {
 			ret = SPL_LOG_SHM_UNIX_UNMAP;
@@ -1772,7 +1742,6 @@ int spl_del_memory()
 			/*https://linux.die.net/man/3/shm_unlink*/
 			spl_shm_unlink(t->shared_key, ret);
 		}
-		
 #endif
 	} while (0);
 	return ret;
@@ -1793,12 +1762,12 @@ int spl_create_memory(void** output, char* shared_key, int size_shared, char isC
 		}
 		if (isCreating) {
 			hMapFile = CreateFileMappingA(
-				INVALID_HANDLE_VALUE,    // use paging file
-				NULL,                    // default security
-				PAGE_READWRITE,          // read/write access
-				0,                       // maximum object size (high-order DWORD)
-				size_shared,                // maximum object size (low-order DWORD)
-				shared_key);                 // name of mapping object
+				INVALID_HANDLE_VALUE,    
+				NULL,                    
+				PAGE_READWRITE,          
+				0,                       
+				size_shared,             
+				shared_key);             
 
 			if (!hMapFile) {
 				spl_console_log("Cannot create SHM. error: %d\n", (int)GetLastError());
@@ -2359,7 +2328,6 @@ int spl_clean_sync_tool() {
 #else	
 		
 #endif
-		
 		if (t->isProcessMode) {
 			ret = spl_del_memory();
 			if (ret) {
