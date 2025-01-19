@@ -247,7 +247,7 @@ static int
 	static int
 		spl_mtx_init(void* mtx, char shared);
 	static void* 
-		spl_trigger_routine(void* arg)
+		spl_trigger_routine(void* arg);
 #endif
 
 static int
