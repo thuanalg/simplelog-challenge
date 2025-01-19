@@ -1221,12 +1221,15 @@ int spl_rel_sem(void *sem) {
 #ifndef UNIX_LINUX
 		ReleaseSemaphore(sem, 1, 0);
 #else
+		/*
 		err = sem_getvalue((sem_t*)sem, &val);
 		if (!err) {
 			if (val < 1) {
 				SPL_sem_post(sem);
 			}
 		}
+		*/
+		SPL_sem_post(sem);
 #endif 
 	} while (0);
 	return ret;
