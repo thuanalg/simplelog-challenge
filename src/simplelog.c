@@ -1746,7 +1746,6 @@ int spl_del_memory()
 			spl_shm_unlink(t->shared_key, ret);
 			spl_console_log("spl_del_memory, t->isProcessMode: %d, ret %d", (int)t->isProcessMode, ret);
 		}
-		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 #endif
 	} while (0);
 	return ret;
@@ -2333,10 +2332,8 @@ int spl_clean_sync_tool() {
 #else	
 		
 #endif
-		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 		if (t->isProcessMode) {
 			ret = spl_del_memory();
-			spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 			if (ret) {
 				spl_console_log("spl_del_memory, ret: %d", ret);
 			}
@@ -2345,7 +2342,6 @@ int spl_clean_sync_tool() {
 			spl_free(t->buf);
 		}
 		spl_free(t->arr_mtx);
-		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 	} while (0);
 	return ret;
 }
