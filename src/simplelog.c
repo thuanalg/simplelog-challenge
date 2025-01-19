@@ -1235,6 +1235,7 @@ int spl_rel_sem(void *sem) {
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int spl_finish_log() {
 	int ret = 0; 
+	SIMPLE_LOG_ST* t = &__simple_log_static__;
 	ret = spl_set_off(1);
 	if (ret) {
 		spl_console_log("spl_set_off ret: %d", ret);
