@@ -1244,6 +1244,7 @@ int spl_finish_log() {
 		spl_console_log("spl_clean_sync_tool ret: %d", ret);
 	}
 	memset(&__simple_log_static__, 0, sizeof(__simple_log_static__));
+	spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 	return ret;
 }
 
@@ -1742,7 +1743,7 @@ int spl_del_memory()
 			/*https://linux.die.net/man/3/shm_unlink*/
 			spl_shm_unlink(t->shared_key, ret);
 		}
-		
+		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 #endif
 	} while (0);
 	return ret;
@@ -2340,6 +2341,7 @@ int spl_clean_sync_tool() {
 			spl_free(t->buf);
 		}
 		spl_free(t->arr_mtx);
+		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 	} while (0);
 	return ret;
 }
