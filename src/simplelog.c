@@ -1733,7 +1733,7 @@ int spl_del_memory()
 				spl_console_log("sem_destroy/sem_off: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
 			}
 		}
-		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
+		spl_console_log("spl_del_memory, t->isProcessMode: %d, %p", (int)t->isProcessMode, t->buf);
 		ret = munmap((void*)t->buf, (size_t) t->map_mem_size);
 		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 		if (ret) {
