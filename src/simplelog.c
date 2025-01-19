@@ -1743,6 +1743,7 @@ int spl_del_memory()
 		if (t->is_master) {
 			/*https://linux.die.net/man/3/shm_unlink*/
 			spl_shm_unlink(t->shared_key, ret);
+			spl_console_log("spl_del_memory, t->isProcessMode: %d, ret %d", (int)t->isProcessMode, ret);
 		}
 		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 #endif
@@ -2334,6 +2335,7 @@ int spl_clean_sync_tool() {
 		spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 		if (t->isProcessMode) {
 			ret = spl_del_memory();
+			spl_console_log("spl_del_memory, t->isProcessMode: %d", (int)t->isProcessMode);
 			if (ret) {
 				spl_console_log("spl_del_memory, ret: %d", ret);
 			}
