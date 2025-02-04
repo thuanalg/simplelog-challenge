@@ -2146,6 +2146,7 @@ int spl_calculate_size() {
 			break;
 		}
 		#ifdef __MACH__
+			/* Semaphore UNIX_LINUX MAC OSX */
 			ret = spl_osx_sync_create();
 		#else
 			/*Semaphore UNIX_LINUX*/
