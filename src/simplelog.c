@@ -336,8 +336,8 @@ int spl_local_time_now(spl_local_time_st*stt) {
 			break;
 		}
 		lt = (struct tm*) &rlt;
-		/*No need freeing, 
-		//https://stackoverflow.com/questions/35031647/do-i-need-to-free-the-returned-pointer-from-localtime-function*/
+		/* No need freeing, 
+		//https://stackoverflow.com/questions/35031647/do-i-need-to-free-the-returned-pointer-from-localtime-function */
 	#ifdef __MACH__
 		result = host_get_clock_service(mach_host_self(), REALTIME_CLOCK, &cclock);
 		if (result != KERN_SUCCESS) {
@@ -434,7 +434,7 @@ int spl_init_log_parse(char* buff, char *key, char *isEnd) {
 				ret = SPL_LOG_LEVEL_ERROR;
 				break;
 			}
-			/*spl_set_log_levwel(n);*/
+			/* spl_set_log_levwel(n); */
 			t->llevel = n;
 			break;
 		}
@@ -502,9 +502,11 @@ int spl_init_log_parse(char* buff, char *key, char *isEnd) {
 				break;
 			}
 			__simple_log_static__.ncpu = n;
+			/*
 			//if (__simple_log_static__.ncpu < 1) {
 			//	__simple_log_static__.ncpu = 1;
 			//}
+			*/
 			break;
 		}
 		if (strcmp(key, SPLOG_TRIGGER) == 0) {
@@ -629,7 +631,9 @@ int spl_init_log( char *pathcfg)
 						ret = spl_init_log_parse(p, node, &isEnd);
 						break;
 					}
+					/*
 					j++;
+					*/
 				}
 
 				if (ret) {
@@ -760,14 +764,18 @@ int spl_verify_folder(char* folder) {
 	int ret = 0;
 	do {
 #ifdef WIN32
-		/*https://learn.microsoft.com/en-us/windows/win32/fileio/retrieving-and-changing-file-attributes
+		/* 
+		https://learn.microsoft.com/en-us/windows/win32/fileio/retrieving-and-changing-file-attributes
 		// https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createdirectorya
-		// ERROR_ALREADY_EXISTS, ERROR_PATH_NOT_FOUND */
+		// ERROR_ALREADY_EXISTS, ERROR_PATH_NOT_FOUND 
+		*/
 		BOOL result = CreateDirectoryA(folder, NULL);
 		if (!result) {
 			DWORD werr = GetLastError();
 			if (werr == ERROR_ALREADY_EXISTS) {
-				//ret = 1;
+				/*
+				ret = 1;
+				*/
 				break;
 			}
 			ret = SPL_LOG_FOLDER_ERROR;
@@ -819,13 +827,16 @@ void* spl_written_thread_routine(void* lpParam)
 #endif
 	char* only_buf = 0;
 	generic_dta_st* only_cast = 0;
-	//k = 3;
 	spl_malloc((t->buff_size * t->ncpu), only_buf, char);
+	/*
 	//spl_malloc((t->buff_size * 3), only_buf, char);
 	//spl_create_memory((void**)&only_buf, "thread_buff_123", (t->buff_size * t->ncpu), 1);
+	*/
 	only_cast = MYCASTGEN(only_buf);
 	only_cast->total = (t->buff_size * t->ncpu);
+	/*
 	//only_cast->range = only_cast->total - sizeof(generic_dta_st);
+	*/
 	only_cast->pl = only_cast->pc = 0;
 
 	spl_malloc(t->ncpu * sizeof(char*), main_src_thrd_buf, char*);
@@ -862,7 +873,9 @@ void* spl_written_thread_routine(void* lpParam)
 		if (!t->sem_rwfile) {
 			exit(1);
 		}
+		/*
 		//spl_console_log("Semaphore: 0x%p.\n", t->sem_rwfile);
+		*/
 		if (!t->mtx_rw) {
 			exit(1);
 		}
