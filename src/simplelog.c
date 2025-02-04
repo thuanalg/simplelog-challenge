@@ -1821,7 +1821,7 @@ int spl_del_memory()
 	#endif
 			#ifdef __MACH__
 				/* Clear semaphore of MAC OSX. */
-				/* ret = spl_osx_sync_del(); */
+				ret = spl_osx_sync_del();
 			#else
 				/*Clean Semaphore*/
 				/*https://linux.die.net/man/3/sem_destroy*/
