@@ -243,17 +243,16 @@ static int
 	spl_fflush_err(int t, void *fpp);
 
 #ifndef UNIX_LINUX
-	#ifdef __MACH__
-		static int
-			spl_osx_sync_create();
-		static int
-			spl_osx_sync_del();
-	#endif
+
 	static int
 		spl_win32_sync_create();
 	static DWORD WINAPI
 		spl_trigger_routine(void* arg);
 #else
+	#ifdef __MACH__
+		static int spl_osx_sync_create();
+		static int spl_osx_sync_del();
+	#endif
 	static int
 		spl_mtx_init(void* mtx, char shared);
 	static void* 
