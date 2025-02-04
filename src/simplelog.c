@@ -1821,7 +1821,7 @@ int spl_del_memory()
 	#endif
 			#ifdef __MACH__
 				/* Clear semaphore of MAC OSX. */
-				ret = spl_osx_sync_del();
+				/* ret = spl_osx_sync_del(); */
 			#else
 				/*Clean Semaphore*/
 				/*https://linux.die.net/man/3/sem_destroy*/
@@ -2299,7 +2299,7 @@ int spl_osx_sync_del() {
 	SIMPLE_LOG_ST* t = &__simple_log_static__;
 	char nameobj[SPL_SHARED_NAME_LEN];
 	do {
-		if (t->isProcessMode) {
+		if (t->isProcessMode && t->is_master) {
 			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
 			if (sem_close((sem_t*)t->sem_rwfile) == -1) {
 				spl_console_log("sem_close, errno: %d, errno_text: %s.", errno, strerror(errno));
