@@ -1530,9 +1530,11 @@ spl_stdz_topics
 		spl_console_log("Topic.\n");	
 
 	} while(0);
+	/*
 	//if (p) {
 	//	spl_free(p);
 	//}
+	*/
 	return ret;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -1540,12 +1542,16 @@ int
 spl_gen_topics(SIMPLE_LOG_ST* t) {
 	int ret = 0;
 	char path[1024];
+	/*
 	//int renew = 0;
+	*/
 	LLU cszize = 0;
 	do {
 		int i = 0;
 		if (t->n_topic < 1) {
+			/*
 			//ret = SPL_LOG_TOPIC_ZERO;
+			*/
 			break;
 		}
 		for (i = 0; i < t->n_topic; ++i) 
@@ -1586,7 +1592,6 @@ spl_gen_topics(SIMPLE_LOG_ST* t) {
 		}
 		/*--------------*/
 		if (t->renew > SPL_CHANGE_FILE_SIZE) {
-			//TO-TEST
 			for (i = 0; i < t->n_topic; ++i) {
 				do {
 					int err = 0;
@@ -1598,7 +1603,9 @@ spl_gen_topics(SIMPLE_LOG_ST* t) {
 					t->arr_topic[i].index = 0;
 					t->arr_topic[i].fizize = 0;
 					snprintf(path, 1024, "%s-%s-%.7d.log", t->path_template, t->arr_topic[i].topic, t->arr_topic[i].index);
+					/*
 					//t->arr_topic[i].fp = fopen(path, "a+");
+					*/
 					FFOPEN(t->arr_topic[i].fp, path, "a+");
 					if (!t->arr_topic[i].fp) {
 						ret = SPL_LOG_TOPIC_FOPEN;
@@ -1612,7 +1619,6 @@ spl_gen_topics(SIMPLE_LOG_ST* t) {
 			break;
 		}
 		for (i = 0; i < t->n_topic; ) {
-			//TO-TEST
 			if ((t->arr_topic[i].fizize) < t->file_limit_size) {
 				++i;
 				continue;
@@ -1629,7 +1635,9 @@ spl_gen_topics(SIMPLE_LOG_ST* t) {
 				t->arr_topic[i].fizize = 0;
 				
 				snprintf(path, 1024, "%s-%s-%.7d.log", t->path_template, t->arr_topic[i].topic, t->arr_topic[i].index);
+				/*
 				//t->arr_topic[i].fp = fopen(path, "a+");
+				*/
 				FFOPEN(t->arr_topic[i].fp, path, "a+");
 				if (!t->arr_topic[i].fp) {
 					ret = SPL_LOG_TOPIC_FOPEN;
@@ -1747,7 +1755,9 @@ int spl_create_thread(THREAD_ROUTINE f, void* arg, pthread_t *outid)
 #endif
 {
 	int ret = 0;
+	/*
 	//spl_console_log("===============================================f: %p, arg: %p", f, arg);
+	*/
 #ifndef UNIX_LINUX
 	DWORD dwThreadId = 0;
 	HANDLE hThread = 0;
@@ -1807,7 +1817,7 @@ int spl_del_memory()
 			}
 	#else
 			/*Clean Mutex*/
-			/*https://linux.die.net/man/3/pthread_mutex_destroy*/
+			/* https://linux.die.net/man/3/pthread_mutex_destroy */
 			ret = pthread_mutex_destroy((pthread_mutex_t*)t->mtx_rw);
 			if (ret) {
 				spl_console_log("pthread_mutex_destroy/mtx_rw: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
@@ -1841,7 +1851,7 @@ int spl_del_memory()
 			spl_console_log("munmap: err: %d, errno: %d, text: %s, name: %s.", ret, errno, strerror(errno), "__name__");
 		}
 		if (t->is_master) {
-			/*https://linux.die.net/man/3/shm_unlink*/
+			/* https://linux.die.net/man/3/shm_unlink */
 			spl_shm_unlink(t->shared_key, ret);
 		}
 #endif
