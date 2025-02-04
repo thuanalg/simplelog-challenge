@@ -1985,20 +1985,45 @@ int spl_calculate_size() {
 		semsize = 0;
 	#endif
 #else
-	#ifdef SPL_USING_SPIN_LOCK
-		step_size = sizeof(pthread_spinlock_t);
+	#ifdef __MACH__
+		#ifdef SPL_USING_SPIN_LOCK
+				step_size = sizeof(pthread_spinlock_t);
+				#error "not yet implemented."
+				/*
+					- https://developer.apple.com/documentation/os/os_unfair_lock_t : iOS 10.0+
+						iPadOS 10.0+
+						Mac Catalyst 13.1+
+						macOS 10.12+
+						tvOS 10.0+
+						visionOS 1.0+
+						watchOS 3.0+
+					- https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/OSSpinLockTry.3.html
+						- May 26, 2004   Darwin
+				*/
+		#else
+				step_size = sizeof(pthread_mutex_t);
+		#endif
+			mtxsize = (1 + t->ncpu) * step_size;
+			/*1: For semrw.*/
+			/*1: For semOnOff.*/
+			semsize = 0;
 	#else
-		step_size = sizeof(pthread_mutex_t);
+		#ifdef SPL_USING_SPIN_LOCK
+			step_size = sizeof(pthread_spinlock_t);
+		#else
+			step_size = sizeof(pthread_mutex_t);
+		#endif
+			mtxsize = (1 + t->ncpu) * step_size;
+			/*1: For semrw.*/
+			/*1: For semOnOff.*/
+			semsize = 2 * sizeof(sem_t);
 	#endif
-		mtxsize = (1 + t->ncpu) * step_size;
-		/*1: For semrw.*/
-		/*1: For semOnOff.*/
-		semsize = 2 * sizeof(sem_t);
 #endif
 		/*k: For buffer.*/
 		/*mtxsize: mutex size.*/
 		/*semsize: sem size.*/
 		/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+		spl_console_log("buf size: %d, mtxsize: %d, semsize: %d", (int)k, (int)mtxsize, (int)semsize);
 		n = k + mtxsize + semsize;		
 		t->map_mem_size = n;
 		/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
