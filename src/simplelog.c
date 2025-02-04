@@ -2588,8 +2588,12 @@ int spl_clean_sync_tool() {
 		SPL_CloseHandle(t->sem_rwfile);
 		SPL_CloseHandle(t->sem_off);
 #else	
-		
+	#ifdef __MACH__
+		ret = spl_osx_sync_del();
+	#endif		
 #endif
+		spl_free(t->arr_mtx);
+
 		if (t->isProcessMode) {
 			ret = spl_del_memory();
 			if (ret) {
@@ -2599,7 +2603,6 @@ int spl_clean_sync_tool() {
 		else {
 			spl_free(t->buf);
 		}
-		spl_free(t->arr_mtx);
 	} while (0);
 	return ret;
 }
