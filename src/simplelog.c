@@ -909,14 +909,15 @@ void* spl_written_thread_routine(void* lpParam)
 				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
 				for (i = 0; i < t->ncpu; ++i) {
 					spl_mutex_lock(t->arr_mtx[i]);
-					//do {
+					/*
+					//do { */
 						if (MYCASTGEN(main_src_thrd_buf[i])->pl > 0) {
 							memcpy(only_cast->data + only_cast->pl, MYCASTGEN(main_src_thrd_buf[i])->data, 
 								MYCASTGEN(main_src_thrd_buf[i])->pl);
 							only_cast->pl += MYCASTGEN(main_src_thrd_buf[i])->pl;
 							MYCASTGEN(main_src_thrd_buf[i])->pl = 0;
 						}
-					//} while (0);
+					/* //} while (0); */
 					spl_mutex_unlock(t->arr_mtx[i]);
 				}
 
@@ -997,7 +998,7 @@ void* spl_written_thread_routine(void* lpParam)
 
 		
 	} while (0);
-	/*//spl_free(thrd_buffer);*/
+	/* //spl_free(thrd_buffer); */
 	spl_free(main_src_thrd_buf);
 	if (t->arr_topic) {
 		for (i = 0; i < t->n_topic; ++i) {
@@ -1006,8 +1007,8 @@ void* spl_written_thread_routine(void* lpParam)
 		spl_free(src_topic_thrd_buf);
 	}
 	spl_free(only_buf);
-	/*//spl_del_memory((void *) only_buf);*/
-	/*Send a signal to the waiting thread.*/
+	/* //spl_del_memory((void *) only_buf); */
+	/* Send a signal to the waiting thread. */
 	if (t->trigger_thread) {
 #ifndef UNIX_LINUX
 		if (trigger_handle_id) {
@@ -1102,9 +1103,10 @@ char* spl_fmt_now_ext(char* fmtt, int len, int lv,
 
 	*outlen = n;
 
-	
+	/*
 	//*outlen += snprintf(fmtt + n, len - n, "[%s:%s:%d] [r: %d]\t",
 	//	filename, funcname, line, (int)*r);
+	*/
 	*outlen += snprintf(fmtt + n, SPL_RL_BUF - n, "[%s:%s:%d] ",
 		filename, funcname, line);
 	if (*outlen > len) {
@@ -1114,8 +1116,10 @@ char* spl_fmt_now_ext(char* fmtt, int len, int lv,
 		}
 		memcpy(p, fmtt, n);
 		*outlen = n;
+		/*
 		//*outlen += sprintf(p + n, "[%s:%s:%d] [r: %d]\t",
 		//	filename, funcname, line, (int)*r);
+		*/
 		*outlen += snprintf(fmtt + n, SPL_RL_BUF - n, "[%s:%s:%d] ",
 			filename, funcname, line);
 	}
@@ -1161,7 +1165,9 @@ int spl_fmmt_now(char* fmtt, int len) {
 int spl_gen_file(SIMPLE_LOG_ST* t, int *sz, int limit, int *index) {
 	int ret = 0;
 	spl_local_time_st lt,* plt = 0;;
+	/*
 	//int renew = SPL_NO_CHANGE_NAME;
+	*/
 	char path[1024];
 	char fmt_file_name[SPL_FNAME_LEN];
 	int ferr = 0;
@@ -1263,7 +1269,9 @@ int spl_gen_file(SIMPLE_LOG_ST* t, int *sz, int limit, int *index) {
 		}
 		spl_standardize_path(path);
 		spl_standardize_path(t->path_template);
+		/*
 		//t->fp = fopen(path, "a+");
+		*/
 		FFOPEN(t->fp, path, "a+");
 		if (sz) {
 			*sz = 0;
