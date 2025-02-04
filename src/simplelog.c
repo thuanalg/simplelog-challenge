@@ -48,7 +48,11 @@
 	#include <sys/stat.h> /* For mode constants */
 	#include <fcntl.h> /* For O_* constants */
 	#include <errno.h>
-	
+	#ifdef __MACH__
+		#include <mach/mach.h>
+		#include <mach/clock.h>
+		#include <mach/clock_types.h>
+	#endif		
 	#define YEAR_PADDING				1900
 	#define MONTH_PADDING				1
 
@@ -299,6 +303,11 @@ int spl_local_time_now(spl_local_time_st*stt) {
 #else
 	struct tm* lt, rlt;
 	struct timespec nanosec;
+	#ifdef __MACH__
+		clock_serv_t cclock;
+		mach_timespec_t mts;
+		kern_return_t result;
+	#endif
 #endif
 	do {
 		if (!stt) {
@@ -329,11 +338,29 @@ int spl_local_time_now(spl_local_time_st*stt) {
 		lt = (struct tm*) &rlt;
 		/*No need freeing, 
 		//https://stackoverflow.com/questions/35031647/do-i-need-to-free-the-returned-pointer-from-localtime-function*/
+	#ifdef __MACH__
+		result = host_get_clock_service(mach_host_self(), REALTIME_CLOCK, &cclock);
+		if (result != KERN_SUCCESS) {
+			ret = SPL_LOG_MACH_CLOCK_SERVICE_ERROR;
+			spl_console_log("SPL_LOG_MACH_CLOCK_SERVICE_ERROR.");
+			break;
+		}
+		result = clock_get_time(cclock, &mts);
+		if (result != KERN_SUCCESS) {
+			ret = SPL_LOG_MACH_GETTIME_ERROR;
+			spl_console_log("SPL_LOG_MACH_GETTIME_ERROR.");
+			break;
+		}
+		mach_port_deallocate(mach_task_self(), cclock);
+		nanosec.tv_sec = mts.tv_sec;
+		nanosec.tv_nsec = mts.tv_nsec;
+	#else
 		ret = clock_gettime(CLOCK_REALTIME, &nanosec);
 		if (ret) {
 			ret = SPL_LOG_TIME_NANO_NULL_ERROR;
 			break;
 		}
+	#endif
 		stt->year = lt->tm_year;
 		stt->month = lt->tm_mon;
 		stt->day = lt->tm_mday;
@@ -342,6 +369,7 @@ int spl_local_time_now(spl_local_time_st*stt) {
 		stt->minute = lt->tm_min;
 		stt->sec = lt->tm_sec;
 		stt->nn = (nanosec.tv_nsec);
+	
 #endif
 	} while (0);
 	return ret;
@@ -1034,45 +1062,50 @@ char* spl_fmt_now_ext(char* fmtt, int len, int lv,
 	int ret = 0;
 	spl_local_time_st stt;
 	int n = 0;
+	LLU threadiid = 0;
+	
+	threadiid = (LLU)spl_get_threadid();
 	*outlen = 0;
+	ret = spl_local_time_now(&stt);
+	if (ret) {
+		return p;
+	}
+#ifndef __MODE_STRAIGHT__
+	* r = (stt.nn % __simple_log_static__.ncpu);
+#else
+	* r = (threadiid % __simple_log_static__.ncpu);
+#endif
 
-		ret = spl_local_time_now(&stt);
-		if (ret) {
-			return p;
+	n = sprintf(fmtt, SPL_FMT_DATE_ADDING_X"[%c] [tid\t%llu]\t",
+		stt.year + YEAR_PADDING, stt.month + MONTH_PADDING, stt.day,
+		stt.hour, stt.minute, stt.sec, (int)stt.nn, spl_text_gb_c[lv % SPL_LOG_PEAK], spl_get_threadid());
+	if (n < 1) {
+		ret = SPL_LOG_PRINTF_ERROR;
+		return p;
+	}
+
+	memcpy(fmtt + n, __spl_process_id, __spl_process_id_len);
+	n += __spl_process_id_len;
+
+	*outlen = n;
+
+	
+	//*outlen += snprintf(fmtt + n, len - n, "[%s:%s:%d] [r: %d]\t",
+	//	filename, funcname, line, (int)*r);
+	*outlen += snprintf(fmtt + n, SPL_RL_BUF - n, "[%s:%s:%d] ",
+		filename, funcname, line);
+	if (*outlen > len) {
+		spl_malloc((*outlen + 1), p, char);
+		if (!p) {
+			exit(1);
 		}
-
-		*r = (stt.nn  % __simple_log_static__.ncpu);
-
-		n = sprintf(fmtt, SPL_FMT_DATE_ADDING_X"[%c] [tid\t%llu]\t",
-			stt.year + YEAR_PADDING, stt.month + MONTH_PADDING, stt.day,
-			stt.hour, stt.minute, stt.sec, (int)stt.nn, spl_text_gb_c[lv % SPL_LOG_PEAK], spl_get_threadid());
-		if (n < 1) {
-			ret = SPL_LOG_PRINTF_ERROR;
-			return p;
-		}
-
-		memcpy(fmtt + n, __spl_process_id, __spl_process_id_len);
-		n += __spl_process_id_len;
-
+		memcpy(p, fmtt, n);
 		*outlen = n;
-
-		
-		//*outlen += snprintf(fmtt + n, len - n, "[%s:%s:%d] [r: %d]\t",
+		//*outlen += sprintf(p + n, "[%s:%s:%d] [r: %d]\t",
 		//	filename, funcname, line, (int)*r);
 		*outlen += snprintf(fmtt + n, SPL_RL_BUF - n, "[%s:%s:%d] ",
 			filename, funcname, line);
-		if (*outlen > len) {
-			spl_malloc((*outlen + 1), p, char);
-			if (!p) {
-				exit(1);
-			}
-			memcpy(p, fmtt, n);
-			*outlen = n;
-			//*outlen += sprintf(p + n, "[%s:%s:%d] [r: %d]\t",
-			//	filename, funcname, line, (int)*r);
-			*outlen += snprintf(fmtt + n, SPL_RL_BUF - n, "[%s:%s:%d] ",
-				filename, funcname, line);
-		}
+	}
 		
 
 	return p;
