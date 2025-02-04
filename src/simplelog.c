@@ -2299,6 +2299,10 @@ int spl_osx_sync_del() {
 	SIMPLE_LOG_ST* t = &__simple_log_static__;
 	char nameobj[SPL_SHARED_NAME_LEN];
 	do {
+		if (!t->sem_rwfile) {
+			spl_console_log("Already cleared.");
+			break;
+		}
 		if (t->isProcessMode && t->is_master) {
 			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
 			if (sem_close((sem_t*)t->sem_rwfile) == -1) {
@@ -2309,6 +2313,8 @@ int spl_osx_sync_del() {
 				spl_console_log("sem_unlink, errno: %d, errno_text: %s.", errno, strerror(errno));
 				ret = SPL_LOG_OSX_SEM_UNLINK;
 			}
+			t->sem_rwfile = 0;
+
 			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_OFF, t->shared_key);
 			if (sem_close((sem_t*)t->sem_off) == -1) {
 				spl_console_log("sem_close, errno: %d, errno_text: %s.", errno, strerror(errno));
@@ -2318,6 +2324,7 @@ int spl_osx_sync_del() {
 				spl_console_log("sem_unlink, errno: %d, errno_text: %s.", errno, strerror(errno));
 				ret = SPL_LOG_OSX_SEM_UNLINK;
 			}
+			t->sem_off = 0;
 		}
 		else {
 			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
@@ -2325,11 +2332,15 @@ int spl_osx_sync_del() {
 				spl_console_log("sem_close, errno: %d, errno_text: %s.", errno, strerror(errno));
 				ret = SPL_LOG_OSX_SEM_CLOSE;
 			}
+			t->sem_rwfile = 0;
+
 			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_OFF, t->shared_key);
 			if (sem_close((sem_t*)t->sem_off) == -1) {
 				spl_console_log("sem_close, errno: %d, errno_text: %s.", errno, strerror(errno));
 				ret = SPL_LOG_OSX_SEM_CLOSE;
 			}
+			t->sem_off = 0;
+
 		}
 	} while (0);
 	return ret;
