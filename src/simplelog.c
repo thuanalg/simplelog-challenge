@@ -2344,7 +2344,7 @@ int spl_osx_sync_create() {
 #else
 #endif
 
-		if (t->isProcessMode) {
+		if (t->isProcessMode && t->is_master) {
 			int retry = 0;
 			sem_t* hd = 0;
 			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
