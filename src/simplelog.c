@@ -1819,16 +1819,21 @@ int spl_del_memory()
 				}
 			}
 	#endif
-			/*Clean Semaphore*/
-			/*https://linux.die.net/man/3/sem_destroy*/
-			ret = sem_destroy((sem_t*)t->sem_rwfile);
-			if (ret) {
-				spl_console_log("sem_destroy/sem_rwfile: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
-			}
-			ret = sem_destroy((sem_t*)t->sem_off);
-			if (ret) {
-				spl_console_log("sem_destroy/sem_off: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
-			}
+			#ifdef __MACH__
+				/* Clear semaphore of MAC OSX. */
+				ret = spl_osx_sync_del();
+			#else
+				/*Clean Semaphore*/
+				/*https://linux.die.net/man/3/sem_destroy*/
+				ret = sem_destroy((sem_t*)t->sem_rwfile);
+				if (ret) {
+					spl_console_log("sem_destroy/sem_rwfile: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
+				}
+				ret = sem_destroy((sem_t*)t->sem_off);
+				if (ret) {
+					spl_console_log("sem_destroy/sem_off: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
+				}
+			#endif
 		}
 		ret = munmap((void*)t->buf, (size_t) t->map_mem_size);
 		if (ret) {
@@ -2589,7 +2594,7 @@ int spl_clean_sync_tool() {
 		SPL_CloseHandle(t->sem_off);
 #else	
 	#ifdef __MACH__
-		ret = spl_osx_sync_del();
+		ret = spl_osx_sync_del(); /* Clear semaphore of MAC OSX. */
 	#endif		
 #endif
 		spl_free(t->arr_mtx);
