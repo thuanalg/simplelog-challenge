@@ -2131,17 +2131,36 @@ int spl_calculate_size() {
 		if (ret) {
 			break;
 		}
-		/*Semaphore UNIX_LINUX*/
-		p = buff + k + mtxsize;
-		t->sem_rwfile = (void *)p;
-		t->sem_off = (void *)(p + sizeof(sem_t));
-		/*
-		* https://linux.die.net/man/3/sem_init
-		* #include <semaphore.h>
-		* int sem_init(sem_t *sem, int pshared, unsigned int value);
-		*/
-		if (t->isProcessMode) {
-			if (t->is_master) {
+		#ifdef __MACH__
+			ret = spl_osx_sync_create();
+		#else
+			/*Semaphore UNIX_LINUX*/
+			p = buff + k + mtxsize;
+			t->sem_rwfile = (void *)p;
+			t->sem_off = (void *)(p + sizeof(sem_t));
+			/*
+			* https://linux.die.net/man/3/sem_init
+			* #include <semaphore.h>
+			* int sem_init(sem_t *sem, int pshared, unsigned int value);
+			*/
+			if (t->isProcessMode) {
+				if (t->is_master) {
+					int err = 0;
+					err = sem_init((sem_t*)t->sem_rwfile, (int)t->isProcessMode, 0);
+					if (err) {
+						ret = SPL_LOG_SEM_INIT_UNIX;
+						spl_console_log("sem_init, errno: %d, errno_text: %s.", errno, strerror(errno));
+						break;
+					}
+					err = sem_init((sem_t*)t->sem_off, (int)t->isProcessMode, 0);
+					if (err) {
+						ret = SPL_LOG_SEM_INIT_UNIX;
+						spl_console_log("sem_init, errno: %d, errno_text: %s.", errno, strerror(errno));
+						break;
+					}
+				}
+			}
+			else {
 				int err = 0;
 				err = sem_init((sem_t*)t->sem_rwfile, (int)t->isProcessMode, 0);
 				if (err) {
@@ -2156,22 +2175,7 @@ int spl_calculate_size() {
 					break;
 				}
 			}
-		}
-		else {
-			int err = 0;
-			err = sem_init((sem_t*)t->sem_rwfile, (int)t->isProcessMode, 0);
-			if (err) {
-				ret = SPL_LOG_SEM_INIT_UNIX;
-				spl_console_log("sem_init, errno: %d, errno_text: %s.", errno, strerror(errno));
-				break;
-			}
-			err = sem_init((sem_t*)t->sem_off, (int)t->isProcessMode, 0);
-			if (err) {
-				ret = SPL_LOG_SEM_INIT_UNIX;
-				spl_console_log("sem_init, errno: %d, errno_text: %s.", errno, strerror(errno));
-				break;
-			}
-		}
+		#endif
 #endif
 	} while (0);
 
@@ -2335,7 +2339,7 @@ int spl_osx_sync_create() {
 #else
 #endif
 
-		if (t->isProcessMode | 1) {
+		if (t->isProcessMode) {
 			int retry = 0;
 			sem_t* hd = 0;
 			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
