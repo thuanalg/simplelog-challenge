@@ -243,6 +243,12 @@ static int
 	spl_fflush_err(int t, void *fpp);
 
 #ifndef UNIX_LINUX
+	#ifdef __MACH__
+		static int
+			spl_osx_sync_create();
+		static int
+			spl_osx_sync_del();
+	#endif
 	static int
 		spl_win32_sync_create();
 	static DWORD WINAPI
@@ -1987,19 +1993,19 @@ int spl_calculate_size() {
 #else
 	#ifdef __MACH__
 		#ifdef SPL_USING_SPIN_LOCK
-				step_size = sizeof(pthread_spinlock_t);
-				#error "not yet implemented."
-				/*
-					- https://developer.apple.com/documentation/os/os_unfair_lock_t : iOS 10.0+
-						iPadOS 10.0+
-						Mac Catalyst 13.1+
-						macOS 10.12+
-						tvOS 10.0+
-						visionOS 1.0+
-						watchOS 3.0+
-					- https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/OSSpinLockTry.3.html
-						- May 26, 2004   Darwin
-				*/
+			step_size = sizeof(pthread_spinlock_t);
+			#error "not yet implemented."
+			/*
+				- https://developer.apple.com/documentation/os/os_unfair_lock_t : iOS 10.0+
+					iPadOS 10.0+
+					Mac Catalyst 13.1+
+					macOS 10.12+
+					tvOS 10.0+
+					visionOS 1.0+
+					watchOS 3.0+
+				- https://developer.apple.com/library/archive/documentation/System/Conceptual/ManPages_iPhoneOS/man3/OSSpinLockTry.3.html
+					- May 26, 2004   Darwin
+			*/
 		#else
 				step_size = sizeof(pthread_mutex_t);
 		#endif
@@ -2278,6 +2284,142 @@ int spl_win32_sync_create() {
 	return ret;
 }
 #else
+#ifdef __MACH__
+int spl_osx_sync_del() {
+	int ret = 0;
+	SIMPLE_LOG_ST* t = &__simple_log_static__;
+	char nameobj[SPL_SHARED_NAME_LEN];
+	do {
+		if (t->isProcessMode | 1) {
+			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
+			if (sem_close((sem_t*)t->sem_rwfile) == -1) {
+				spl_console_log("sem_close, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_OSX_SEM_CLOSE;
+			}
+			if (sem_unlink(nameobj) == -1) {
+				spl_console_log("sem_unlink, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_OSX_SEM_UNLINK;
+			}
+			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_OFF, t->shared_key);
+			if (sem_close((sem_t*)t->sem_off) == -1) {
+				spl_console_log("sem_close, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_OSX_SEM_CLOSE;
+			}
+			if (sem_unlink(nameobj) == -1) {
+				spl_console_log("sem_unlink, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_OSX_SEM_UNLINK;
+			}
+		}
+		else {
+			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
+			if (sem_close((sem_t*)t->sem_rwfile) == -1) {
+				spl_console_log("sem_close, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_OSX_SEM_CLOSE;
+			}
+			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_OFF, t->shared_key);
+			if (sem_close((sem_t*)t->sem_off) == -1) {
+				spl_console_log("sem_close, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_OSX_SEM_CLOSE;
+			}
+		}
+	} while (0);
+	return ret;
+}
+
+int spl_osx_sync_create() {
+	int ret = 0;
+	SIMPLE_LOG_ST* t = &__simple_log_static__;
+	char nameobj[SPL_SHARED_NAME_LEN];
+	do {
+#ifdef SPL_USING_SPIN_LOCK
+#else
+#endif
+
+		if (t->isProcessMode | 1) {
+			int retry = 0;
+			sem_t* hd = 0;
+			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
+			do {
+				hd = sem_open(nameobj, SPL_LOG_UNIX_CREATE_MODE, SPL_LOG_UNIX__SHARED_MODE, 1);
+				if (hd == SEM_FAILED) {
+					spl_console_log("sem_open, errno: %d, errno_text: %s.", errno, strerror(errno));
+					ret = SPL_LOG_SEM_OSX_CREATED_ERROR;
+					if (retry) {
+						break;
+					}
+					else {
+						ret = sem_unlink(nameobj);
+						if (ret) {
+							spl_console_log("sem_unlink, errno: %d, errno_text: %s.", errno, strerror(errno));
+							ret = SPL_LOG_SEM_OSX_UNLINK_ERROR;
+							break;
+						}
+						retry++;
+						continue;
+					}
+				}
+				break;
+			} while (1);
+
+			if (ret) {
+				break;
+			}
+			t->sem_rwfile = hd;
+
+			retry = 0;
+			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_OFF, t->shared_key);
+			do {
+				hd = sem_open(nameobj, SPL_LOG_UNIX_CREATE_MODE, SPL_LOG_UNIX__SHARED_MODE, 1);
+				if (hd == SEM_FAILED) {
+					spl_console_log("sem_open, errno: %d, errno_text: %s.", errno, strerror(errno));
+					ret = SPL_LOG_SEM_OSX_CREATED_ERROR;
+					if (retry) {
+						break;
+					}
+					else {
+						ret = sem_unlink(nameobj);
+						if (ret) {
+							spl_console_log("sem_unlink, errno: %d, errno_text: %s.", errno, strerror(errno));
+							ret = SPL_LOG_SEM_OSX_UNLINK_ERROR;
+							break;
+						}
+						retry++;
+						continue;
+					}
+				}
+				break;
+			} while (1);
+			if (ret) {
+				break;
+			}
+			sem_wait(hd);
+			t->sem_off = hd;
+		}
+		else
+		{
+			sem_t* hd = 0;
+			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
+			hd = sem_open(nameobj, SPL_LOG_UNIX_OPEN_MODE);
+			if (hd == SEM_FAILED) {
+				spl_console_log("sem_open, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_SEM_OSX_CREATED_ERROR;
+				break;
+			}
+			t->sem_rwfile = hd;
+
+			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_OFF, t->shared_key);
+			hd = sem_open(nameobj, SPL_LOG_UNIX_OPEN_MODE);
+			if (hd == SEM_FAILED) {
+				spl_console_log("sem_open, errno: %d, errno_text: %s.", errno, strerror(errno));
+				ret = SPL_LOG_SEM_OSX_CREATED_ERROR;
+				break;
+			}
+			t->sem_off = hd;
+		}
+	} while (0);
+	return ret;
+}
+#endif
 int spl_mtx_init(void* obj, char shared) 
 {
 	int ret = 0;
