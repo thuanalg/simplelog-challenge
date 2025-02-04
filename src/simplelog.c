@@ -1692,13 +1692,13 @@ spl_fclose_err(int terr, void* ffp)
 	int ret = 0;
 	do {
 #ifndef UNIX_LINUX
-		spl_console_log("ffp: %p, terr: %d, GetLastError: 0x%x,", ffp, terr, (int)GetLastError());
+		spl_console_log("ffp: %p, terr: %d, GetLastError: 0x%x.", ffp, terr, (int)GetLastError());
 #else
 		char buf[64];
 		/* https://linux.die.net/man/3/strerror_r , */
 		/* - The strerror_r() function is similar to strerror(), but is thread safe */
 		strerror_r(errno, buf, 64);
-		spl_console_log("ffp: %p,terr: %d, errno: %d, strerror_r: %s", ffp, (int)errno, buf);
+		spl_console_log("ffp: %p,terr: %d, errno: %d, strerror_r: %s.", ffp, terr, (int)errno, buf);
 #endif
 	} while(0);
 	return ret;
@@ -1709,13 +1709,13 @@ spl_fflush_err(int terr, void* ffp) {
 	int ret = 0;
 	do {
 #ifndef UNIX_LINUX
-		spl_console_log("ffp: %p, terr: %d, GetLastError: 0x%x,", ffp, terr, (int)GetLastError());
+		spl_console_log("ffp: %p, terr: %d, GetLastError: 0x%x.", ffp, terr, (int)GetLastError());
 #else
 		char buf[64];
 		/* https://linux.die.net/man/3/strerror_r , */
 		/* - The strerror_r() function is similar to strerror(), but is thread safe */
 		strerror_r(errno, buf, 64);
-		spl_console_log("ffp: %p,terr: %d, errno: %d, strerror_r: %s", ffp, (int)errno, buf);
+		spl_console_log("ffp: %p, terr: %d, errno: %d, strerror_r: %s.", ffp, terr, (int)errno, buf);
 #endif
 	} while (0);
 	return ret;
