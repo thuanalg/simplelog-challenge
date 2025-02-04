@@ -2294,7 +2294,7 @@ int spl_osx_sync_del() {
 	SIMPLE_LOG_ST* t = &__simple_log_static__;
 	char nameobj[SPL_SHARED_NAME_LEN];
 	do {
-		if (t->isProcessMode | 1) {
+		if (t->isProcessMode) {
 			snprintf(nameobj, SPL_SHARED_NAME_LEN, "%s_%s", SPL_SEM_NAME_RW, t->shared_key);
 			if (sem_close((sem_t*)t->sem_rwfile) == -1) {
 				spl_console_log("sem_close, errno: %d, errno_text: %s.", errno, strerror(errno));
