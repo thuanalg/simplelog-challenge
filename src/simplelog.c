@@ -537,8 +537,10 @@ int spl_init_log_parse(char* buff, char *key, char *isEnd) {
 			break;
 		}
 		if (strcmp(key, SPLOG_SHARED_KEY) == 0) {
-			int n = 0, count = 0;
-			char* p = 0;
+			int n = 0;
+            /*
+             char* p = 0;
+            */
 			n = (int)strlen(buff);
 			if (n < 1) {
 				break;
@@ -585,7 +587,9 @@ int spl_init_log( char *pathcfg)
 	char c = 0;
 	int count = 0;
 	char buf[1024];
-	void* obj = 0;
+    /*
+        void* obj = 0;
+    */
 	char isEnd = 0;
 	__simple_log_static__.ncpu = 1;
 	do {
@@ -1110,8 +1114,7 @@ char* spl_fmt_now_ext(char* fmtt, int len, int lv,
 	*outlen = n;
 
 	/*
-	//*outlen += snprintf(fmtt + n, len - n, "[%s:%s:%d] [r: %d]\t",
-	//	filename, funcname, line, (int)*r);
+        *outlen += snprintf(fmtt + n, len - n, "[%s:%s:%d] [r: %d]\t", filename, funcname, line, (int)*r);
 	*/
 	*outlen += snprintf(fmtt + n, SPL_RL_BUF - n, "[%s:%s:%d] ",
 		filename, funcname, line);
@@ -1123,8 +1126,7 @@ char* spl_fmt_now_ext(char* fmtt, int len, int lv,
 		memcpy(p, fmtt, n);
 		*outlen = n;
 		/*
-		//*outlen += sprintf(p + n, "[%s:%s:%d] [r: %d]\t",
-		//	filename, funcname, line, (int)*r);
+            *outlen += sprintf(p + n, "[%s:%s:%d] [r: %d]\t", filename, funcname, line, (int)*r);
 		*/
 		*outlen += snprintf(fmtt + n, SPL_RL_BUF - n, "[%s:%s:%d] ",
 			filename, funcname, line);
@@ -1212,7 +1214,7 @@ int spl_gen_file(SIMPLE_LOG_ST* t, int *sz, int limit, int *index) {
 					break;
 				}
 				FFSEEK(t->fp, 0, SEEK_END);
-				cszize = FFTELL(t->fp);
+				cszize = (int)FFTELL(t->fp);
 				if (cszize < limit) {
 					*sz = cszize;
 					break;
@@ -1303,7 +1305,7 @@ int spl_rel_sem(void *sem) {
 	int ret = 0;
 #ifndef UNIX_LINUX
 #else
-	int err = 0, val = 0;
+	/* int err = 0, val = 0; */
 #endif
 	do {
 		if (!sem) {
@@ -1785,11 +1787,10 @@ int spl_create_thread(THREAD_ROUTINE f, void* arg, pthread_t *outid)
 int spl_del_memory()
 {
 	int ret = 0;
-	int isWell = 0;
 	SIMPLE_LOG_ST *t = &__simple_log_static__;
 	do {
 #ifndef UNIX_LINUX
-		isWell = (int)UnmapViewOfFile((void*)t->buf);
+		int isWell = (int)UnmapViewOfFile((void*)t->buf);
 		if (!isWell) {
 			spl_console_log("UnmapViewOfFile error: %d", (int)GetLastError());
 			ret = SPL_LOG_SHM_WIN_UNMAP;
