@@ -2645,8 +2645,6 @@ int spl_clean_sync_tool() {
 		ret = spl_osx_sync_del(); /* Clear semaphore of MAC OSX. */
 	#endif		
 #endif
-		spl_free(t->arr_mtx);
-
 		if (t->isProcessMode) {
 			ret = spl_del_memory();
 			if (ret) {
@@ -2656,6 +2654,7 @@ int spl_clean_sync_tool() {
 		else {
 			spl_free(t->buf);
 		}
+        spl_free(t->arr_mtx);
 	} while (0);
 	return ret;
 }
