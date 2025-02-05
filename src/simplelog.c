@@ -60,7 +60,8 @@
 	#define SPL_LOG_UNIX__SHARED_MODE					(S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)	
 	#define SPL_LOG_UNIX_CREATE_MODE					(O_CREAT | O_RDWR | O_EXCL)	
 	#define SPL_LOG_UNIX_OPEN_MODE						(O_RDWR | O_EXCL)	
-	#define SPL_LOG_UNIX_PROT_FLAGS						(PROT_READ | PROT_WRITE | PROT_EXEC)
+	/* #define SPL_LOG_UNIX_PROT_FLAGS						(PROT_READ | PROT_WRITE | PROT_EXEC) */
+    #define SPL_LOG_UNIX_PROT_FLAGS                        (PROT_READ | PROT_WRITE)
 #endif
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -73,7 +74,7 @@
 #define FFOPEN(__fp, __path, __mode) \
 	{ (__fp) = fopen((__path), (__mode)); if(!(__fp)) spl_console_log("Open FILE error code: 0x%p, %s.\n", (__fp), (__fp) ? "DONE": "FAILED"); }
 
-#define FFTELL(__fp)						ftell((FILE*)(__fp))
+#define FFTELL(__fp)							ftell((FILE*)(__fp))
 #define FFSEEK(__fp, __a, __b)				fseek((FILE*)(__fp), (__a), (__b))
 
 #ifndef UNIX_LINUX
@@ -92,6 +93,9 @@
 		{ (__err) = pthread_mutex_lock((pthread_mutex_t*)(__obj)); if((__err)) spl_console_log("pthread_mutex_lock errcode: %d. %s\n", (__err), (__err) ? "FALIED": "DONE");}
 	#define SPL_pthread_mutex_unlock(__obj, __err) \
 		{ (__err) = pthread_mutex_unlock((pthread_mutex_t*)(__obj)); if((__err)) spl_console_log("pthread_mutex_unlock errcode: %d. %s\n", (__err), (__err) ? "FALIED": "DONE");}
+
+    #define spl_shm_unlink(__name__, __err__) { __err__ = shm_unlink(__name__); \
+        if(__err__) {spl_console_log("shm_unlink: err: %d, errno: %d, text: %s, name: %s.", __err__, errno, strerror(errno), __name__);}}
 #endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #define SPL_SEM_NAME_RW				"_SEM_RW"
@@ -1781,9 +1785,6 @@ int spl_create_thread(THREAD_ROUTINE f, void* arg, pthread_t *outid)
 	return ret;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-#define spl_shm_unlink(__name__, __err__) { __err__ = shm_unlink(__name__); \
-		if(__err__) {spl_console_log("shm_unlink: err: %d, errno: %d, text: %s, name: %s.", __err__, errno, strerror(errno), __name__);}}
-
 int spl_del_memory()
 {
 	int ret = 0;
@@ -1804,8 +1805,8 @@ int spl_del_memory()
 		int i = 0;
 		if (t->is_master) {
 	#ifdef SPL_USING_SPIN_LOCK
-			/*Clean spinlock*/
-			/*https://linux.die.net/man/3/pthread_spin_destroy*/
+			/* Clean spinlock */
+			/* https://linux.die.net/man/3/pthread_spin_destroy */
 			ret = pthread_spin_destroy((pthread_spinlock_t*)t->mtx_rw);
 			if (ret) {
 				spl_console_log("pthread_spin_destroy/mtx_rw: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
@@ -1817,7 +1818,7 @@ int spl_del_memory()
 				}
 			}
 	#else
-			/*Clean Mutex*/
+			/* Clean Mutex */
 			/* https://linux.die.net/man/3/pthread_mutex_destroy */
 			ret = pthread_mutex_destroy((pthread_mutex_t*)t->mtx_rw);
 			if (ret) {
@@ -1834,8 +1835,8 @@ int spl_del_memory()
 				/* Clear semaphore of MAC OSX. */
 				ret = spl_osx_sync_del();
 			#else
-				/*Clean Semaphore*/
-				/*https://linux.die.net/man/3/sem_destroy*/
+				/* Clean Semaphore */
+				/* https://linux.die.net/man/3/sem_destroy */
 				ret = sem_destroy((sem_t*)t->sem_rwfile);
 				if (ret) {
 					spl_console_log("sem_destroy/sem_rwfile: err: %d, errno: %d, text: %s.", ret, errno, strerror(errno));
@@ -1910,16 +1911,24 @@ int spl_create_memory(void** output, char* shared_key, int size_shared, char isC
 		int hMapFile = 0;
 		int err = 0;
 		if (isCreating) {
-			hMapFile = shm_open(shared_key, SPL_LOG_UNIX_CREATE_MODE, SPL_LOG_UNIX__SHARED_MODE);
-			if (hMapFile < 0) {
-				spl_console_log("shm_open/creating, errno: %d, errno_text: %s.", errno, strerror(errno));
-				hMapFile = shm_open(shared_key, SPL_LOG_UNIX_OPEN_MODE, SPL_LOG_UNIX__SHARED_MODE);
+            int retry = 0;
+            while(1) {
+				hMapFile = shm_open(shared_key, SPL_LOG_UNIX_CREATE_MODE, SPL_LOG_UNIX__SHARED_MODE);
 				if (hMapFile < 0) {
-					spl_console_log("shm_open/creating+open, errno: %d, errno_text: %s.", errno, strerror(errno));
-					ret = SPL_LOG_SHM_UNIX_CREATE;
-					break;
+                    if(retry) {
+                        spl_console_log("shm_open/creating+open, errno: %d, errno_text: %s, shared_key: %s.", errno, strerror(errno), shared_key);
+                        ret = SPL_LOG_SHM_UNIX_CREATE;
+                    }
+                    if(!retry) {
+                        /* shm_unlink(shared_key); */
+                        spl_shm_unlink(shared_key, err);
+                        retry++;
+                        continue;
+                    }
+                    break;
 				}
-			}
+                break;
+            }
 		}
 		else {
 			hMapFile = shm_open(shared_key, SPL_LOG_UNIX_OPEN_MODE, SPL_LOG_UNIX__SHARED_MODE);
@@ -1929,16 +1938,22 @@ int spl_create_memory(void** output, char* shared_key, int size_shared, char isC
 				break;
 			}
 		}
+        if(ret) {
+            break;
+        }
+        
 		err = ftruncate(hMapFile, size_shared);
 		if (err) {
-			spl_console_log("SPL_LOG_SHM_UNIX_TRUNC");
+            spl_console_log("ftruncate, errno: %d, errno_text: %s, shared_key: %s.", errno, strerror(errno), shared_key);
 			ret = SPL_LOG_SHM_UNIX_TRUNC;
 			break;
 		}
+         
 		p = (char*)mmap(0, size_shared, SPL_LOG_UNIX_PROT_FLAGS, MAP_SHARED, hMapFile, 0);
+        /* p = (char*)mmap(0, size_shared, PROT_WRITE, MAP_SHARED, hMapFile, 0); //PROT_WRITE */
 		if (p == MAP_FAILED || p == 0) {
 			ret = SPL_LOG_SHM_UNIX_MAP_FAILED;
-			spl_console_log("SPL_LOG_SHM_UNIX_MAP_FAILED");
+			spl_console_log("mmap, errno: %d, errno_text: %s, hMapFile: %d, size_shared: %d.", errno, strerror(errno), hMapFile, (int)size_shared);
 			p = 0;
 			break;
 		}
