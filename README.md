@@ -61,6 +61,14 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
    In an extreme scenario, SimpleLog-Challenge processed **1 billion records** across **10 threads**, generating **102 GB of log data** in just **31 minutes**. This performance indicates that SimpleLog-Challenge can scale to handle **massive volumes** of log data, making it suitable for both **high-frequency** and **large-scale logging** applications.
 
+4. **OSX/Apple clang version 11.0.3 (clang-1103.0.32.29) with 10 Threads and 10 Million Records:**
+
+   - **SimpleLog-challenge: 35 seconds** 
+   - **spdlog: 26 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250205-MacOSX-performance-2-Core.txt) 
+
+   In this environment **spdlog** is faster at **9s (~35%)** than **simplelog-challenge**. However, I shall re-verify with PC with more CPU cores.
+
+
 #### **Optimized for Low Latency and High Throughput**
 
 - **Minimal Latency:**  
