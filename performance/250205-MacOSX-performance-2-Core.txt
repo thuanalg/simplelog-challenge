@@ -1,0 +1,115 @@
+#---------------------------------------------------------------------------------------------------------------------
+
+If you have a problem of configuration/running or suspecting about honesty.
+	Please contact me: <nguyenthaithuanalg@gmail.com>/Skype:<nguyenthaithuanalg>/Phone: +084.799.324.179
+
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog test file: https://github.com/thuanalg/simplelog-topic/blob/main/src/spd_example.cpp
+
+simplelog-challenge: https://github.com/thuanalg/simplelog-challenge/blob/main/src/cpp_test/main.cpp
+	Configuration file: src/mach/simplelog.cfg
+	
+Environment for both:
+		Thuans-Mac-mini-2:example ntthuan$ gcc -v
+			Configured with: --prefix=/Applications/Xcode.app/Contents/Developer/usr --with-gxx-include-dir=/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/4.2.1
+			Apple clang version 11.0.3 (clang-1103.0.32.29)
+			Target: x86_64-apple-darwin19.4.0
+			Thread model: posix
+			InstalledDir: /Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/bin
+		Thuans-Mac-mini-2:example ntthuan$	
+	- 10 threads/10(ten) million records.
+------------------
+System Information
+------------------
+	- Hardware Overview:
+
+			Model Name: Mac mini(Late 2012)
+			Model Identifier: Macmini6,1
+			Processor Name: Dual-Core Intel Core i5
+			Processor Speed: 2.5 GHz
+			Number of Processors: 1
+			Total Number of Cores: 2
+			L2 Cache (per Core): 256 KB
+			L3 Cache: 3 MB
+			Hyper-Threading Technology: Enabled
+			Memory: 16 GB
+			Boot ROM Version: 283.0.0.0.0
+			SMC Version (system): 2.7f1
+			Serial Number (system): C07MW15LDWYL
+			Hardware UUID: 6FD4500E-700C-52F6-A9E0-78964B60125D
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 01 (first round)
+[2025-02-03 15:37:44.628] [A] [info] [example.cpp:log_messages:435] [Threadid 123145557639168] test log: 999999
+[2025-02-03 15:37:17.995] [A] [info] [example.cpp:log_messages:435] [Threadid 123145556029440] test log: 0
+Size of the file: 1118888900
+26.7s
+
+
+
+simplelog-challenge 01 (first round)
+
+	[2025-02-05 09:35:07.320243491] [I] [tid        4499914176]     [pid     2875]  [main.cpp:main:159] this is master process.
+	[2025-02-05 09:35:09.162449415] [I] [tid        123145340907520]        [pid     2877]  [main.cpp:posix_thread_routine:103] Log:2
+	[2025-02-05 09:35:09.162961185] [I] [tid        123145340370944]        [pid     2877]  [main.cpp:posix_thread_routine:103] Log:54
+	
+	[2025-02-05 09:35:44.192062533] [I] [tid        123145343590400]        [pid     2877]  [main.cpp:posix_thread_routine:103] Log:999997
+	[2025-02-05 09:35:44.191781764] [I] [tid        123145343590400]        [pid     2877]  [main.cpp:posix_thread_routine:103] Log:999956
+	[2025-02-05 09:35:44.191884589] [I] [tid        123145343590400]        [pid     2877]  [main.cpp:posix_thread_routine:103] Log:999971
+	[2025-02-05 09:35:47.329272871] [I] [tid        4499914176]     [pid     2875]  [main.cpp:main:159] this is master process.
+	[2025-02-05 09:35:52.330053047] [I] [tid        4499914176]     [pid     2875]  [main.cpp:main:159] this is master process.
+
+Size of the file: 1178888900
+35.03s
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 02  (second round)
+[2025-02-03 15:40:19.349] [A] [info] [example.cpp:log_messages:435] [Threadid 123145528803328] test log: 999999
+[2025-02-03 15:39:53.536] [A] [info] [example.cpp:log_messages:435] [Threadid 123145526120448] test log: 0
+Size of the file: 1118888900
+25.8s
+
+
+
+simplelog-challenge 02 (second round)
+	[2025-02-05 09:45:03.749818888] [I] [tid        4654616000]     [pid     2921]  [main.cpp:main:159] this is master process.
+	[2025-02-05 09:45:06.317700330] [I] [tid        123145422000128]        [pid     2925]  [main.cpp:posix_thread_routine:103] Log:0
+	[2025-02-05 09:45:06.317773230] [I] [tid        123145420926976]        [pid     2925]  [main.cpp:posix_thread_routine:103] Log:5
+	[2025-02-05 09:45:06.317896530] [I] [tid        123145422536704]        [pid     2925]  [main.cpp:posix_thread_routine:103] Log:2
+	
+	
+	[2025-02-05 09:45:41.244810349] [I] [tid        123145421463552]        [pid     2925]  [main.cpp:posix_thread_routine:103] Log:999983
+	[2025-02-05 09:45:41.244823354] [I] [tid        123145421463552]        [pid     2925]  [main.cpp:posix_thread_routine:103] Log:999985
+	[2025-02-05 09:45:41.244829864] [I] [tid        123145421463552]        [pid     2925]  [main.cpp:posix_thread_routine:103] Log:999986
+	[2025-02-05 09:45:43.770637820] [I] [tid        4654616000]     [pid     2921]  [main.cpp:main:159] this is master process.
+	[2025-02-05 09:45:48.771839426] [I] [tid        4654616000]     [pid     2921]  [main.cpp:main:159] this is master process.
+
+
+Size of the file: 1178888900
+34.93s
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 03 (third round)
+[2025-02-03 15:44:14.319] [A] [info] [example.cpp:log_messages:435] [Threadid 123145313828864] test log: 999999
+[2025-02-03 15:43:48.731] [A] [info] [example.cpp:log_messages:435] [Threadid 123145308999680] test log: 0
+Size of the file: 1118888900
+25.6s
+
+
+
+simplelog-challenge 01 (third round)
+	[2025-02-05 09:49:02.983429392] [I] [tid        4431101376]     [pid     2935]  [main.cpp:main:159] this is master process.
+	[2025-02-05 09:49:04.446525370] [I] [tid        123145506758656]        [pid     2937]  [main.cpp:posix_thread_routine:103] Log:4
+	[2025-02-05 09:49:04.446567025] [I] [tid        123145506222080]        [pid     2937]  [main.cpp:posix_thread_routine:103] Log:22
+	
+	[2025-02-05 09:49:39.046767164] [I] [tid        123145507831808]        [pid     2937]  [main.cpp:posix_thread_routine:103] Log:999972
+	[2025-02-05 09:49:39.046792964] [I] [tid        123145507831808]        [pid     2937]  [main.cpp:posix_thread_routine:103] Log:999976
+	[2025-02-05 09:49:39.046831574] [I] [tid        123145507831808]        [pid     2937]  [main.cpp:posix_thread_routine:103] Log:999982
+	[2025-02-05 09:49:39.046896194] [I] [tid        123145507831808]        [pid     2937]  [main.cpp:posix_thread_routine:103] Log:999992
+	[2025-02-05 09:49:43.998552675] [I] [tid        4431101376]     [pid     2935]  [main.cpp:main:159] this is master process.
+	[2025-02-05 09:49:48.999901896] [I] [tid        4431101376]     [pid     2935]  [main.cpp:main:159] this is master process.
+
+Size of the file: 1178888900
+34.6s
+#---------------------------------------------------------------------------------------------------------------------
+Conclusion:
+- Average time of spdlog: 26s
+- Average time of simplelog-challenge: 35s
+	In this environment spdlog is faster at 9s (~35%) than simplelog-topic.

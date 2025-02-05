@@ -18,6 +18,7 @@
 *		<2025-Jan-08>
 *		<2025-Jan-10>
 *		<2025-Jan-18>
+*		<2025-Feb-04>
 * Decription:
 *		The (only) main header file to export 5 APIs: [spl_init_log, spl_init_log_ext, spllog, spllogtopic, spl_finish_log].
 */
@@ -133,7 +134,14 @@ extern "C" {
 		SPL_LOG_SEM_INIT_UNIX,
 		SPL_LOG_THREAD_W32_CREATE,
 		SPL_LOG_THREAD_PX_CREATE,
-		
+		SPL_LOG_MACH_GETTIME_ERROR,
+		SPL_LOG_MACH_CLOCK_SERVICE_ERROR,
+		SPL_LOG_OSX_SEM_CLOSE,
+		SPL_LOG_OSX_SEM_UNLINK,
+		SPL_LOG_SEM_OSX_CREATED_ERROR,
+		SPL_LOG_SEM_INIT_OSX,
+		SPL_LOG_SEM_OSX_UNLINK_ERROR,
+
 		
 		
 		SPL_END_ERROR,
