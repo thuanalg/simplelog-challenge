@@ -1941,14 +1941,24 @@ int spl_create_memory(void** output, char* shared_key, int size_shared, char isC
         if(ret) {
             break;
         }
-        
+        if (t->isProcessMode) {
+            if (t->is_master) {
+                err = ftruncate(hMapFile, size_shared);
+                if (err) {
+                    spl_console_log("ftruncate, errno: %d, errno_text: %s, shared_key: %s.", errno, strerror(errno), shared_key);
+                    ret = SPL_LOG_SHM_UNIX_TRUNC;
+                    break;
+                }
+            }
+        }
+        /*
 		err = ftruncate(hMapFile, size_shared);
 		if (err) {
             spl_console_log("ftruncate, errno: %d, errno_text: %s, shared_key: %s.", errno, strerror(errno), shared_key);
 			ret = SPL_LOG_SHM_UNIX_TRUNC;
 			break;
 		}
-         
+        */
 		p = (char*)mmap(0, size_shared, SPL_LOG_UNIX_PROT_FLAGS, MAP_SHARED, hMapFile, 0);
         /* p = (char*)mmap(0, size_shared, PROT_WRITE, MAP_SHARED, hMapFile, 0); //PROT_WRITE */
 		if (p == MAP_FAILED || p == 0) {
