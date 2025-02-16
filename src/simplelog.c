@@ -1106,7 +1106,7 @@ char* spl_fmt_now_ext(char* fmtt, int len, int lv,
 
 	n = sprintf(fmtt, SPL_FMT_DATE_ADDING_X"[%c] [tid\t%llu]\t",
 		stt.year + YEAR_PADDING, stt.month + MONTH_PADDING, stt.day,
-		stt.hour, stt.minute, stt.sec, (int)stt.nn, spl_text_gb_c[lv % SPL_LOG_PEAK], spl_get_threadid());
+		stt.hour, stt.minute, stt.sec, (int)stt.nn, spl_text_gb_c[lv % SPL_LOG_PEAK], threadiid);
 	if (n < 1) {
 		ret = SPL_LOG_PRINTF_ERROR;
 		return p;
@@ -2660,13 +2660,13 @@ int spl_clean_sync_tool() {
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 LLU spl_process_id() {
-	LLU ret = 0;
+	/*LLU ret = 0;*/
 #ifndef UNIX_LINUX
-	ret = (LLU)GetCurrentProcessId();
+	return (LLU)GetCurrentProcessId();
 #else
-	ret = (LLU)getpid();
+	return (LLU)getpid();
 #endif	
-	return ret;
+	/*return ret;*/
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
