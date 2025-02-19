@@ -48,11 +48,15 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
 2. **Linux Performance Benchmark (10 Threads and 10 Million Records), VM CentOs9:**  
 	
-	**With 4 CPUs:**	
+	**With 4 CPUs / VM:**	
 	- **SimpleLog-Challenge: ~12.5 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-LinuxCentOs09-4CPU-multi-processes.txt)
 	- **spdlog: ~15 seconds**  
-   
-   On **Linux**, SimpleLog-Challenge is **faster** spdlog about **2.5s (20%)**. This consistency across platforms demonstrates that SimpleLog-Challenge provides **reliable performance** in both Windows and Linux environments. If **number of CPUs** are more, then SimpleLog-Challenge becomes more effective.
+   In this test, **SimpleLog-Challenge** logged **10 million records** in just **16 seconds**, compared to **66 seconds** taken by **spdlog**. This demonstrates **4x faster performance** in multithreaded environments, showing that SimpleLog-Challenge efficiently manages logging tasks without unnecessary performance bottlenecks.   
+	
+	**With 8 CPUs / PC:**	
+	- **SimpleLog-Challenge: ~3.358 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt)
+	- **spdlog: ~7.051 seconds**  
+   In this environment simplelog-topic is faster at **3.72s (~100%, 2x)** than spdlog..
 
 3. **Large-Scale Logging Test (1 Billion Records, 10 Threads):**
 
