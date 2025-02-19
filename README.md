@@ -60,10 +60,16 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
 3. **Large-Scale Logging Test (1 Billion Records, 10 Threads):**
 
+	**Windows 10: ** 
    - **Time Taken:** **31 minutes** (**1860 seconds**)
    - **Log Size:** **Size on disk: 102 GB (110,389,039,104 bytes)**: (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-1billion-multi-processes.txt)
 
-   In an extreme scenario, SimpleLog-Challenge processed **1 billion records** across **10 threads**, generating **102 GB of log data** in just **31 minutes**. This performance indicates that SimpleLog-Challenge can scale to handle **massive volumes** of log data, making it suitable for both **high-frequency** and **large-scale logging** applications.
+
+	**CentOS 09: ** 
+   - **Time Taken:** **19 minutes** (**1140 seconds**)
+   - **Log Size:** **Size on disk: 113GB (120,888,922,262 bytes)**: (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core-1Billion.txt)
+
+   In an extreme scenario, Linux is better Windows.
 
 4. **OSX/Apple clang version 11.0.3 (clang-1103.0.32.29) with 10 Threads and 10 Million Records:**
 
