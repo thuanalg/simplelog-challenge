@@ -66,7 +66,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
 
 	**CentOS 09: ** 
-   - **Time Taken:** **19 minutes** (**1140 seconds**)
+   - **Time Taken:** **19 minutes** (**1140 seconds**) 
    - **Log Size:** **Size on disk: 113GB (120,888,922,262 bytes)**: (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core-1Billion.txt)
 
    In an extreme scenario, Linux is better Windows.
