@@ -1,0 +1,133 @@
+#---------------------------------------------------------------------------------------------------------------------
+
+If you have a problem of configuration/running or suspecting about honesty.
+	Please contact me: <nguyenthaithuanalg@gmail.com>/Skype:<nguyenthaithuanalg>/Phone: +084.799.324.179
+
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog test file: https://github.com/thuanalg/simplelog-topic/blob/main/src/spd_example.cpp
+
+simplelog-topic: https://github.com/thuanalg/simplelog-topic/blob/main/src/cpp_test/main.cpp
+	Configuration file: performance/250217-CentOS-09-performance-8-Core.cfg
+	
+Environment for both:
+	- CentOS 09, 8 Cores
+	- 10 threads
+	- 10(ten) million records.
+------------------
+System Information
+------------------
+      System Manufacturer: Gigabyte Technology Co., Ltd.
+             System Model: Z87M-D3H
+                     BIOS: F9 (type: UEFI)
+                Processor: Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz (8 CPUs), ~3.4GHz
+                   Memory: 16384MB RAM
+      Available OS Memory: 16272MB RAM
+                Page File: 10589MB used, 8113MB available
+	- 10 threads/10(ten) million records.
+
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 01 (first round)
+[2025-02-17 22:02:54.257] [A] [info] [example.cpp:log_messages:433] [Threadid 139977675503168] test log: 0
+[2025-02-17 22:02:54.257] [A] [info] [example.cpp:log_messages:433] [Threadid 139977675503168] test log: 1
+[2025-02-17 22:02:54.257] [A] [info] [example.cpp:log_messages:433] [Threadid 139977675503168] test log: 2
+
+[2025-02-17 22:03:01.296] [A] [info] [example.cpp:log_messages:433] [Threadid 139977539184192] test log: 999997
+[2025-02-17 22:03:01.296] [A] [info] [example.cpp:log_messages:433] [Threadid 139977539184192] test log: 999998
+[2025-02-17 22:03:01.296] [A] [info] [example.cpp:log_messages:433] [Threadid 139977539184192] test log: 999999
+
+-->> File size: 1118888900, time: 7.039s
+
+
+simplelog-challenge:
+
+[2025-02-18 08:48:13.848288992] [I] [tid        140307428419392]        [pid     11236] [main.cpp:main:159] this is master process.
+[2025-02-18 08:48:18.848432940] [I] [tid        140307428419392]        [pid     11236] [main.cpp:main:159] this is master process.
+[2025-02-18 08:48:21.467347680] [I] [tid        139721696224832]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:3
+[2025-02-18 08:48:21.467367165] [I] [tid        139721687832128]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:6
+[2025-02-18 08:48:21.467368500] [I] [tid        139721696224832]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:21
+[2025-02-18 08:48:21.467373885] [I] [tid        139721696224832]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:27
+[2025-02-18 08:48:21.467374500] [I] [tid        139721679439424]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:0
+[2025-02-18 08:48:21.467384925] [I] [tid        139721696224832]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:36
+
+[2025-02-18 08:48:24.839277839] [I] [tid        139721620690496]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:999932
+[2025-02-18 08:48:24.839288789] [I] [tid        139721620690496]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:999948
+[2025-02-18 08:48:24.839303879] [I] [tid        139721620690496]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:999970
+[2025-02-18 08:48:24.839321654] [I] [tid        139721620690496]        [pid     11250] [main.cpp:posix_thread_routine:103] Log:999996
+[2025-02-18 08:48:28.848702281] [I] [tid        140307428419392]        [pid     11236] [main.cpp:main:159] this is master process.
+[2025-02-18 08:48:33.848900562] [I] [tid        140307428419392]        [pid     11236] [main.cpp:main:159] this is master process.
+ 
+ --->>> Filesize: 1188889480, time: 3.372
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 02  (second round)
+
+[2025-02-17 22:08:05.728] [A] [info] [example.cpp:log_messages:433] [Threadid 140458583914048] test log: 0
+[2025-02-17 22:08:05.728] [A] [info] [example.cpp:log_messages:433] [Threadid 140458583914048] test log: 1
+[2025-02-17 22:08:05.728] [A] [info] [example.cpp:log_messages:433] [Threadid 140458583914048] test log: 2
+
+[2025-02-17 22:08:12.766] [A] [info] [example.cpp:log_messages:433] [Threadid 140458558735936] test log: 999997
+[2025-02-17 22:08:12.766] [A] [info] [example.cpp:log_messages:433] [Threadid 140458558735936] test log: 999998
+[2025-02-17 22:08:12.766] [A] [info] [example.cpp:log_messages:433] [Threadid 140458558735936] test log: 999999
+
+-->> File size: 1118888900, time: 7.038s
+
+
+simplelog-challenge:
+
+[2025-02-18 08:56:32.753092908] [I] [tid        139833759582016]        [pid     11939] [main.cpp:main:159] this is master process.
+[2025-02-18 08:56:37.753266855] [I] [tid        139833759582016]        [pid     11939] [main.cpp:main:159] this is master process.
+[2025-02-18 08:56:42.753440253] [I] [tid        139833759582016]        [pid     11939] [main.cpp:main:159] this is master process.
+[2025-02-18 08:56:47.753596349] [I] [tid        139833759582016]        [pid     11939] [main.cpp:main:159] this is master process.
+[2025-02-18 08:56:51.215431935] [I] [tid        140201981781568]        [pid     11950] [main.cpp:posix_thread_routine:103] Log:11
+[2025-02-18 08:56:51.215435850] [I] [tid        140201973388864]        [pid     11950] [main.cpp:posix_thread_routine:103] Log:14
+[2025-02-18 08:56:51.215439750] [I] [tid        140201981781568]        [pid     11950] [main.cpp:posix_thread_routine:103] Log:18
+
+
+[2025-02-18 08:56:54.553024079] [I] [tid        140201906247232]        [pid     11950] [main.cpp:posix_thread_routine:103] Log:999863
+[2025-02-18 08:56:54.553026089] [I] [tid        140201906247232]        [pid     11950] [main.cpp:posix_thread_routine:103] Log:999866
+[2025-02-18 08:56:54.553057754] [I] [tid        140201906247232]        [pid     11950] [main.cpp:posix_thread_routine:103] Log:999913
+[2025-02-18 08:56:54.553089134] [I] [tid        140201906247232]        [pid     11950] [main.cpp:posix_thread_routine:103] Log:999960
+[2025-02-18 08:56:57.753911267] [I] [tid        139833759582016]        [pid     11939] [main.cpp:main:159] this is master process.
+[2025-02-18 08:57:02.754117738] [I] [tid        139833759582016]        [pid     11939] [main.cpp:main:159] this is master process.
+
+--->>> Filesize: 1188889480, time: 3.338
+
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog 03 (third round)
+[2025-02-17 22:12:58.239] [A] [info] [example.cpp:log_messages:433] [Threadid 140659501561408] test log: 0
+[2025-02-17 22:12:58.239] [A] [info] [example.cpp:log_messages:433] [Threadid 140659501561408] test log: 1
+[2025-02-17 22:12:58.239] [A] [info] [example.cpp:log_messages:433] [Threadid 140659501561408] test log: 2
+[2025-02-17 22:12:58.239] [A] [info] [example.cpp:log_messages:433] [Threadid 140659501561408] test log: 3
+[2025-02-17 22:12:58.239] [A] [info] [example.cpp:log_messages:433] [Threadid 140659501561408] test log: 4
+
+[2025-02-17 22:13:05.317] [A] [info] [example.cpp:log_messages:433] [Threadid 140659088414272] test log: 999995
+[2025-02-17 22:13:05.317] [A] [info] [example.cpp:log_messages:433] [Threadid 140659088414272] test log: 999996
+[2025-02-17 22:13:05.317] [A] [info] [example.cpp:log_messages:433] [Threadid 140659088414272] test log: 999997
+[2025-02-17 22:13:05.317] [A] [info] [example.cpp:log_messages:433] [Threadid 140659088414272] test log: 999998
+[2025-02-17 22:13:05.317] [A] [info] [example.cpp:log_messages:433] [Threadid 140659088414272] test log: 999999
+
+-->> File size: 1118888900, time: 7.078s
+
+
+simplelog-challenge:
+
+[2025-02-18 09:03:40.500755108] [I] [tid        140568542746432]        [pid     12379] [main.cpp:main:159] this is master process.
+[2025-02-18 09:03:45.500932799] [I] [tid        140568542746432]        [pid     12379] [main.cpp:main:159] this is master process.
+[2025-02-18 09:03:45.879442065] [I] [tid        140184657204800]        [pid     12384] [main.cpp:posix_thread_routine:103] Log:0
+[2025-02-18 09:03:45.879462180] [I] [tid        140184665597504]        [pid     12384] [main.cpp:posix_thread_routine:103] Log:6
+[2025-02-18 09:03:45.879468660] [I] [tid        140184665597504]        [pid     12384] [main.cpp:posix_thread_routine:103] Log:11
+[2025-02-18 09:03:45.879473235] [I] [tid        140184665597504]        [pid     12384] [main.cpp:posix_thread_routine:103] Log:15
+[2025-02-18 09:03:45.879477915] [I] [tid        140184657204800]        [pid     12384] [main.cpp:posix_thread_routine:103] Log:15
+
+
+[2025-02-18 09:03:49.242606894] [I] [tid        140184615241280]        [pid     12384] [main.cpp:posix_thread_routine:103] Log:999987
+[2025-02-18 09:03:49.242613089] [I] [tid        140184615241280]        [pid     12384] [main.cpp:posix_thread_routine:103] Log:999996
+[2025-02-18 09:03:49.242614454] [I] [tid        140184615241280]        [pid     12384] [main.cpp:posix_thread_routine:103] Log:999998
+[2025-02-18 09:03:50.501069647] [I] [tid        140568542746432]        [pid     12379] [main.cpp:main:159] this is master process.
+ 
+--->>> Filesize: 1188889480, time: 3.363
+
+#---------------------------------------------------------------------------------------------------------------------
+Conclusion:
+- Average time of simplelog-topic: 3.358s. Speed: 2.978 million records a second.
+- Average time of spdlog: 7.051s. Speed: 1.418 million records a second.
+	In this environment simplelog-topic is faster at 3.72s (~100%, 2x) than spdlog.
