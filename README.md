@@ -151,7 +151,7 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 **Video Install/Demo:**  
 	- For Windows 10 64bit: (https://drive.google.com/file/d/1gccgtO84U7_R9a1WuPcLnT3Iw7hBN7Wr/view?usp=sharing)  
 	- For VM Linux CentOs9 64bit: (https://drive.google.com/file/d/1a2OWwSoa1bIbzYvhhoFKDAhS3eTXkPv9/view?usp=sharing)  
-	- For MacOSX 64bit, come to src/mach, and do similar steps of Linux.
+	- For MacOSX 64bit, come to **src/mach**, and do similar steps of Linux.
 
 ---
 **Thanks a lot to:**
