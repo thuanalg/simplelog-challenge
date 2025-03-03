@@ -71,7 +71,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
    In an extreme scenario, Linux is better Windows. More CPUs more effective.
 
-4. **OSX/Apple clang version 11.0.3 (clang-1103.0.32.29) with 10 Threads and 10 Million Records:**
+4. **OSX/Apple clang version 11.0.3 (clang-1103.0.32.29) with 10 Threads and 10 Million Records (Total Number of Cores: 2, Model Name: Mac mini(Late 2012)):**
 
    - **SimpleLog-challenge: 35 seconds** 
    - **spdlog: 26 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250205-MacOSX-performance-2-Core.txt) 
