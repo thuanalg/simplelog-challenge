@@ -82,11 +82,11 @@ dotest()
 }
 
 // topic=sys,lib,exe,nayax,sksgn
-#define spllogsys(__level__, __fmt__, ...) spllogtopic(__level__, 0, __fmt__, ##__VA_ARGS__);
-#define splloglib(__level__, __fmt__, ...) spllogtopic(__level__, 1, __fmt__, ##__VA_ARGS__);
-#define spllogexe(__level__, __fmt__, ...) spllogtopic(__level__, 2, __fmt__, ##__VA_ARGS__);
-#define spllognaxyax(__level__, __fmt__, ...) spllogtopic(__level__, 3, __fmt__, ##__VA_ARGS__);
-#define spllogsksgn(__level__, __fmt__, ...) spllogtopic(__level__, 4, __fmt__, ##__VA_ARGS__);
+#define spclogsys(__level__, __fmt__, ...) spclogtopic(__level__, 0, __fmt__, ##__VA_ARGS__);
+#define spcloglib(__level__, __fmt__, ...) spclogtopic(__level__, 1, __fmt__, ##__VA_ARGS__);
+#define spclogexe(__level__, __fmt__, ...) spclogtopic(__level__, 2, __fmt__, ##__VA_ARGS__);
+#define spclognaxyax(__level__, __fmt__, ...) spclogtopic(__level__, 3, __fmt__, ##__VA_ARGS__);
+#define spclogsksgn(__level__, __fmt__, ...) spclogtopic(__level__, 4, __fmt__, ##__VA_ARGS__);
 // https://github.com/gabime/spdlog, 10 thread
 #ifndef UNIX_LINUX
 DWORD WINAPI
@@ -107,11 +107,11 @@ posix_thread_routine(void *lpParam)
 /*You can mix any topic togther. No problem.*/
 #define TEXT_PERFORMMANCE_TEXT "Log:%d"
 		if (topicindex < 1) {
-			spllog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
-			/*spllog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa);*/
+			spclog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
+			/*spclog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa);*/
 		} else {
-			spllogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
-			/*spllogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa); */
+			spclogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
+			/*spclogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa); */
 		}
 		++count;
 	}
@@ -163,7 +163,7 @@ main(int argc, char *argv[])
 		FILE *fp = 0;
 		while (1) {
 			spc_console_log("this is master process.");
-			spllog(SPC_LOG_INFO, "this is master process.");
+			spclog(SPC_LOG_INFO, "this is master process.");
 			spc_sleep(5);
 #ifndef UNIX_LINUX
 			fp = fopen("trigger_master.txt", "r");

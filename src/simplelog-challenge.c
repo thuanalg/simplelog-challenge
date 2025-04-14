@@ -193,12 +193,12 @@
 #ifndef UNIX_LINUX
 // DLL_API_SIMPLE_LOG
 static void
-splLockSpinlock(volatile long *p);
+spcLockSpinlock(volatile long *p);
 // DLL_API_SIMPLE_LOG
 static void
-splUnlockSpinlock(volatile long *p);
-#define SplLockSpinlock(__p__) splLockSpinlock((volatile long *)(__p__))
-#define SplUnlockSpinlock(__p__) splUnlockSpinlock((volatile long *)(__p__))
+spcUnlockSpinlock(volatile long *p);
+#define SplLockSpinlock(__p__) spcLockSpinlock((volatile long *)(__p__))
+#define SplUnlockSpinlock(__p__) spcUnlockSpinlock((volatile long *)(__p__))
 
 /*static
 	volatile long spc_rw_spin = 0;*/
@@ -219,10 +219,10 @@ typedef enum __CHANGE_NAME_E__ {
 } __CHANGE_NAME_E__;
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-static const char *__splog_pathfolder[] = {SPLOG_PATHFOLDR, SPLOG_LEVEL, SPLOG_BUFF_SIZE, SPC_MAX_SZ_MSG, SPLOG_ROT_SIZE,
+static const char *__spclog_pathfolder[] = {SPLOG_PATHFOLDR, SPLOG_LEVEL, SPLOG_BUFF_SIZE, SPC_MAX_SZ_MSG, SPLOG_ROT_SIZE,
     SPLOG_TOPIC, SPLOG_NCPU, SPLOG_TRIGGER, SPLOG_PROCESS_MODE, SPLOG_SHARED_KEY, SPLOG_END_CFG, 0};
 
-static SIMPLE_LOG_ST __simple_log_static__;
+static SPC_LOG_ST __simple_log_static__;
 ;
 
 static char __spc_process_id[32];
@@ -236,11 +236,11 @@ spc_init_log_parse(char *buff, char *key, char *);
 static int
 spc_verify_folder(char *folder);
 static int
-spc_simple_log_thread(SIMPLE_LOG_ST *t);
+spc_simple_log_thread(SPC_LOG_ST *t);
 static int
-spc_gen_file(SIMPLE_LOG_ST *t, int *n, int limit, int *);
+spc_gen_file(SPC_LOG_ST *t, int *n, int limit, int *);
 static int
-spc_gen_topics(SIMPLE_LOG_ST *t);
+spc_gen_topics(SPC_LOG_ST *t);
 static int
 spc_get_fname_now(char *name);
 static int
@@ -311,11 +311,11 @@ spc_set_off(int);
 static int
 spc_standardize_path(char *fname);
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-SIMPLE_LOG_ST *
+SPC_LOG_ST *
 spc_control_obj()
 {
 	// spc_con
-	return (SIMPLE_LOG_ST *)&__simple_log_static__;
+	return (SPC_LOG_ST *)&__simple_log_static__;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
@@ -416,7 +416,7 @@ int
 spc_set_off(int isoff)
 {
 	int ret = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	spc_mutex_lock(t->mtx_rw);
 	do {
 		t->off = isoff;
@@ -454,7 +454,7 @@ int
 spc_init_log_parse(char *buff, char *key, char *isEnd)
 {
 	int ret = SPC_NO_ERROR;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	do {
 		if (strcmp(key, SPLOG_PATHFOLDR) == 0) {
 			if (!buff[0]) {
@@ -648,7 +648,7 @@ spc_init_log(char *pathcfg)
 				}
 				while (1) {
 					char *pp = 0;
-					node = (char *)__splog_pathfolder[j];
+					node = (char *)__spclog_pathfolder[j];
 					if (!node) {
 						break;
 					}
@@ -860,7 +860,7 @@ spc_written_thread_routine(void *lpParam)
 #endif
 {
 	int k = 0;
-	SIMPLE_LOG_ST *t = (SIMPLE_LOG_ST *)lpParam;
+	SPC_LOG_ST *t = (SPC_LOG_ST *)lpParam;
 	int ret = 0, sz = 0, err = 0;
 
 	register char is_off = 0;
@@ -1088,7 +1088,7 @@ spc_written_thread_routine(void *lpParam)
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int
-spc_simple_log_thread(SIMPLE_LOG_ST *t)
+spc_simple_log_thread(SPC_LOG_ST *t)
 {
 	int ret = 0;
 	do {
@@ -1205,7 +1205,7 @@ spc_fmmt_now(char *fmtt, int len)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 int
-spc_gen_file(SIMPLE_LOG_ST *t, int *sz, int limit, int *index)
+spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 {
 	int ret = 0;
 	spc_local_time_st lt, *plt = 0;
@@ -1376,7 +1376,7 @@ int
 spc_finish_log()
 {
 	int ret = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	ret = spc_set_off(1);
 	if (ret) {
 		spc_console_log("spc_set_off ret: %d", ret);
@@ -1385,7 +1385,7 @@ spc_finish_log()
 	if (ret) {
 		spc_console_log("spc_clean_sync_tool ret: %d", ret);
 	}
-	memset(t, 0, sizeof(SIMPLE_LOG_ST));
+	memset(t, 0, sizeof(SPC_LOG_ST));
 	return ret;
 }
 
@@ -1591,7 +1591,7 @@ spc_stdz_topics(char *buff, int *inoutlen, int *ntopics, char **pchar)
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int
-spc_gen_topics(SIMPLE_LOG_ST *t)
+spc_gen_topics(SPC_LOG_ST *t)
 {
 	int ret = 0;
 	char path[1024];
@@ -1780,14 +1780,14 @@ spc_fflush_err(int terr, void *ffp)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef UNIX_LINUX
 void
-splLockSpinlock(volatile long *p)
+spcLockSpinlock(volatile long *p)
 {
 	while (InterlockedCompareExchange(p, 1, 0) != 0) {
 	}
 }
 
 void
-splUnlockSpinlock(volatile long *p)
+spcUnlockSpinlock(volatile long *p)
 {
 	InterlockedExchange(p, 0);
 }
@@ -1803,7 +1803,7 @@ void *
 spc_trigger_routine(void *arg)
 #endif
 {
-	SIMPLE_LOG_ST *t = (SIMPLE_LOG_ST *)arg;
+	SPC_LOG_ST *t = (SPC_LOG_ST *)arg;
 	while (1) {
 		spc_rel_sem(t->sem_rwfile);
 		spc_milli_sleep(t->trigger_thread);
@@ -1847,7 +1847,7 @@ int
 spc_del_memory()
 {
 	int ret = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	do {
 #ifndef UNIX_LINUX
 		int isWell = (int)UnmapViewOfFile((void *)t->buf);
@@ -1933,7 +1933,7 @@ spc_create_memory(void **output, char *shared_key, int size_shared, char isCreat
 {
 	int ret = 0;
 	char *p = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	do {
 #ifndef UNIX_LINUX
 		HANDLE hMapFile = 0;
@@ -2045,7 +2045,7 @@ spc_create_memory(void **output, char *shared_key, int size_shared, char isCreat
 	return ret = 0;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-/* (SIMPLE_LOG_ST*)&__simple_log_static__, volatile long, pthread_spinlock_t, pthread_mutex_t */
+/* (SPC_LOG_ST*)&__simple_log_static__, volatile long, pthread_spinlock_t, pthread_mutex_t */
 
 int
 spc_calculate_size()
@@ -2070,7 +2070,7 @@ spc_calculate_size()
 	char *p = 0;
 	int step_size = 0;
 #endif
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	size_arr_mtx = t->ncpu * sizeof(void *);
 	/*k: For buffer.*/
 	k = t->buff_size * t->ncpu * (t->n_topic + 1);
@@ -2294,7 +2294,7 @@ int
 spc_win32_sync_create()
 {
 	int ret = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	char nameobj[SPC_SHARED_NAME_LEN];
 	do {
 #ifdef SPC_USING_SPIN_LOCK
@@ -2399,7 +2399,7 @@ int
 spc_osx_sync_del()
 {
 	int ret = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	char nameobj[SPC_SHARED_NAME_LEN];
 	do {
 		if (!t->sem_rwfile) {
@@ -2451,7 +2451,7 @@ int
 spc_osx_sync_create()
 {
 	int ret = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	char nameobj[SPC_SHARED_NAME_LEN];
 	do {
 #ifdef SPC_USING_SPIN_LOCK
@@ -2546,7 +2546,7 @@ spc_mtx_init(void *obj, char shared)
 {
 	int ret = 0;
 	int err = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	pthread_mutex_t *mtx = (pthread_mutex_t *)obj;
 	do {
 		if (t->isProcessMode && !t->is_master) {
@@ -2591,7 +2591,7 @@ spc_mtx_init(void *obj, char shared)
 static void
 spc_fmt_segment(generic_dta_st *sgment)
 {
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	sgment->total = t->buff_size;
 	sgment->pl = 0;
 	sgment->pc = 0;
@@ -2606,7 +2606,7 @@ spc_init_segments()
 	int k = 0;
 	int step = 0;
 	generic_dta_st *sgment = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	p = (char *)t->buf;
 	if (!t->range) {
 		t->range = t->buff_size - (sizeof(generic_dta_st) + t->max_sz_msg + SPC_RL_BUF);
@@ -2642,13 +2642,13 @@ spc_allocate_topics()
 	char *p1 = 0;
 	int n = 0;
 	int szitopics = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	do {
 		if (!t->n_topic) {
 			break;
 		}
-		szitopics = sizeof(SIMPLE_LOG_TOPIC_ST) * t->n_topic;
-		spc_malloc(szitopics, t->arr_topic, SIMPLE_LOG_TOPIC_ST);
+		szitopics = sizeof(SPC_TOPIC_ST) * t->n_topic;
+		spc_malloc(szitopics, t->arr_topic, SPC_TOPIC_ST);
 		if (!t->arr_topic) {
 			ret = SPC_LOG_TOPIC_MEMORY;
 			break;
@@ -2697,7 +2697,7 @@ int
 spc_clean_sync_tool()
 {
 	int ret = 0;
-	SIMPLE_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__simple_log_static__;
 	do {
 		if (t->n_topic > 0) {
 			spc_free(t->topics);

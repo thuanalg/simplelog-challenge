@@ -21,7 +21,7 @@
  *		<2025-Feb-04>
  *		<2025-Apr-12>
  * Decription:
- *		The (only) main header file to export 5 APIs: [spc_init_log, spc_init_log_ext, spllog, spllogtopic,
+ *		The (only) main header file to export 5 APIs: [spc_init_log, spc_init_log_ext, spclog, spclogtopic,
  *spc_finish_log].
  */
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -181,15 +181,15 @@ typedef struct __spc_local_time_st__ {
 #define SPC_SHARED_KEY_LEN 64
 #define SPC_SHARED_NAME_LEN 128
 
-typedef struct __SIMPLE_LOG_TOPIC_ST__ {
+typedef struct __SPC_TOPIC_ST__ {
 	int index; /*Index of a topic*/
 	char topic[SPC_TOPIC_SIZE]; /*Name of topic*/
 	generic_dta_st *buf; /*Buff for writing*/
 	int fizize; /*Size of file.*/
 	void *fp; /*File stream.*/
-} SIMPLE_LOG_TOPIC_ST;
+} SPC_TOPIC_ST;
 
-typedef struct __SIMPLE_LOG_ST__ {
+typedef struct __SPC_LOG_ST__ {
 	int llevel; /*Level of log.*/
 	int file_limit_size; /*Limitation of each log file. No nead SYNC.*/
 	int buff_size; /*Buffer size for each buffer. No nead SYNC.*/
@@ -207,8 +207,8 @@ typedef struct __SIMPLE_LOG_ST__ {
 	FILE *fp; /*fp: Need to close*/
 	generic_dta_st *buf; /*buf: Must be synchoronized. Must be freed.*/
 	char *topics; /*topics: topics string. Must be freed */
-	int n_topic; /*Number of topics, SIMPLE_LOG_TOPIC_ST.*/
-	SIMPLE_LOG_TOPIC_ST *arr_topic; /*List od topics: SIMPLE_LOG_TOPIC_ST. Must be freed*/
+	int n_topic; /*Number of topics, SPC_TOPIC_ST.*/
+	SPC_TOPIC_ST *arr_topic; /*List od topics: SPC_TOPIC_ST. Must be freed*/
 	int renew; /*In a thread of logger, NO NEED SYNC.*/
 	char path_template[1024]; /*In a thread of logger, NO NEED SYNC.*/
 	int ncpu; /*Number of CPU.*/
@@ -229,7 +229,7 @@ typedef struct __SIMPLE_LOG_ST__ {
 	SPC_CALLBACL_FUNCTION
 	fn;
 	SPC_CALLBACL_DATA *obj;
-} SIMPLE_LOG_ST;
+} SPC_LOG_ST;
 
 typedef struct __SPC_INPUT_ARG__ {
 	char folder[SPC_PATH_FOLDER];
@@ -308,12 +308,12 @@ typedef struct __SPC_INPUT_ARG__ {
 #define SPC_MAX_AB(a, b) ((a) > (b)) ? (a) : (b)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-#define SPLKEYBUF(__t__, __i__) ((generic_dta_st *)((char *)__t__->buf + (__t__->buff_size * __i__)))
+#define SPCKEYBUF(__t__, __i__) ((generic_dta_st *)((char *)__t__->buf + (__t__->buff_size * __i__)))
 #define __spc_log_buf_level__(__lv__, ___fmttt___, ...)                                                                     \
 	{                                                                                                                   \
 		;                                                                                                           \
 		;                                                                                                           \
-		SIMPLE_LOG_ST *__t__ = spc_control_obj();                                                                   \
+		SPC_LOG_ST *__t__ = spc_control_obj();                                                                   \
 		if (__t__->llevel <= (__lv__) && ___fmttt___[0]) {                                                          \
 			;                                                                                                   \
 			;                                                                                                   \
@@ -344,16 +344,16 @@ typedef struct __SPC_INPUT_ARG__ {
 					;                                                                                   \
 					spc_mutex_lock(__t__->arr_mtx[__r__]);                                              \
 					;                                                                                   \
-					if (__t__->range > SPLKEYBUF(__t__, __r__)->pl) {                                   \
+					if (__t__->range > SPCKEYBUF(__t__, __r__)->pl) {                                   \
 						;                                                                           \
-						memcpy(SPLKEYBUF(__t__, __r__)->data + SPLKEYBUF(__t__, __r__)->pl,         \
+						memcpy(SPCKEYBUF(__t__, __r__)->data + SPCKEYBUF(__t__, __r__)->pl,         \
 						    __pprefmt__, __outlen__);                                               \
 						;                                                                           \
-						SPLKEYBUF(__t__, __r__)->pl += __outlen__;                                  \
+						SPCKEYBUF(__t__, __r__)->pl += __outlen__;                                  \
 						;                                                                           \
 						__len__ =                                                                   \
-						    snprintf(SPLKEYBUF(__t__, __r__)->data + SPLKEYBUF(__t__, __r__)->pl,   \
-							__t__->krange - SPLKEYBUF(__t__, __r__)->pl, ___fmttt___,           \
+						    snprintf(SPCKEYBUF(__t__, __r__)->data + SPCKEYBUF(__t__, __r__)->pl,   \
+							__t__->krange - SPCKEYBUF(__t__, __r__)->pl, ___fmttt___,           \
 							##__VA_ARGS__);                                                     \
 						;                                                                           \
 						if (__len__ > 0) {                                                          \
@@ -361,11 +361,11 @@ typedef struct __SPC_INPUT_ARG__ {
 							;                                                                   \
 							;                                                                   \
 							__outlen__ = SPC_MIN_AB(                                            \
-							    __len__, __t__->krange - SPLKEYBUF(__t__, __r__)->pl);          \
+							    __len__, __t__->krange - SPCKEYBUF(__t__, __r__)->pl);          \
 							;                                                                   \
 							; /*spc_console_log("outlen: %d", outlen);*/                        \
 							;                                                                   \
-							SPLKEYBUF(__t__, __r__)->pl += __outlen__;                          \
+							SPCKEYBUF(__t__, __r__)->pl += __outlen__;                          \
 							;                                                                   \
 						};                                                                          \
 					}                                                                                   \
@@ -390,14 +390,14 @@ typedef struct __SPC_INPUT_ARG__ {
 		}                                                                                                           \
 	}
 
-#define STSPLOGBUFTOPIC(__t__, __i__) (&(__t__->arr_topic[__i__]))->buf
-#define STSPLOGBUFTOPIC_RANGE(__t__, __i__, __r__)                                                                          \
-	((generic_dta_st *)((char *)STSPLOGBUFTOPIC(__t__, __i__) + __t__->buff_size * __r__))
+#define STSPCLOBUFTOPIC(__t__, __i__) (&(__t__->arr_topic[__i__]))->buf
+#define STSPCLOBUFTOPIC_RANGE(__t__, __i__, __r__)                                                                          \
+	((generic_dta_st *)((char *)STSPCLOBUFTOPIC(__t__, __i__) + __t__->buff_size * __r__))
 
 #define __spc_log_buf_topic_level__(__lv__, __tpic__, ___fmttt___, ...)                                                     \
 	{                                                                                                                   \
 		;                                                                                                           \
-		SIMPLE_LOG_ST *__t__ = spc_control_obj();                                                                   \
+		SPC_LOG_ST *__t__ = spc_control_obj();                                                                   \
 		;                                                                                                           \
 		if (__t__->llevel <= (__lv__) && ___fmttt___[0] && __t__->arr_topic) {                                      \
 			;                                                                                                   \
@@ -434,18 +434,18 @@ typedef struct __SPC_INPUT_ARG__ {
 				;                                                                                           \
 				;                                                                                           \
 				;                                                                                           \
-				if (__t__->range > STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl) {                      \
+				if (__t__->range > STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl) {                      \
 					;                                                                                   \
-					memcpy(STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +                         \
-						   STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,                        \
+					memcpy(STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +                         \
+						   STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,                        \
 					    __pprefmt__, __outlen__);                                                       \
 					;                                                                                   \
-					STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;                     \
+					STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;                     \
 					;                                                                                   \
 					;                                                                                   \
-					__len__ = snprintf(STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +             \
-							       STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,            \
-					    __t__->krange - STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl, ___fmttt___,  \
+					__len__ = snprintf(STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +             \
+							       STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,            \
+					    __t__->krange - STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl, ___fmttt___,  \
 					    ##__VA_ARGS__);                                                                 \
 					;                                                                                   \
 					;                                                                                   \
@@ -454,12 +454,12 @@ typedef struct __SPC_INPUT_ARG__ {
 						;                                                                           \
 						;                                                                           \
 						__outlen__ = SPC_MIN_AB(__len__,                                            \
-						    __t__->krange - STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl);      \
+						    __t__->krange - STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl);      \
 						; /*spc_console_log("outlen: %d", outlen);*/                                \
 						;                                                                           \
 						;                                                                           \
 						;                                                                           \
-						STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;             \
+						STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;             \
 					}                                                                                   \
 				}                                                                                           \
 				/*}*/                                                                                       \
@@ -495,16 +495,16 @@ DLL_API_SIMPLE_LOG int
 spc_init_log_ext(SPC_INPUT_ARG *input);
 
 /*
- * Export name:	spllog
- * Sample:		spllog(SPC_LOG_INFO, "Hello spllog: %llu", time(0));
+ * Export name:	spclog
+ * Sample:		spclog(SPC_LOG_INFO, "Hello spclog: %llu", time(0));
  */
-#define spllog __spc_log_buf_level__
+#define spclog __spc_log_buf_level__
 
 /*
- * Export name:	spllogtopic
- * Sample:		spllogtopic(SPC_LOG_INFO, 0, "Hello spllog: %llu", time(0));
+ * Export name:	spclogtopic
+ * Sample:		spclogtopic(SPC_LOG_INFO, 0, "Hello spclog: %llu", time(0));
  */
-#define spllogtopic __spc_log_buf_topic_level__
+#define spclogtopic __spc_log_buf_topic_level__
 
 /* Please demo with spc_finish_log */
 DLL_API_SIMPLE_LOG int
@@ -534,7 +534,7 @@ DLL_API_SIMPLE_LOG
 LLU
 spc_milli_now();
 DLL_API_SIMPLE_LOG
-SIMPLE_LOG_ST *
+SPC_LOG_ST *
 spc_control_obj();
 DLL_API_SIMPLE_LOG
 LLU
