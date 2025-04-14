@@ -188,7 +188,7 @@
 #define SPC_MILLION 1000000
 #define SPC_FNAME_LEN 128
 
-#define MYCASTGEN(__t__) ((spc_gen_data_st *)__t__)
+#define SPC_CASTGEN(__t__) ((spc_gen_data_st *)__t__)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef UNIX_LINUX
 // DLL_API_SIMPLE_LOG
@@ -880,7 +880,7 @@ spc_written_thread_routine(void *lpParam)
 	//spc_malloc((t->buff_size * 3), only_buf, char);
 	//spc_create_memory((void**)&only_buf, "thread_buff_123", (t->buff_size * t->ncpu), 1);
 	*/
-	only_cast = MYCASTGEN(only_buf);
+	only_cast = SPC_CASTGEN(only_buf);
 	only_cast->total = (t->buff_size * t->ncpu);
 	/*
 	//only_cast->range = only_cast->total - sizeof(spc_gen_data_st);
@@ -958,12 +958,12 @@ spc_written_thread_routine(void *lpParam)
 					spc_mutex_lock(t->arr_mtx[i]);
 					/*
 					//do { */
-					if (MYCASTGEN(main_src_thrd_buf[i])->pl > 0) {
+					if (SPC_CASTGEN(main_src_thrd_buf[i])->pl > 0) {
 						memcpy(only_cast->data + only_cast->pl,
-						    MYCASTGEN(main_src_thrd_buf[i])->data,
-						    MYCASTGEN(main_src_thrd_buf[i])->pl);
-						only_cast->pl += MYCASTGEN(main_src_thrd_buf[i])->pl;
-						MYCASTGEN(main_src_thrd_buf[i])->pl = 0;
+						    SPC_CASTGEN(main_src_thrd_buf[i])->data,
+						    SPC_CASTGEN(main_src_thrd_buf[i])->pl);
+						only_cast->pl += SPC_CASTGEN(main_src_thrd_buf[i])->pl;
+						SPC_CASTGEN(main_src_thrd_buf[i])->pl = 0;
 					}
 					/* //} while (0); */
 					spc_mutex_unlock(t->arr_mtx[i]);
@@ -989,11 +989,11 @@ spc_written_thread_routine(void *lpParam)
 							src = src_topic_thrd_buf[i][j];
 							spc_mutex_lock(t->arr_mtx[j]);
 							/*//do */
-							if (MYCASTGEN(src)->pl > 0) {
-								memcpy(only_cast->data + only_cast->pl, MYCASTGEN(src)->data,
-								    MYCASTGEN(src)->pl);
-								only_cast->pl += MYCASTGEN(src)->pl;
-								MYCASTGEN(src)->pl = 0;
+							if (SPC_CASTGEN(src)->pl > 0) {
+								memcpy(only_cast->data + only_cast->pl, SPC_CASTGEN(src)->data,
+								    SPC_CASTGEN(src)->pl);
+								only_cast->pl += SPC_CASTGEN(src)->pl;
+								SPC_CASTGEN(src)->pl = 0;
 							}
 							/*//} while (0);*/
 							spc_mutex_unlock(t->arr_mtx[j]);
