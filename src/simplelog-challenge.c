@@ -314,7 +314,6 @@ spc_standardize_path(char *fname);
 SPC_LOG_ST *
 spc_control_obj()
 {
-	// spc_con
 	return (SPC_LOG_ST *)&__spc_log_statiic__;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -631,7 +630,7 @@ spc_init_log(char *pathcfg)
 		snprintf(__spc_process_id, 32, "[pid \t %llu]\t", spc_process_id());
 		__spc_process_id_len = (int)strlen(__spc_process_id);
 		memset(buf, 0, sizeof(buf));
-		// fp = fopen(pathcfg, "r");
+		/* // fp = fopen(pathcfg, "r");*/
 		FFOPEN(fp, pathcfg, "r");
 		if (!fp) {
 			ret = 1;
@@ -661,7 +660,7 @@ spc_init_log(char *pathcfg)
 						++j;
 						continue;
 					}
-					// if (pp)
+					/* // if (pp) */
 					{
 						char *p = 0;
 						size_t k = 0;
@@ -2139,7 +2138,7 @@ spc_calculate_size()
 		n = k + mtxsize + semsize;
 		t->map_mem_size = n;
 		/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
-		// int spc_create_memory(void** output, char* shared_key, int size_shared, char isCreating) {
+		/* // int spc_create_memory(void** output, char* shared_key, int size_shared, char isCreating) { */
 		if (t->isProcessMode) {
 			spc_create_memory((void **)&buff, t->shared_key, n, t->is_master);
 		} else {

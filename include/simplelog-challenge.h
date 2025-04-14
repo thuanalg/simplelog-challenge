@@ -32,10 +32,10 @@
 /*strrchr*/
 #define UNIX_LINUX
 #ifndef SPC_USING_SPIN_LOCK
-// #define SPC_USING_SPIN_LOCK
-#endif // !SPC_USING_SPIN_LOCK
+	/*// #define SPC_USING_SPIN_LOCK */
+#endif /* // !SPC_USING_SPIN_LOCK */
 
-// #define __UNIX_LINUX_CPP11_AND_NEWERS__
+/* // #define __UNIX_LINUX_CPP11_AND_NEWERS__ */
 
 #ifndef __UNIX_LINUX_CPP11_AND_NEWERS__
 #else
@@ -55,7 +55,8 @@ extern "C" {
 #define SPC_LOG_FATAL 5
 #define SPC_LOG_PEAK 6
 
-// #define					SPC_RL_BUF						50
+/* // #define					SPC_RL_BUF						50 */
+
 #define SPC_RL_BUF 256
 #define SPC_PATH_FOLDER 1024
 #define SPC_IDD_NAME 64
