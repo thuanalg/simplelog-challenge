@@ -161,7 +161,7 @@ typedef struct __GENERIC_DATA__ {
 	int pc; /*Point to the current*/
 	int pl; /*Point to the last*/
 	char data[0]; /*Generic data */
-} generic_dta_st;
+} spc_gen_data_st;
 
 #define spc_uchar unsigned char
 #define spc_uint unsigned int
@@ -184,7 +184,7 @@ typedef struct __spc_local_time_st__ {
 typedef struct __SPC_TOPIC_ST__ {
 	int index; /*Index of a topic*/
 	char topic[SPC_TOPIC_SIZE]; /*Name of topic*/
-	generic_dta_st *buf; /*Buff for writing*/
+	spc_gen_data_st *buf; /*Buff for writing*/
 	int fizize; /*Size of file.*/
 	void *fp; /*File stream.*/
 } SPC_TOPIC_ST;
@@ -205,7 +205,7 @@ typedef struct __SPC_LOG_ST__ {
 	void *sem_off; /*sem_off: Need to close handle*/
 	spc_local_time_st lc_time_now; /*Current time.*/
 	FILE *fp; /*fp: Need to close*/
-	generic_dta_st *buf; /*buf: Must be synchoronized. Must be freed.*/
+	spc_gen_data_st *buf; /*buf: Must be synchoronized. Must be freed.*/
 	char *topics; /*topics: topics string. Must be freed */
 	int n_topic; /*Number of topics, SPC_TOPIC_ST.*/
 	SPC_TOPIC_ST *arr_topic; /*List od topics: SPC_TOPIC_ST. Must be freed*/
@@ -308,7 +308,7 @@ typedef struct __SPC_INPUT_ARG__ {
 #define SPC_MAX_AB(a, b) ((a) > (b)) ? (a) : (b)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-#define SPCKEYBUF(__t__, __i__) ((generic_dta_st *)((char *)__t__->buf + (__t__->buff_size * __i__)))
+#define SPCKEYBUF(__t__, __i__) ((spc_gen_data_st *)((char *)__t__->buf + (__t__->buff_size * __i__)))
 #define __spc_log_buf_level__(__lv__, ___fmttt___, ...)                                                                     \
 	{                                                                                                                   \
 		;                                                                                                           \
@@ -392,7 +392,7 @@ typedef struct __SPC_INPUT_ARG__ {
 
 #define STSPCLOBUFTOPIC(__t__, __i__) (&(__t__->arr_topic[__i__]))->buf
 #define STSPCLOBUFTOPIC_RANGE(__t__, __i__, __r__)                                                                          \
-	((generic_dta_st *)((char *)STSPCLOBUFTOPIC(__t__, __i__) + __t__->buff_size * __r__))
+	((spc_gen_data_st *)((char *)STSPCLOBUFTOPIC(__t__, __i__) + __t__->buff_size * __r__))
 
 #define __spc_log_buf_topic_level__(__lv__, __tpic__, ___fmttt___, ...)                                                     \
 	{                                                                                                                   \

@@ -188,7 +188,7 @@
 #define SPC_MILLION 1000000
 #define SPC_FNAME_LEN 128
 
-#define MYCASTGEN(__t__) ((generic_dta_st *)__t__)
+#define MYCASTGEN(__t__) ((spc_gen_data_st *)__t__)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef UNIX_LINUX
 // DLL_API_SIMPLE_LOG
@@ -875,7 +875,7 @@ spc_written_thread_routine(void *lpParam)
 	pthread_t trigger_handle_id = 0;
 #endif
 	char *only_buf = 0;
-	generic_dta_st *only_cast = 0;
+	spc_gen_data_st *only_cast = 0;
 	spc_malloc((t->buff_size * t->ncpu), only_buf, char);
 	/*
 	//spc_malloc((t->buff_size * 3), only_buf, char);
@@ -884,7 +884,7 @@ spc_written_thread_routine(void *lpParam)
 	only_cast = MYCASTGEN(only_buf);
 	only_cast->total = (t->buff_size * t->ncpu);
 	/*
-	//only_cast->range = only_cast->total - sizeof(generic_dta_st);
+	//only_cast->range = only_cast->total - sizeof(spc_gen_data_st);
 	*/
 	only_cast->pl = only_cast->pc = 0;
 
@@ -2150,7 +2150,7 @@ spc_calculate_size()
 			spc_console_log("spc_malloc: SPC_LOG_BUFF_MALLOC_ERROR.");
 			break;
 		}
-		t->buf = (generic_dta_st *)buff;
+		t->buf = (spc_gen_data_st *)buff;
 
 #ifndef UNIX_LINUX
 #ifdef SPC_USING_SPIN_LOCK
@@ -2589,7 +2589,7 @@ spc_mtx_init(void *obj, char shared)
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 static void
-spc_fmt_segment(generic_dta_st *sgment)
+spc_fmt_segment(spc_gen_data_st *sgment)
 {
 	SPC_LOG_ST *t = &__spc_log_statiic__;
 	sgment->total = t->buff_size;
@@ -2605,26 +2605,26 @@ spc_init_segments()
 	int i = 0;
 	int k = 0;
 	int step = 0;
-	generic_dta_st *sgment = 0;
+	spc_gen_data_st *sgment = 0;
 	SPC_LOG_ST *t = &__spc_log_statiic__;
 	p = (char *)t->buf;
 	if (!t->range) {
-		t->range = t->buff_size - (sizeof(generic_dta_st) + t->max_sz_msg + SPC_RL_BUF);
+		t->range = t->buff_size - (sizeof(spc_gen_data_st) + t->max_sz_msg + SPC_RL_BUF);
 		t->krange = t->range + t->max_sz_msg;
 	}
 	do {
 		for (i = 0; i < t->ncpu; ++i) {
 			seg = p + i * t->buff_size;
-			sgment = (generic_dta_st *)seg;
+			sgment = (spc_gen_data_st *)seg;
 			spc_fmt_segment(sgment);
 		}
 		step = t->buff_size * t->ncpu;
 		for (k = 0; k < t->n_topic; ++k) {
 			p += step;
-			t->arr_topic[k].buf = (generic_dta_st *)p;
+			t->arr_topic[k].buf = (spc_gen_data_st *)p;
 			for (i = 0; i < t->ncpu; ++i) {
 				seg = p + i * t->buff_size;
-				sgment = (generic_dta_st *)seg;
+				sgment = (spc_gen_data_st *)seg;
 				spc_fmt_segment(sgment);
 			}
 		}
