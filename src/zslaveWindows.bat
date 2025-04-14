@@ -1,1 +1,0 @@
-simple_cpp_million_example.exe --n_thread=200 --is_master=0 --loop_count=1000000

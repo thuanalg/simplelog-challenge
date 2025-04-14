@@ -136,19 +136,29 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 **APIs - Focus on Simplicity and Ease of Use**:  
   - **4 simple APIs** for usage:  
     - **Initialization** (at the start of `main`):  
-	    		    - `spl_init_log_ext(SPL_INPUT_ARG *input)`  
+	    		    - `spc_init_log_ext(SPC_INPUT_ARG *input)`  
     - **Logging** (in any thread):  
-	    	    - `spllog(level, fmt, ...)`  
-	    	    - **Levels**: `SPL_LOG_DEBUG`, `SPL_LOG_INFO`, `SPL_LOG_WARNING`, `SPL_LOG_ERROR`, `SPL_LOG_FATAL`  
+	    	    - `spclog(level, fmt, ...)`  
+	    	    - **Levels**: `SPC_LOG_DEBUG`, `SPC_LOG_INFO`, `SPC_LOG_WARNING`, `SPC_LOG_ERROR`, `SPC_LOG_FATAL`  
     - **Topic-based Logging**:  
-	    	    - `spllogtopic(level, topic_index, fmt, ...)`  
+	    	    - `spclogtopic(level, topic_index, fmt, ...)`  
     - **Finalization** (at the end of `main`):  
-		   - `spl_finish_log()`  
+		   - `spc_finish_log()`  
 
 
 ---
-
-**Video Install/Demo:**  
+  
+**Build and install with cmake**:	  
+	- Install **cmake**.     
+	- Come to root folder, **mkdir build && cd build**.  
+	- For windows-32: **cmake .. -G "Visual Studio 17 2022" -A win32**.  
+	- For windows-64: **cmake .. -G "Visual Studio 17 2022"**.  
+	- For Linux: **cmake .. -DUNIX_LINUX=1**.  
+	- For MAC-OSX/Apple: **cmake .. -DUNIX_LINUX=1 -DMACOSX=1**.  
+	  
+   
+  
+**Video Install/Demo ( old way):**  
 	- For Windows 10 64bit: (https://drive.google.com/file/d/1gccgtO84U7_R9a1WuPcLnT3Iw7hBN7Wr/view?usp=sharing)  
 	- For VM Linux CentOs9 64bit: (https://drive.google.com/file/d/1a2OWwSoa1bIbzYvhhoFKDAhS3eTXkPv9/view?usp=sharing)  
 	- For MacOSX 64bit, come to **src/mach**, and do similar steps of Linux.
