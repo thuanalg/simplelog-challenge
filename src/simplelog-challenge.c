@@ -193,12 +193,12 @@
 #ifndef UNIX_LINUX
 // DLL_API_SIMPLE_LOG
 static void
-spcLockSpinlock(volatile long *p);
+spc_LockSpinlock(volatile long *p);
 // DLL_API_SIMPLE_LOG
 static void
-spcUnlockSpinlock(volatile long *p);
-#define SpcLockSpinlock(__p__) spcLockSpinlock((volatile long *)(__p__))
-#define SpcUnlockSpinlock(__p__) spcUnlockSpinlock((volatile long *)(__p__))
+spc_UnlockSpinlock(volatile long *p);
+#define SPC_LockSpinlock(__p__) spc_LockSpinlock((volatile long *)(__p__))
+#define SPC_UnlockSpinlock(__p__) spc_UnlockSpinlock((volatile long *)(__p__))
 
 /*static
 	volatile long spc_rw_spin = 0;*/
@@ -756,7 +756,7 @@ spc_mutex_lock(void *obj)
 			break;
 		}
 #else
-		SpcLockSpinlock(obj);
+		SPC_LockSpinlock(obj);
 #endif
 #else
 #ifndef SPC_USING_SPIN_LOCK
@@ -791,7 +791,7 @@ spc_mutex_unlock(void *obj)
 			break;
 		}
 #else
-		SpcUnlockSpinlock(obj);
+		SPC_UnlockSpinlock(obj);
 #endif
 #else
 #ifndef SPC_USING_SPIN_LOCK
@@ -1780,14 +1780,14 @@ spc_fflush_err(int terr, void *ffp)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef UNIX_LINUX
 void
-spcLockSpinlock(volatile long *p)
+spc_LockSpinlock(volatile long *p)
 {
 	while (InterlockedCompareExchange(p, 1, 0) != 0) {
 	}
 }
 
 void
-spcUnlockSpinlock(volatile long *p)
+spc_UnlockSpinlock(volatile long *p)
 {
 	InterlockedExchange(p, 0);
 }

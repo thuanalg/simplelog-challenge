@@ -25,8 +25,8 @@
  *spc_finish_log].
  */
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-#ifndef ___SIMPLE_LOG__
-#define ___SIMPLE_LOG__
+#ifndef ___SPC_SIMEPLE_LOG__
+#define ___SPC_SIMEPLE_LOG__
 #include <stdio.h>
 #include <string.h>
 /*strrchr*/
@@ -62,16 +62,16 @@ extern "C" {
 
 #ifndef UNIX_LINUX
 #ifndef __SIMPLE_STATIC_LOG__
-#ifdef EXPORT_DLL_API_SIMPLE_LOG
-#define DLL_API_SIMPLE_LOG __declspec(dllexport)
+#ifdef EXPORT_DLL_API_SPC_SIMEPLE_LOG
+#define DLL_API_SPC_SIMEPLE_LOG __declspec(dllexport)
 #else
-#define DLL_API_SIMPLE_LOG __declspec(dllimport)
+#define DLL_API_SPC_SIMEPLE_LOG __declspec(dllimport)
 #endif
 #else
-#define DLL_API_SIMPLE_LOG
+#define DLL_API_SPC_SIMEPLE_LOG
 #endif
 #else
-#define DLL_API_SIMPLE_LOG
+#define DLL_API_SPC_SIMEPLE_LOG
 #endif /*! UNIX_LINUX */
 
 typedef enum __SPC_LOG_ERR_CODE__ {
@@ -487,11 +487,11 @@ typedef struct __SPC_INPUT_ARG__ {
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 /* Please demo with spc_init_log */
-DLL_API_SIMPLE_LOG int
+DLL_API_SPC_SIMEPLE_LOG int
 spc_init_log(char *path);
 
 /* Please demo with spc_init_log */
-DLL_API_SIMPLE_LOG int
+DLL_API_SPC_SIMEPLE_LOG int
 spc_init_log_ext(SPC_INPUT_ARG *input);
 
 /*
@@ -507,36 +507,36 @@ spc_init_log_ext(SPC_INPUT_ARG *input);
 #define spclogtopic __spc_log_buf_topic_level__
 
 /* Please demo with spc_finish_log */
-DLL_API_SIMPLE_LOG int
+DLL_API_SPC_SIMEPLE_LOG int
 spc_finish_log();
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-DLL_API_SIMPLE_LOG char *
+DLL_API_SPC_SIMEPLE_LOG char *
 spc_fmt_now_ext(char *fmtt, int len, int lv, const char *filename, const char *funcname, int line, unsigned short *r, int *);
-DLL_API_SIMPLE_LOG int
+DLL_API_SPC_SIMEPLE_LOG int
 spc_fmmt_now(char *fmtt, int len);
-DLL_API_SIMPLE_LOG int
+DLL_API_SPC_SIMEPLE_LOG int
 spc_mutex_lock(void *mtx);
-DLL_API_SIMPLE_LOG int
+DLL_API_SPC_SIMEPLE_LOG int
 spc_mutex_unlock(void *mtx);
-DLL_API_SIMPLE_LOG LLU
+DLL_API_SPC_SIMEPLE_LOG LLU
 spc_get_threadid();
-DLL_API_SIMPLE_LOG int
+DLL_API_SPC_SIMEPLE_LOG int
 spc_rel_sem(void *sem);
-DLL_API_SIMPLE_LOG
+DLL_API_SPC_SIMEPLE_LOG
 void
 spc_sleep(unsigned int);
-DLL_API_SIMPLE_LOG
+DLL_API_SPC_SIMEPLE_LOG
 void
 spc_milli_sleep(unsigned int);
-DLL_API_SIMPLE_LOG
+DLL_API_SPC_SIMEPLE_LOG
 LLU
 spc_milli_now();
-DLL_API_SIMPLE_LOG
+DLL_API_SPC_SIMEPLE_LOG
 SPC_LOG_ST *
 spc_control_obj();
-DLL_API_SIMPLE_LOG
+DLL_API_SPC_SIMEPLE_LOG
 LLU
 spc_process_id();
 
