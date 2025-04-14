@@ -107,11 +107,11 @@ posix_thread_routine(void *lpParam)
 /*You can mix any topic togther. No problem.*/
 #define TEXT_PERFORMMANCE_TEXT "Log:%d"
 		if (topicindex < 1) {
-			spllog(SPL_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
-			/*spllog(SPL_LOG_INFO, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa);*/
+			spllog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
+			/*spllog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa);*/
 		} else {
-			spllogtopic(SPL_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
-			/*spllogtopic(SPL_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa); */
+			spllogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
+			/*spllogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa); */
 		}
 		++count;
 	}
@@ -122,7 +122,7 @@ int
 main(int argc, char *argv[])
 {
 	int ret = 0, i = 0;
-	SPL_INPUT_ARG input;
+	SPC_INPUT_ARG input;
 	int count = 2;
 	for (i = 1; i < argc; ++i) {
 		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
@@ -143,14 +143,14 @@ main(int argc, char *argv[])
 		}
 	}
 	memset(&input, 0, sizeof(input));
-	snprintf(input.id_name, SPL_IDD_NAME, "testlog");
+	snprintf(input.id_name, SPC_IDD_NAME, "testlog");
 	// int ret = spl_init_log((char *)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
 #ifndef UNIX_LINUX
 	// ret = spl_init_log((char*)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
-	snprintf(input.folder, SPL_PATH_FOLDER, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
+	snprintf(input.folder, SPC_PATH_FOLDER, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
 #else
 	// ret = spl_init_log((char*)"simplelog.cfg");
-	snprintf(input.folder, SPL_PATH_FOLDER, "simplelog.cfg");
+	snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");
 #endif
 	input.is_master = ismaster ? 1 : 0;
 	ret = spl_init_log_ext(&input);
@@ -163,7 +163,7 @@ main(int argc, char *argv[])
 		FILE *fp = 0;
 		while (1) {
 			spl_console_log("this is master process.");
-			spllog(SPL_LOG_INFO, "this is master process.");
+			spllog(SPC_LOG_INFO, "this is master process.");
 			spl_sleep(5);
 #ifndef UNIX_LINUX
 			fp = fopen("trigger_master.txt", "r");

@@ -21,8 +21,8 @@
  *		<2025-Feb-04>
  *		<2025-Apr-12>
  * Decription:
- *		The (only) main header file to export 5 APIs: [spl_init_log, spl_init_log_ext, spllog, spllogtopic,
- *spl_finish_log].
+ *		The (only) main header file to export 5 APIs: [spc_init_log, spc_init_log_ext, spllog, spllogtopic,
+ *spc_finish_log].
  */
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef ___SIMPLE_LOG__
@@ -31,9 +31,9 @@
 #include <string.h>
 /*strrchr*/
 
-#ifndef SPL_USING_SPIN_LOCK
-// #define SPL_USING_SPIN_LOCK
-#endif // !SPL_USING_SPIN_LOCK
+#ifndef SPC_USING_SPIN_LOCK
+// #define SPC_USING_SPIN_LOCK
+#endif // !SPC_USING_SPIN_LOCK
 
 // #define __UNIX_LINUX_CPP11_AND_NEWERS__
 
@@ -47,18 +47,18 @@ extern "C" {
 
 #define LLU unsigned long long
 
-#define SPL_LOG_BASE 0
-#define SPL_LOG_DEBUG 1
-#define SPL_LOG_INFO 2
-#define SPL_LOG_WARNING 3
-#define SPL_LOG_ERROR 4
-#define SPL_LOG_FATAL 5
-#define SPL_LOG_PEAK 6
+#define SPC_LOG_BASE 0
+#define SPC_LOG_DEBUG 1
+#define SPC_LOG_INFO 2
+#define SPC_LOG_WARNING 3
+#define SPC_LOG_ERROR 4
+#define SPC_LOG_FATAL 5
+#define SPC_LOG_PEAK 6
 
-// #define					SPL_RL_BUF						50
-#define SPL_RL_BUF 256
-#define SPL_PATH_FOLDER 1024
-#define SPL_IDD_NAME 64
+// #define					SPC_RL_BUF						50
+#define SPC_RL_BUF 256
+#define SPC_PATH_FOLDER 1024
+#define SPC_IDD_NAME 64
 
 #ifndef UNIX_LINUX
 #ifndef __SIMPLE_STATIC_LOG__
@@ -74,87 +74,87 @@ extern "C" {
 #define DLL_API_SIMPLE_LOG
 #endif /*! UNIX_LINUX */
 
-typedef enum __SPL_LOG_ERR_CODE__ {
-	SPL_NO_ERROR = 0,
-	SPL_INIT_PATH_FOLDER_EMPTY_ERROR,
-	SPL_LOG_LEVEL_ERROR,
-	SPL_ERROR_CREATE_MUTEX,
-	SPL_ERROR_CREATE_SEM,
-	SPL_LOG_BUFF_SIZE_ERROR,
-	SPL_LOG_MAX_SZ_MSG_ERROR,
-	SPL_LOG_BUFF_MALLOC_ERROR,
-	SPL_LOG_FOLDER_ERROR,
-	SPL_LOG_CREATE_THREAD_ERROR,
-	SPL_LOG_FMT_NULL_ERROR,
-	SPL_LOG_MEM_GEN_FILE_ERROR,
-	SPL_LOG_MEM_MALLOC_ERROR,
-	SPL_LOG_OPEN_FILE_ERROR,
-	SPL_LOG_OPEN1_FILE_ERROR,
-	SPL_LOG_CLOSE_FILE_ERROR,
-	SPL_LOG_SEM_NULL_ERROR,
-	SPL_LOG_SEM_WIN32_CREATED_ERROR,
-	SPL_LOG_MTX_WIN32_CREATED_ERROR,
-	SPL_LOG_ROT_SIZE_ERROR,
-	SPL_LOG_TOPIC_EMPTY,
-	SPL_LOG_TOPIC_NULL,
-	SPL_LOG_MEM_FILE_MALLOC_ERROR,
-	SPL_LOG_CHECK_FOLDER_ERROR,
-	SPL_LOG_CHECK_FOLDER_YEAR_ERROR,
-	SPL_LOG_CHECK_FILE_YEAR_ERROR,
-	SPL_LOG_CHECK_FOLDER_NULL_ERROR,
-	SPL_LOG_MUTEX_NULL_ERROR,
-	SPL_LOG_ST_NAME_NULL_ERROR,
-	SPL_LOG_TIME_NULL_ERROR,
-	SPL_LOG_TIME_NANO_NULL_ERROR,
-	SPL_LOG_STAT_FOLDER_ERROR,
-	SPL_LOG_PRINTF_ERROR,
-	SPL_LOG_TOPIC_ZERO,
-	SPL_LOG_TOPIC_MEMORY,
-	SPL_LOG_TOPIC_FOPEN,
-	SPL_LOG_TOPIC_FLUSH,
-	SPL_LOG_TOPIC_BUFF_MEM,
-	SPL_LOG_ALOCK_NUM,
-	SPL_LOG_ALOCK_NULL,
-	SPL_LOG_SHM_CREATE_NULL,
-	SPL_LOG_SHM_WIN_UNMAP,
-	SPL_LOG_SHM_UNIX_CREATE,
-	SPL_LOG_SHM_UNIX_OPEN,
-	SPL_LOG_SHM_UNIX_TRUNC,
-	SPL_LOG_SHM_UNIX_MAP_FAILED,
-	SPL_LOG_WIN_SHM_CLOSE,
-	SPL_LOG_SHM_UNIX_UNMAP,
-	SPL_LOG_VAR_NULL,
-	SPL_LOG_ARR_MTX_NULL,
-	SPL_LOG_ARR_BUFF_NULL,
-	SPL_LOG_MTX_ATT_SHARED_MODE,
-	SPL_LOG_MTX_ATT_SHARED_MODE_SET,
-	SPL_LOG_MTX_INIT_ERR,
-	SPL_LOG_SHM_UNIX_INIT_MUTEX,
-	SPL_LOG_SPINLOCK_INIT_SHARED,
-	SPL_LOG_SPINLOCK_INIT_PRIVATE,
-	SPL_LOG_SEM_INIT_UNIX,
-	SPL_LOG_THREAD_W32_CREATE,
-	SPL_LOG_THREAD_PX_CREATE,
-	SPL_LOG_MACH_GETTIME_ERROR,
-	SPL_LOG_MACH_CLOCK_SERVICE_ERROR,
-	SPL_LOG_OSX_SEM_CLOSE,
-	SPL_LOG_OSX_SEM_UNLINK,
-	SPL_LOG_SEM_OSX_CREATED_ERROR,
-	SPL_LOG_SEM_INIT_OSX,
-	SPL_LOG_SEM_OSX_UNLINK_ERROR,
+typedef enum __SPC_LOG_ERR_CODE__ {
+	SPC_NO_ERROR = 0,
+	SPC_INIT_PATH_FOLDER_EMPTY_ERROR,
+	SPC_LOG_LEVEL_ERROR,
+	SPC_ERROR_CREATE_MUTEX,
+	SPC_ERROR_CREATE_SEM,
+	SPC_LOG_BUFF_SIZE_ERROR,
+	SPC_LOG_MAX_SZ_MSG_ERROR,
+	SPC_LOG_BUFF_MALLOC_ERROR,
+	SPC_LOG_FOLDER_ERROR,
+	SPC_LOG_CREATE_THREAD_ERROR,
+	SPC_LOG_FMT_NULL_ERROR,
+	SPC_LOG_MEM_GEN_FILE_ERROR,
+	SPC_LOG_MEM_MALLOC_ERROR,
+	SPC_LOG_OPEN_FILE_ERROR,
+	SPC_LOG_OPEN1_FILE_ERROR,
+	SPC_LOG_CLOSE_FILE_ERROR,
+	SPC_LOG_SEM_NULL_ERROR,
+	SPC_LOG_SEM_WIN32_CREATED_ERROR,
+	SPC_LOG_MTX_WIN32_CREATED_ERROR,
+	SPC_LOG_ROT_SIZE_ERROR,
+	SPC_LOG_TOPIC_EMPTY,
+	SPC_LOG_TOPIC_NULL,
+	SPC_LOG_MEM_FILE_MALLOC_ERROR,
+	SPC_LOG_CHECK_FOLDER_ERROR,
+	SPC_LOG_CHECK_FOLDER_YEAR_ERROR,
+	SPC_LOG_CHECK_FILE_YEAR_ERROR,
+	SPC_LOG_CHECK_FOLDER_NULL_ERROR,
+	SPC_LOG_MUTEX_NULL_ERROR,
+	SPC_LOG_ST_NAME_NULL_ERROR,
+	SPC_LOG_TIME_NULL_ERROR,
+	SPC_LOG_TIME_NANO_NULL_ERROR,
+	SPC_LOG_STAT_FOLDER_ERROR,
+	SPC_LOG_PRINTF_ERROR,
+	SPC_LOG_TOPIC_ZERO,
+	SPC_LOG_TOPIC_MEMORY,
+	SPC_LOG_TOPIC_FOPEN,
+	SPC_LOG_TOPIC_FLUSH,
+	SPC_LOG_TOPIC_BUFF_MEM,
+	SPC_LOG_ALOCK_NUM,
+	SPC_LOG_ALOCK_NULL,
+	SPC_LOG_SHM_CREATE_NULL,
+	SPC_LOG_SHM_WIN_UNMAP,
+	SPC_LOG_SHM_UNIX_CREATE,
+	SPC_LOG_SHM_UNIX_OPEN,
+	SPC_LOG_SHM_UNIX_TRUNC,
+	SPC_LOG_SHM_UNIX_MAP_FAILED,
+	SPC_LOG_WIN_SHM_CLOSE,
+	SPC_LOG_SHM_UNIX_UNMAP,
+	SPC_LOG_VAR_NULL,
+	SPC_LOG_ARR_MTX_NULL,
+	SPC_LOG_ARR_BUFF_NULL,
+	SPC_LOG_MTX_ATT_SHARED_MODE,
+	SPC_LOG_MTX_ATT_SHARED_MODE_SET,
+	SPC_LOG_MTX_INIT_ERR,
+	SPC_LOG_SHM_UNIX_INIT_MUTEX,
+	SPC_LOG_SPINLOCK_INIT_SHARED,
+	SPC_LOG_SPINLOCK_INIT_PRIVATE,
+	SPC_LOG_SEM_INIT_UNIX,
+	SPC_LOG_THREAD_W32_CREATE,
+	SPC_LOG_THREAD_PX_CREATE,
+	SPC_LOG_MACH_GETTIME_ERROR,
+	SPC_LOG_MACH_CLOCK_SERVICE_ERROR,
+	SPC_LOG_OSX_SEM_CLOSE,
+	SPC_LOG_OSX_SEM_UNLINK,
+	SPC_LOG_SEM_OSX_CREATED_ERROR,
+	SPC_LOG_SEM_INIT_OSX,
+	SPC_LOG_SEM_OSX_UNLINK_ERROR,
 
-	SPL_END_ERROR,
-} SPL_LOG_ERR_CODE;
+	SPC_END_ERROR,
+} SPC_LOG_ERR_CODE;
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-typedef struct __SPL_CALLBACL_DATA__ {
+typedef struct __SPC_CALLBACL_DATA__ {
 	int total;
 	int eventid;
 	int range;
 	int pc;
 	int pl;
 	char data[0];
-} SPL_CALLBACL_DATA;
-typedef int (*SPL_CALLBACL_FUNCTION)(void *);
+} SPC_CALLBACL_DATA;
+typedef int (*SPC_CALLBACL_FUNCTION)(void *);
 typedef struct __GENERIC_DATA__ {
 	int total; /*Total size*/
 	/*int range;					Total size*/
@@ -163,27 +163,27 @@ typedef struct __GENERIC_DATA__ {
 	char data[0]; /*Generic data */
 } generic_dta_st;
 
-#define spl_uchar unsigned char
-#define spl_uint unsigned int
+#define spc_uchar unsigned char
+#define spc_uint unsigned int
 
-typedef struct __spl_local_time_st__ {
-	spl_uint year;
-	spl_uchar month;
-	spl_uchar day;
-	spl_uchar hour;
-	spl_uchar minute;
-	spl_uchar sec;
-	spl_uint nn; /*Nanosecond*/
-} spl_local_time_st;
+typedef struct __spc_local_time_st__ {
+	spc_uint year;
+	spc_uchar month;
+	spc_uchar day;
+	spc_uchar hour;
+	spc_uchar minute;
+	spc_uchar sec;
+	spc_uint nn; /*Nanosecond*/
+} spc_local_time_st;
 
-#define SPL_TOPIC_SIZE 32
-#define SPL_MEMO_PADDING 1024
-#define SPL_SHARED_KEY_LEN 64
-#define SPL_SHARED_NAME_LEN 128
+#define SPC_TOPIC_SIZE 32
+#define SPC_MEMO_PADDING 1024
+#define SPC_SHARED_KEY_LEN 64
+#define SPC_SHARED_NAME_LEN 128
 
 typedef struct __SIMPLE_LOG_TOPIC_ST__ {
 	int index; /*Index of a topic*/
-	char topic[SPL_TOPIC_SIZE]; /*Name of topic*/
+	char topic[SPC_TOPIC_SIZE]; /*Name of topic*/
 	generic_dta_st *buf; /*Buff for writing*/
 	int fizize; /*Size of file.*/
 	void *fp; /*File stream.*/
@@ -203,7 +203,7 @@ typedef struct __SIMPLE_LOG_ST__ {
 	void *mtx_rw; /*mtx: Need to close handle*/
 	void *sem_rwfile; /*sem_rwfile: Need to close handle*/
 	void *sem_off; /*sem_off: Need to close handle*/
-	spl_local_time_st lc_time_now; /*Current time.*/
+	spc_local_time_st lc_time_now; /*Current time.*/
 	FILE *fp; /*fp: Need to close*/
 	generic_dta_st *buf; /*buf: Must be synchoronized. Must be freed.*/
 	char *topics; /*topics: topics string. Must be freed */
@@ -221,24 +221,24 @@ typedef struct __SIMPLE_LOG_ST__ {
 	int
 #endif
 	    hd; /* Handle of shared memory.*/
-	char shared_key[SPL_SHARED_KEY_LEN]; /* Name of shared key.*/
-	char id_name[SPL_IDD_NAME]; /*To avoid duplicating of file name.*/
+	char shared_key[SPC_SHARED_KEY_LEN]; /* Name of shared key.*/
+	char id_name[SPC_IDD_NAME]; /*To avoid duplicating of file name.*/
 	char isProcessMode; /*For cross processes mode.*/
 	int map_mem_size; /*Total mapped memory.*/
 	char is_master;
-	SPL_CALLBACL_FUNCTION
+	SPC_CALLBACL_FUNCTION
 	fn;
-	SPL_CALLBACL_DATA *obj;
+	SPC_CALLBACL_DATA *obj;
 } SIMPLE_LOG_ST;
 
-typedef struct __SPL_INPUT_ARG__ {
-	char folder[SPL_PATH_FOLDER];
-	char id_name[SPL_IDD_NAME];
+typedef struct __SPC_INPUT_ARG__ {
+	char folder[SPC_PATH_FOLDER];
+	char id_name[SPC_IDD_NAME];
 	char is_master;
-	SPL_CALLBACL_FUNCTION
+	SPC_CALLBACL_FUNCTION
 	fn;
-	SPL_CALLBACL_DATA *obj;
-} SPL_INPUT_ARG;
+	SPC_CALLBACL_DATA *obj;
+} SPC_INPUT_ARG;
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #define __FILLE__(__p__)                                                                                                    \
@@ -257,19 +257,19 @@ typedef struct __SPL_INPUT_ARG__ {
 	} while (0);
 
 #ifndef __UNIX_LINUX_CPP11_AND_NEWERS__
-#define spl_console_log(___fmttt___, ...)                                                                                   \
+#define spc_console_log(___fmttt___, ...)                                                                                   \
 	{                                                                                                                   \
 		char buf[1024];                                                                                             \
 		const char *pfn = 0;                                                                                        \
 		__FILLE__(pfn);                                                                                             \
-		spl_fmmt_now(buf, 1024);                                                                                    \
+		spc_fmmt_now(buf, 1024);                                                                                    \
 		fprintf(stdout,                                                                                             \
 		    "[%s] [%s:%s:%d] [thid: %llu] "___fmttt___                                                              \
 		    "\n",                                                                                                   \
-		    (char *)buf, (char *)pfn, (char *)__FUNCTION__, (int)__LINE__, spl_get_threadid(), ##__VA_ARGS__);      \
+		    (char *)buf, (char *)pfn, (char *)__FUNCTION__, (int)__LINE__, spc_get_threadid(), ##__VA_ARGS__);      \
 	}
 #else
-#define spl_console_log(___fmttt___, ...)                                                                                   \
+#define spc_console_log(___fmttt___, ...)                                                                                   \
 	{                                                                                                                   \
 		std::string __c11fmt__ = "[%s] [%s:%s:%d] [thid: %llu] ";                                                   \
 		__c11fmt__ += ___fmttt___;                                                                                  \
@@ -278,25 +278,25 @@ typedef struct __SPL_INPUT_ARG__ {
 		char buf[1024];                                                                                             \
 		const char *pfn = 0;                                                                                        \
 		__FILLE__(pfn);                                                                                             \
-		spl_fmmt_now(buf, 1024);                                                                                    \
+		spc_fmmt_now(buf, 1024);                                                                                    \
 		fprintf(stdout, __c11fmt__.c_str(), (char *)buf, (char *)pfn, (char *)__FUNCTION__, (int)__LINE__,          \
-		    spl_get_threadid(), ##__VA_ARGS__);                                                                     \
+		    spc_get_threadid(), ##__VA_ARGS__);                                                                     \
 	}
 #endif
 
-#define spl_malloc(__nn__, __obj__, __type__)                                                                               \
+#define spc_malloc(__nn__, __obj__, __type__)                                                                               \
 	{                                                                                                                   \
 		(__obj__) = (__type__ *)malloc(__nn__);                                                                     \
-		if (__obj__) { /*spl_console_log("Malloc: 0x%p\n", (__obj__));*/                                            \
+		if (__obj__) { /*spc_console_log("Malloc: 0x%p\n", (__obj__));*/                                            \
 			;                                                                                                   \
 			memset((void *)(__obj__), 0, (__nn__));                                                             \
 		} else {                                                                                                    \
-			spl_console_log("Malloc: error.\n");                                                                \
+			spc_console_log("Malloc: error.\n");                                                                \
 		}                                                                                                           \
 	}
 
-#define spl_free(__obj__)                                                                                                   \
-	{ /*spl_console_log("Free: 0x%p.\n", (__obj__));*/                                                                  \
+#define spc_free(__obj__)                                                                                                   \
+	{ /*spc_console_log("Free: 0x%p.\n", (__obj__));*/                                                                  \
 		;                                                                                                           \
 		free(__obj__);                                                                                              \
 		;                                                                                                           \
@@ -304,16 +304,16 @@ typedef struct __SPL_INPUT_ARG__ {
 	}
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-#define SPL_MIN_AB(a, b) ((a) < (b)) ? (a) : (b)
-#define SPL_MAX_AB(a, b) ((a) > (b)) ? (a) : (b)
+#define SPC_MIN_AB(a, b) ((a) < (b)) ? (a) : (b)
+#define SPC_MAX_AB(a, b) ((a) > (b)) ? (a) : (b)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #define SPLKEYBUF(__t__, __i__) ((generic_dta_st *)((char *)__t__->buf + (__t__->buff_size * __i__)))
-#define __spl_log_buf_level__(__lv__, ___fmttt___, ...)                                                                     \
+#define __spc_log_buf_level__(__lv__, ___fmttt___, ...)                                                                     \
 	{                                                                                                                   \
 		;                                                                                                           \
 		;                                                                                                           \
-		SIMPLE_LOG_ST *__t__ = spl_control_obj();                                                                   \
+		SIMPLE_LOG_ST *__t__ = spc_control_obj();                                                                   \
 		if (__t__->llevel <= (__lv__) && ___fmttt___[0]) {                                                          \
 			;                                                                                                   \
 			;                                                                                                   \
@@ -324,14 +324,14 @@ typedef struct __SPL_INPUT_ARG__ {
 			;                                                                                                   \
 			unsigned short __r__ = 0;                                                                           \
 			;                                                                                                   \
-			char __tnow__[SPL_RL_BUF];                                                                          \
+			char __tnow__[SPC_RL_BUF];                                                                          \
 			char *__pprefmt__ = 0;                                                                              \
 			;                                                                                                   \
 			;                                                                                                   \
 			;                                                                                                   \
 			__FILLE__(__pfn__);                                                                                 \
-			__pprefmt__ = spl_fmt_now_ext(                                                                      \
-			    __tnow__, SPL_RL_BUF, __lv__, __pfn__, __FUNCTION__, __LINE__, &__r__, &__outlen__);            \
+			__pprefmt__ = spc_fmt_now_ext(                                                                      \
+			    __tnow__, SPC_RL_BUF, __lv__, __pfn__, __FUNCTION__, __LINE__, &__r__, &__outlen__);            \
 			;                                                                                                   \
 			{                                                                                                   \
 				do {                                                                                        \
@@ -342,7 +342,7 @@ typedef struct __SPL_INPUT_ARG__ {
 					;                                                                                   \
 					;                                                                                   \
 					;                                                                                   \
-					spl_mutex_lock(__t__->arr_mtx[__r__]);                                              \
+					spc_mutex_lock(__t__->arr_mtx[__r__]);                                              \
 					;                                                                                   \
 					if (__t__->range > SPLKEYBUF(__t__, __r__)->pl) {                                   \
 						;                                                                           \
@@ -357,20 +357,20 @@ typedef struct __SPL_INPUT_ARG__ {
 							##__VA_ARGS__);                                                     \
 						;                                                                           \
 						if (__len__ > 0) {                                                          \
-							; /*spl_console_log("len: %d", len);*/                              \
+							; /*spc_console_log("len: %d", len);*/                              \
 							;                                                                   \
 							;                                                                   \
-							__outlen__ = SPL_MIN_AB(                                            \
+							__outlen__ = SPC_MIN_AB(                                            \
 							    __len__, __t__->krange - SPLKEYBUF(__t__, __r__)->pl);          \
 							;                                                                   \
-							; /*spl_console_log("outlen: %d", outlen);*/                        \
+							; /*spc_console_log("outlen: %d", outlen);*/                        \
 							;                                                                   \
 							SPLKEYBUF(__t__, __r__)->pl += __outlen__;                          \
 							;                                                                   \
 						};                                                                          \
 					}                                                                                   \
                                                                                                                             \
-					spl_mutex_unlock(__t__->arr_mtx[__r__]);                                            \
+					spc_mutex_unlock(__t__->arr_mtx[__r__]);                                            \
                                                                                                                             \
 					if (__len__ > 0)                                                                    \
 						break;                                                                      \
@@ -382,9 +382,9 @@ typedef struct __SPL_INPUT_ARG__ {
 					continue;                                                                           \
 				} while (1);                                                                                \
 				if (!__t__->trigger_thread)                                                                 \
-					spl_rel_sem(__t__->sem_rwfile);                                                     \
+					spc_rel_sem(__t__->sem_rwfile);                                                     \
 				if (__pprefmt__ != __tnow__) {                                                              \
-					spl_free(__pprefmt__);                                                              \
+					spc_free(__pprefmt__);                                                              \
 				}                                                                                           \
 			}                                                                                                   \
 		}                                                                                                           \
@@ -394,10 +394,10 @@ typedef struct __SPL_INPUT_ARG__ {
 #define STSPLOGBUFTOPIC_RANGE(__t__, __i__, __r__)                                                                          \
 	((generic_dta_st *)((char *)STSPLOGBUFTOPIC(__t__, __i__) + __t__->buff_size * __r__))
 
-#define __spl_log_buf_topic_level__(__lv__, __tpic__, ___fmttt___, ...)                                                     \
+#define __spc_log_buf_topic_level__(__lv__, __tpic__, ___fmttt___, ...)                                                     \
 	{                                                                                                                   \
 		;                                                                                                           \
-		SIMPLE_LOG_ST *__t__ = spl_control_obj();                                                                   \
+		SIMPLE_LOG_ST *__t__ = spc_control_obj();                                                                   \
 		;                                                                                                           \
 		if (__t__->llevel <= (__lv__) && ___fmttt___[0] && __t__->arr_topic) {                                      \
 			;                                                                                                   \
@@ -412,7 +412,7 @@ typedef struct __SPL_INPUT_ARG__ {
 			;                                                                                                   \
 			char *__pprefmt__ = 0;                                                                              \
 			;                                                                                                   \
-			char __tnow__[SPL_RL_BUF];                                                                          \
+			char __tnow__[SPC_RL_BUF];                                                                          \
 			;                                                                                                   \
 			__tpp__ = __tpic__ % __t__->n_topic;                                                                \
 			;                                                                                                   \
@@ -421,13 +421,13 @@ typedef struct __SPL_INPUT_ARG__ {
 			__FILLE__(__pfn__);                                                                                 \
 			;                                                                                                   \
 			;                                                                                                   \
-			__pprefmt__ = spl_fmt_now_ext(                                                                      \
-			    __tnow__, SPL_RL_BUF, __lv__, __pfn__, __FUNCTION__, __LINE__, &__r__, &__outlen__);            \
+			__pprefmt__ = spc_fmt_now_ext(                                                                      \
+			    __tnow__, SPC_RL_BUF, __lv__, __pfn__, __FUNCTION__, __LINE__, &__r__, &__outlen__);            \
 			;                                                                                                   \
 			do {                                                                                                \
 				;                                                                                           \
 				;                                                                                           \
-				spl_mutex_lock(__t__->arr_mtx[__r__]);                                                      \
+				spc_mutex_lock(__t__->arr_mtx[__r__]);                                                      \
 				/*do                                                                                        \
 				{*/                                                                                         \
 				/*if(t->arr_topic){*/;                                                                      \
@@ -450,12 +450,12 @@ typedef struct __SPL_INPUT_ARG__ {
 					;                                                                                   \
 					;                                                                                   \
 					if (__len__ > 0) {                                                                  \
-						; /*spl_console_log("len: %d", len);*/                                      \
+						; /*spc_console_log("len: %d", len);*/                                      \
 						;                                                                           \
 						;                                                                           \
-						__outlen__ = SPL_MIN_AB(__len__,                                            \
+						__outlen__ = SPC_MIN_AB(__len__,                                            \
 						    __t__->krange - STSPLOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl);      \
-						; /*spl_console_log("outlen: %d", outlen);*/                                \
+						; /*spc_console_log("outlen: %d", outlen);*/                                \
 						;                                                                           \
 						;                                                                           \
 						;                                                                           \
@@ -465,7 +465,7 @@ typedef struct __SPL_INPUT_ARG__ {
 				/*}*/                                                                                       \
 				/*}                                                                                         \
 				while(0);*/                                                                                 \
-				spl_mutex_unlock(__t__->arr_mtx[__r__]);                                                    \
+				spc_mutex_unlock(__t__->arr_mtx[__r__]);                                                    \
 				if (__len__ > 0)                                                                            \
 					break;                                                                              \
 				;                                                                                           \
@@ -476,69 +476,69 @@ typedef struct __SPL_INPUT_ARG__ {
 				continue;                                                                                   \
 			} while (1);                                                                                        \
 			if (!__t__->trigger_thread)                                                                         \
-				spl_rel_sem(__t__->sem_rwfile);                                                             \
+				spc_rel_sem(__t__->sem_rwfile);                                                             \
 			;                                                                                                   \
 			if (__pprefmt__ != __tnow__) {                                                                      \
-				spl_free(__pprefmt__);                                                                      \
+				spc_free(__pprefmt__);                                                                      \
 			}                                                                                                   \
 		}                                                                                                           \
 	}
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-/* Please demo with spl_init_log */
+/* Please demo with spc_init_log */
 DLL_API_SIMPLE_LOG int
-spl_init_log(char *path);
+spc_init_log(char *path);
 
-/* Please demo with spl_init_log */
+/* Please demo with spc_init_log */
 DLL_API_SIMPLE_LOG int
-spl_init_log_ext(SPL_INPUT_ARG *input);
+spc_init_log_ext(SPC_INPUT_ARG *input);
 
 /*
  * Export name:	spllog
- * Sample:		spllog(SPL_LOG_INFO, "Hello spllog: %llu", time(0));
+ * Sample:		spllog(SPC_LOG_INFO, "Hello spllog: %llu", time(0));
  */
-#define spllog __spl_log_buf_level__
+#define spllog __spc_log_buf_level__
 
 /*
  * Export name:	spllogtopic
- * Sample:		spllogtopic(SPL_LOG_INFO, 0, "Hello spllog: %llu", time(0));
+ * Sample:		spllogtopic(SPC_LOG_INFO, 0, "Hello spllog: %llu", time(0));
  */
-#define spllogtopic __spl_log_buf_topic_level__
+#define spllogtopic __spc_log_buf_topic_level__
 
-/* Please demo with spl_finish_log */
+/* Please demo with spc_finish_log */
 DLL_API_SIMPLE_LOG int
-spl_finish_log();
+spc_finish_log();
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 DLL_API_SIMPLE_LOG char *
-spl_fmt_now_ext(char *fmtt, int len, int lv, const char *filename, const char *funcname, int line, unsigned short *r, int *);
+spc_fmt_now_ext(char *fmtt, int len, int lv, const char *filename, const char *funcname, int line, unsigned short *r, int *);
 DLL_API_SIMPLE_LOG int
-spl_fmmt_now(char *fmtt, int len);
+spc_fmmt_now(char *fmtt, int len);
 DLL_API_SIMPLE_LOG int
-spl_mutex_lock(void *mtx);
+spc_mutex_lock(void *mtx);
 DLL_API_SIMPLE_LOG int
-spl_mutex_unlock(void *mtx);
+spc_mutex_unlock(void *mtx);
 DLL_API_SIMPLE_LOG LLU
-spl_get_threadid();
+spc_get_threadid();
 DLL_API_SIMPLE_LOG int
-spl_rel_sem(void *sem);
+spc_rel_sem(void *sem);
 DLL_API_SIMPLE_LOG
 void
-spl_sleep(unsigned int);
+spc_sleep(unsigned int);
 DLL_API_SIMPLE_LOG
 void
-spl_milli_sleep(unsigned int);
+spc_milli_sleep(unsigned int);
 DLL_API_SIMPLE_LOG
 LLU
-spl_milli_now();
+spc_milli_now();
 DLL_API_SIMPLE_LOG
 SIMPLE_LOG_ST *
-spl_control_obj();
+spc_control_obj();
 DLL_API_SIMPLE_LOG
 LLU
-spl_process_id();
+spc_process_id();
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
