@@ -56,12 +56,12 @@ main__(int argc, char *argv[])
 #else
 	snprintf(cfgpath, 1024, "simplelog.cfg");
 #endif
-	ret = spl_init_log(cfgpath);
+	ret = spc_init_log(cfgpath);
 
-	spl_console_log("====================Start.\n");
+	spc_console_log("====================Start.\n");
 	dotest();
-	spl_console_log("==================End.\n");
-	spl_finish_log();
+	spc_console_log("==================End.\n");
+	spc_finish_log();
 	return EXIT_SUCCESS;
 }
 void
@@ -109,7 +109,7 @@ dotest()
 	for (i = 0; i < num_threads; i++) {
 		int s = pthread_join(pidds[i], 0);
 		if (s != 0) {
-			spl_console_log("pthread_join error.\n");
+			spc_console_log("pthread_join error.\n");
 		}
 	}
 	free(pidds);
@@ -118,11 +118,11 @@ dotest()
 }
 
 // topic=sys,lib,exe,nayax,sksgn
-#define spllogsys(__level__, __fmt__, ...) spllogtopic(__level__, 0, __fmt__, ##__VA_ARGS__);
-#define splloglib(__level__, __fmt__, ...) spllogtopic(__level__, 1, __fmt__, ##__VA_ARGS__);
-#define spllogexe(__level__, __fmt__, ...) spllogtopic(__level__, 2, __fmt__, ##__VA_ARGS__);
-#define spllognaxyax(__level__, __fmt__, ...) spllogtopic(__level__, 3, __fmt__, ##__VA_ARGS__);
-#define spllogsksgn(__level__, __fmt__, ...) spllogtopic(__level__, 4, __fmt__, ##__VA_ARGS__);
+#define spclogsys(__level__, __fmt__, ...) spclogtopic(__level__, 0, __fmt__, ##__VA_ARGS__);
+#define spcloglib(__level__, __fmt__, ...) spclogtopic(__level__, 1, __fmt__, ##__VA_ARGS__);
+#define spclogexe(__level__, __fmt__, ...) spclogtopic(__level__, 2, __fmt__, ##__VA_ARGS__);
+#define spclognaxyax(__level__, __fmt__, ...) spclogtopic(__level__, 3, __fmt__, ##__VA_ARGS__);
+#define spclogsksgn(__level__, __fmt__, ...) spclogtopic(__level__, 4, __fmt__, ##__VA_ARGS__);
 // https://github.com/gabime/spdlog, 10 thread
 #ifndef UNIX_LINUX
 DWORD WINAPI
@@ -135,19 +135,19 @@ posix_thread_routine(void *lpParam)
 #endif // !UNIX_LINUX
 	int count = 0;
 	while (count < loop_count) {
-// spllog(SPC_LOG_INFO, "test log: %d", count);
-// spllogsys(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
-// splloglib(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "lib");
-// spllogexe(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "exe");
-// spllognaxyax(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "nayax");
-// spllogsksgn(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sksg");
+// spclog(SPC_LOG_INFO, "test log: %d", count);
+// spclogsys(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
+// spcloglib(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "lib");
+// spclogexe(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "exe");
+// spclognaxyax(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "nayax");
+// spclogsksgn(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sksg");
 
 /*You can mix any topic togther. No problem.*/
 #define TEXT_PERFORMMANCE_TEXT "Log: %d"
 		if (topicindex < 1) {
-			spllog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
+			spclog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
 		} else {
-			spllogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
+			spclogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
 		}
 		++count;
 	}
@@ -180,27 +180,27 @@ main(int argc, char *argv[])
 	}
 	memset(&input, 0, sizeof(input));
 	snprintf(input.id_name, SPC_IDD_NAME, "testlog");
-	// int ret = spl_init_log((char *)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
+	// int ret = spc_init_log((char *)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
 #ifndef UNIX_LINUX
-	// ret = spl_init_log((char*)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
+	// ret = spc_init_log((char*)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
 	snprintf(input.folder, SPC_PATH_FOLDER, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
 #else
-	// ret = spl_init_log((char*)"simplelog.cfg");
+	// ret = spc_init_log((char*)"simplelog.cfg");
 	snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");
 #endif
 	input.is_master = ismaster ? 1 : 0;
-	ret = spl_init_log_ext(&input);
+	ret = spc_init_log_ext(&input);
 
 	if (!ismaster) {
-		spl_console_log("====================Start.\n");
+		spc_console_log("====================Start.\n");
 		dotest();
-		spl_console_log("==================End.\n");
+		spc_console_log("==================End.\n");
 	} else {
 		FILE *fp = 0;
 		while (1) {
-			spl_console_log("this is master process.");
-			spllog(SPC_LOG_INFO, "this is master process.");
-			spl_sleep(5);
+			spc_console_log("this is master process.");
+			spclog(SPC_LOG_INFO, "this is master process.");
+			spc_sleep(5);
 #ifndef UNIX_LINUX
 			fp = fopen("trigger_master.txt", "r");
 #else
@@ -214,6 +214,6 @@ main(int argc, char *argv[])
 			fclose(fp);
 		}
 	}
-	spl_finish_log();
+	spc_finish_log();
 	return 0;
 }
