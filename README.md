@@ -136,10 +136,10 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 **APIs - Focus on Simplicity and Ease of Use**:  
   - **4 simple APIs** for usage:  
     - **Initialization** (at the start of `main`):  
-	    		    - `spc_init_log_ext(SPL_INPUT_ARG *input)`  
+	    		    - `spc_init_log_ext(SPC_INPUT_ARG *input)`  
     - **Logging** (in any thread):  
 	    	    - `spclog(level, fmt, ...)`  
-	    	    - **Levels**: `SPL_LOG_DEBUG`, `SPL_LOG_INFO`, `SPL_LOG_WARNING`, `SPL_LOG_ERROR`, `SPL_LOG_FATAL`  
+	    	    - **Levels**: `SPC_LOG_DEBUG`, `SPC_LOG_INFO`, `SPC_LOG_WARNING`, `SPC_LOG_ERROR`, `SPC_LOG_FATAL`  
     - **Topic-based Logging**:  
 	    	    - `spclogtopic(level, topic_index, fmt, ...)`  
     - **Finalization** (at the end of `main`):  
