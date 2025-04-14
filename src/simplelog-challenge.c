@@ -157,17 +157,17 @@
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-#define SPLOG_PATHFOLDR "pathfoder="
-#define SPLOG_LEVEL "level="
-#define SPLOG_BUFF_SIZE "buffsize="
+#define SPCLOG_PATHFOLDR "pathfoder="
+#define SPCLOG_LEVEL "level="
+#define SPCLOG_BUFF_SIZE "buffsize="
 #define SPC_MAX_SZ_MSG "max_sz_msg="
-#define SPLOG_ROT_SIZE "rotation_size="
-#define SPLOG_TOPIC "topic="
-#define SPLOG_NCPU "ncpu="
-#define SPLOG_TRIGGER "trigger="
-#define SPLOG_PROCESS_MODE "process_mode="
-#define SPLOG_SHARED_KEY "shared_key="
-#define SPLOG_END_CFG "end_configuring="
+#define SPCLOG_ROT_SIZE "rotation_size="
+#define SPCLOG_TOPIC "topic="
+#define SPCLOG_NCPU "ncpu="
+#define SPCLOG_TRIGGER "trigger="
+#define SPCLOG_PROCESS_MODE "process_mode="
+#define SPCLOG_SHARED_KEY "shared_key="
+#define SPCLOG_END_CFG "end_configuring="
 
 #define SPC_FILE_NAME_FMT "%s\\%s\\%s_%.8d.log"
 #define SPC_FILE_NAME_FMT_TOPIC "%s\\%s\\%s"
@@ -197,8 +197,8 @@ spcLockSpinlock(volatile long *p);
 // DLL_API_SIMPLE_LOG
 static void
 spcUnlockSpinlock(volatile long *p);
-#define SplLockSpinlock(__p__) spcLockSpinlock((volatile long *)(__p__))
-#define SplUnlockSpinlock(__p__) spcUnlockSpinlock((volatile long *)(__p__))
+#define SpcLockSpinlock(__p__) spcLockSpinlock((volatile long *)(__p__))
+#define SpcUnlockSpinlock(__p__) spcUnlockSpinlock((volatile long *)(__p__))
 
 /*static
 	volatile long spc_rw_spin = 0;*/
@@ -219,10 +219,10 @@ typedef enum __CHANGE_NAME_E__ {
 } __CHANGE_NAME_E__;
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-static const char *__spclog_pathfolder[] = {SPLOG_PATHFOLDR, SPLOG_LEVEL, SPLOG_BUFF_SIZE, SPC_MAX_SZ_MSG, SPLOG_ROT_SIZE,
-    SPLOG_TOPIC, SPLOG_NCPU, SPLOG_TRIGGER, SPLOG_PROCESS_MODE, SPLOG_SHARED_KEY, SPLOG_END_CFG, 0};
+static const char *__spclog_pathfolder[] = {SPCLOG_PATHFOLDR, SPCLOG_LEVEL, SPCLOG_BUFF_SIZE, SPC_MAX_SZ_MSG, SPCLOG_ROT_SIZE,
+    SPCLOG_TOPIC, SPCLOG_NCPU, SPCLOG_TRIGGER, SPCLOG_PROCESS_MODE, SPCLOG_SHARED_KEY, SPCLOG_END_CFG, 0};
 
-static SPC_LOG_ST __simple_log_static__;
+static SPC_LOG_ST __spc_log_statiic__;
 ;
 
 static char __spc_process_id[32];
@@ -315,7 +315,7 @@ SPC_LOG_ST *
 spc_control_obj()
 {
 	// spc_con
-	return (SPC_LOG_ST *)&__simple_log_static__;
+	return (SPC_LOG_ST *)&__spc_log_statiic__;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
@@ -416,7 +416,7 @@ int
 spc_set_off(int isoff)
 {
 	int ret = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	spc_mutex_lock(t->mtx_rw);
 	do {
 		t->off = isoff;
@@ -454,17 +454,17 @@ int
 spc_init_log_parse(char *buff, char *key, char *isEnd)
 {
 	int ret = SPC_NO_ERROR;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	do {
-		if (strcmp(key, SPLOG_PATHFOLDR) == 0) {
+		if (strcmp(key, SPCLOG_PATHFOLDR) == 0) {
 			if (!buff[0]) {
 				ret = SPC_INIT_PATH_FOLDER_EMPTY_ERROR;
 				break;
 			}
-			snprintf(__simple_log_static__.folder, 1024, "%s", buff);
+			snprintf(__spc_log_statiic__.folder, 1024, "%s", buff);
 			break;
 		}
-		if (strcmp(key, SPLOG_LEVEL) == 0) {
+		if (strcmp(key, SPCLOG_LEVEL) == 0) {
 			int n = 0;
 			int count = 0;
 			count = sscanf(buff, "%d", &n);
@@ -476,7 +476,7 @@ spc_init_log_parse(char *buff, char *key, char *isEnd)
 			t->llevel = n;
 			break;
 		}
-		if (strcmp(key, SPLOG_BUFF_SIZE) == 0) {
+		if (strcmp(key, SPCLOG_BUFF_SIZE) == 0) {
 			int n = 0;
 			int sz = 0;
 			sz = sscanf(buff, "%d", &n);
@@ -484,7 +484,7 @@ spc_init_log_parse(char *buff, char *key, char *isEnd)
 				ret = SPC_LOG_BUFF_SIZE_ERROR;
 				break;
 			}
-			__simple_log_static__.buff_size = n;
+			__spc_log_statiic__.buff_size = n;
 			break;
 		}
 		if (strcmp(key, SPC_MAX_SZ_MSG) == 0) {
@@ -498,10 +498,10 @@ spc_init_log_parse(char *buff, char *key, char *isEnd)
 			if (n < SPC_MEMO_PADDING) {
 				n = SPC_MEMO_PADDING;
 			}
-			__simple_log_static__.max_sz_msg = n;
+			__spc_log_statiic__.max_sz_msg = n;
 			break;
 		}
-		if (strcmp(key, SPLOG_ROT_SIZE) == 0) {
+		if (strcmp(key, SPCLOG_ROT_SIZE) == 0) {
 			int n = 0;
 			int sz = 0;
 			sz = sscanf(buff, "%d", &n);
@@ -509,14 +509,14 @@ spc_init_log_parse(char *buff, char *key, char *isEnd)
 				ret = SPC_LOG_ROT_SIZE_ERROR;
 				break;
 			}
-			__simple_log_static__.file_limit_size = n;
+			__spc_log_statiic__.file_limit_size = n;
 #ifdef SPC_SHOW_CONSOLE
 			spc_console_log(
-			    "__simple_log_static__.file_limit_size: %d.\n", __simple_log_static__.file_limit_size);
+			    "__spc_log_statiic__.file_limit_size: %d.\n", __spc_log_statiic__.file_limit_size);
 #endif
 			break;
 		}
-		if (strcmp(key, SPLOG_TOPIC) == 0) {
+		if (strcmp(key, SPCLOG_TOPIC) == 0) {
 			int n = 0, count = 0;
 			char *p = 0;
 			n = (int)strlen(buff);
@@ -527,48 +527,48 @@ spc_init_log_parse(char *buff, char *key, char *isEnd)
 			if (ret) {
 				break;
 			}
-			__simple_log_static__.n_topic = count;
-			__simple_log_static__.topics = p;
+			__spc_log_statiic__.n_topic = count;
+			__spc_log_statiic__.topics = p;
 			break;
 		}
-		if (strcmp(key, SPLOG_NCPU) == 0) {
+		if (strcmp(key, SPCLOG_NCPU) == 0) {
 			int sz = 0;
 			int n = 0;
 			sz = sscanf(buff, "%d", &n);
 			if (sz < 1) {
-				__simple_log_static__.ncpu = 1;
+				__spc_log_statiic__.ncpu = 1;
 				break;
 			}
-			__simple_log_static__.ncpu = n;
+			__spc_log_statiic__.ncpu = n;
 			/*
-			//if (__simple_log_static__.ncpu < 1) {
-			//	__simple_log_static__.ncpu = 1;
+			//if (__spc_log_statiic__.ncpu < 1) {
+			//	__spc_log_statiic__.ncpu = 1;
 			//}
 			*/
 			break;
 		}
-		if (strcmp(key, SPLOG_TRIGGER) == 0) {
+		if (strcmp(key, SPCLOG_TRIGGER) == 0) {
 			int n = 0, sz = 0;
 			sz = sscanf(buff, "%d", &n);
 			if (sz < 1) {
-				__simple_log_static__.trigger_thread = 0;
+				__spc_log_statiic__.trigger_thread = 0;
 				break;
 			}
-			__simple_log_static__.trigger_thread = n;
+			__spc_log_statiic__.trigger_thread = n;
 			break;
 		}
-		if (strcmp(key, SPLOG_PROCESS_MODE) == 0) {
+		if (strcmp(key, SPCLOG_PROCESS_MODE) == 0) {
 			int n = 0, sz = 0;
 			sz = sscanf(buff, "%d", &n);
 			if (sz < 1) {
-				__simple_log_static__.isProcessMode = 0;
-				spc_console_log("SPLOG_PROCESS_MODE error.");
+				__spc_log_statiic__.isProcessMode = 0;
+				spc_console_log("SPCLOG_PROCESS_MODE error.");
 				break;
 			}
-			__simple_log_static__.isProcessMode = n ? 1 : 0;
+			__spc_log_statiic__.isProcessMode = n ? 1 : 0;
 			break;
 		}
-		if (strcmp(key, SPLOG_SHARED_KEY) == 0) {
+		if (strcmp(key, SPCLOG_SHARED_KEY) == 0) {
 			int n = 0;
 			/*
 			 char* p = 0;
@@ -577,10 +577,10 @@ spc_init_log_parse(char *buff, char *key, char *isEnd)
 			if (n < 1) {
 				break;
 			}
-			snprintf(__simple_log_static__.shared_key, SPC_SHARED_KEY_LEN, "%s", buff);
+			snprintf(__spc_log_statiic__.shared_key, SPC_SHARED_KEY_LEN, "%s", buff);
 			break;
 		}
-		if (strcmp(key, SPLOG_END_CFG) == 0) {
+		if (strcmp(key, SPCLOG_END_CFG) == 0) {
 #ifdef SPC_SHOW_CONSOLE
 			spc_console_log("End configuration.\n");
 #endif
@@ -600,8 +600,8 @@ spc_init_log_ext(SPC_INPUT_ARG *input)
 {
 	int ret = 0;
 	do {
-		memcpy(__simple_log_static__.id_name, input->id_name, SPC_IDD_NAME);
-		__simple_log_static__.is_master = input->is_master;
+		memcpy(__spc_log_statiic__.id_name, input->id_name, SPC_IDD_NAME);
+		__spc_log_statiic__.is_master = input->is_master;
 		ret = spc_init_log(input->folder);
 		;
 		if (ret) {
@@ -626,7 +626,7 @@ spc_init_log(char *pathcfg)
 	    void* obj = 0;
 	*/
 	char isEnd = 0;
-	__simple_log_static__.ncpu = 1;
+	__spc_log_statiic__.ncpu = 1;
 	do {
 		snprintf(__spc_process_id, 32, "[pid \t %llu]\t", spc_process_id());
 		__spc_process_id_len = (int)strlen(__spc_process_id);
@@ -704,7 +704,7 @@ spc_init_log(char *pathcfg)
 			break;
 		}
 
-		ret = spc_verify_folder(__simple_log_static__.folder);
+		ret = spc_verify_folder(__spc_log_statiic__.folder);
 		if (ret) {
 			break;
 		}
@@ -712,15 +712,15 @@ spc_init_log(char *pathcfg)
 		if (ret) {
 			break;
 		}
-		if (__simple_log_static__.isProcessMode) {
-			if (__simple_log_static__.is_master) {
-				ret = spc_simple_log_thread(&__simple_log_static__);
+		if (__spc_log_statiic__.isProcessMode) {
+			if (__spc_log_statiic__.is_master) {
+				ret = spc_simple_log_thread(&__spc_log_statiic__);
 				if (ret) {
 					break;
 				}
 			}
 		} else {
-			ret = spc_simple_log_thread(&__simple_log_static__);
+			ret = spc_simple_log_thread(&__spc_log_statiic__);
 			if (ret) {
 				break;
 			}
@@ -756,7 +756,7 @@ spc_mutex_lock(void *obj)
 			break;
 		}
 #else
-		SplLockSpinlock(obj);
+		SpcLockSpinlock(obj);
 #endif
 #else
 #ifndef SPC_USING_SPIN_LOCK
@@ -791,7 +791,7 @@ spc_mutex_unlock(void *obj)
 			break;
 		}
 #else
-		SplUnlockSpinlock(obj);
+		SpcUnlockSpinlock(obj);
 #endif
 #else
 #ifndef SPC_USING_SPIN_LOCK
@@ -839,9 +839,9 @@ spc_get_fname_now(char *name)
 	spc_local_time_st lt;
 	spc_local_time_now(&lt);
 	if (name) {
-		if (__simple_log_static__.id_name[0]) {
+		if (__spc_log_statiic__.id_name[0]) {
 			snprintf(name, SPC_FNAME_LEN, "%.4d-%.2d-%.2d-%s", lt.year + YEAR_PADDING,
-			    (int)lt.month + MONTH_PADDING, (int)lt.day, (char *)__simple_log_static__.id_name);
+			    (int)lt.month + MONTH_PADDING, (int)lt.day, (char *)__spc_log_statiic__.id_name);
 		} else {
 			snprintf(name, SPC_FNAME_LEN, "%.4d-%.2d-%.2d-simplelog", lt.year + YEAR_PADDING,
 			    (int)lt.month + MONTH_PADDING, (int)lt.day);
@@ -1076,12 +1076,12 @@ spc_written_thread_routine(void *lpParam)
 		}
 #endif
 	}
-	spc_rel_sem(__simple_log_static__.sem_rwfile);
+	spc_rel_sem(__spc_log_statiic__.sem_rwfile);
 	if (!t->isProcessMode) {
-		spc_rel_sem(__simple_log_static__.sem_off);
+		spc_rel_sem(__spc_log_statiic__.sem_off);
 	} else {
 		if (t->is_master) {
-			spc_rel_sem(__simple_log_static__.sem_off);
+			spc_rel_sem(__spc_log_statiic__.sem_off);
 		}
 	}
 	return 0;
@@ -1131,9 +1131,9 @@ spc_fmt_now_ext(
 		return p;
 	}
 #ifndef __MODE_STRAIGHT__
-	*r = (stt.nn % __simple_log_static__.ncpu);
+	*r = (stt.nn % __spc_log_statiic__.ncpu);
 #else
-	*r = (threadiid % __simple_log_static__.ncpu);
+	*r = (threadiid % __spc_log_statiic__.ncpu);
 #endif
 
 	n = sprintf(fmtt, SPC_FMT_DATE_ADDING_X "[%c] [tid\t%llu]\t", stt.year + YEAR_PADDING, stt.month + MONTH_PADDING,
@@ -1376,7 +1376,7 @@ int
 spc_finish_log()
 {
 	int ret = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	ret = spc_set_off(1);
 	if (ret) {
 		spc_console_log("spc_set_off ret: %d", ret);
@@ -1847,7 +1847,7 @@ int
 spc_del_memory()
 {
 	int ret = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	do {
 #ifndef UNIX_LINUX
 		int isWell = (int)UnmapViewOfFile((void *)t->buf);
@@ -1933,7 +1933,7 @@ spc_create_memory(void **output, char *shared_key, int size_shared, char isCreat
 {
 	int ret = 0;
 	char *p = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	do {
 #ifndef UNIX_LINUX
 		HANDLE hMapFile = 0;
@@ -2045,7 +2045,7 @@ spc_create_memory(void **output, char *shared_key, int size_shared, char isCreat
 	return ret = 0;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-/* (SPC_LOG_ST*)&__simple_log_static__, volatile long, pthread_spinlock_t, pthread_mutex_t */
+/* (SPC_LOG_ST*)&__spc_log_statiic__, volatile long, pthread_spinlock_t, pthread_mutex_t */
 
 int
 spc_calculate_size()
@@ -2070,7 +2070,7 @@ spc_calculate_size()
 	char *p = 0;
 	int step_size = 0;
 #endif
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	size_arr_mtx = t->ncpu * sizeof(void *);
 	/*k: For buffer.*/
 	k = t->buff_size * t->ncpu * (t->n_topic + 1);
@@ -2294,7 +2294,7 @@ int
 spc_win32_sync_create()
 {
 	int ret = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	char nameobj[SPC_SHARED_NAME_LEN];
 	do {
 #ifdef SPC_USING_SPIN_LOCK
@@ -2399,7 +2399,7 @@ int
 spc_osx_sync_del()
 {
 	int ret = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	char nameobj[SPC_SHARED_NAME_LEN];
 	do {
 		if (!t->sem_rwfile) {
@@ -2451,7 +2451,7 @@ int
 spc_osx_sync_create()
 {
 	int ret = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	char nameobj[SPC_SHARED_NAME_LEN];
 	do {
 #ifdef SPC_USING_SPIN_LOCK
@@ -2546,7 +2546,7 @@ spc_mtx_init(void *obj, char shared)
 {
 	int ret = 0;
 	int err = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	pthread_mutex_t *mtx = (pthread_mutex_t *)obj;
 	do {
 		if (t->isProcessMode && !t->is_master) {
@@ -2591,7 +2591,7 @@ spc_mtx_init(void *obj, char shared)
 static void
 spc_fmt_segment(generic_dta_st *sgment)
 {
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	sgment->total = t->buff_size;
 	sgment->pl = 0;
 	sgment->pc = 0;
@@ -2606,7 +2606,7 @@ spc_init_segments()
 	int k = 0;
 	int step = 0;
 	generic_dta_st *sgment = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	p = (char *)t->buf;
 	if (!t->range) {
 		t->range = t->buff_size - (sizeof(generic_dta_st) + t->max_sz_msg + SPC_RL_BUF);
@@ -2642,7 +2642,7 @@ spc_allocate_topics()
 	char *p1 = 0;
 	int n = 0;
 	int szitopics = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	do {
 		if (!t->n_topic) {
 			break;
@@ -2697,7 +2697,7 @@ int
 spc_clean_sync_tool()
 {
 	int ret = 0;
-	SPC_LOG_ST *t = &__simple_log_static__;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
 	do {
 		if (t->n_topic > 0) {
 			spc_free(t->topics);
