@@ -93,7 +93,7 @@
 		}    \
 	}
 
-#define FFOPEN(__fp, __path, __mode)    \
+#define SPC_FFOPEN(__fp, __path, __mode)    \
 	{   \
 		(__fp) = fopen((__path), (__mode));   \
 		if (!(__fp))      \
@@ -101,8 +101,8 @@
 				(__fp), (__fp) ? "DONE" : "FAILED");     \
 	}
 
-#define FFTELL(__fp) ftell((FILE *)(__fp))
-#define FFSEEK(__fp, __a, __b) fseek((FILE *)(__fp), (__a), (__b))
+#define SPC_FFTELL(__fp) ftell((FILE *)(__fp))
+#define SPC_FFSEEK(__fp, __a, __b) fseek((FILE *)(__fp), (__a), (__b))
 
 #ifndef UNIX_LINUX
 #define SPC_CloseHandle(__obj)    \
@@ -658,7 +658,7 @@ spc_init_log(char *pathcfg)
 		__spc_process_id_len = (int)strlen(__spc_process_id);
 		memset(buf, 0, sizeof(buf));
 		/* // fp = fopen(pathcfg, "r");*/
-		FFOPEN(fp, pathcfg, "r");
+		SPC_FFOPEN(fp, pathcfg, "r");
 		if (!fp) {
 			ret = 1;
 			spc_console_log("Cannot open file error.");
@@ -1321,13 +1321,13 @@ int spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 				spc_standardize_path(path);
 				spc_standardize_path(t->path_template);
 
-				FFOPEN(t->fp, path, "a+");
+				SPC_FFOPEN(t->fp, path, "a+");
 				if (!t->fp) {
 					ret = SPC_LOG_OPEN_FILE_ERROR;
 					break;
 				}
-				FFSEEK(t->fp, 0, SEEK_END);
-				cszize = (int)FFTELL(t->fp);
+				SPC_FFSEEK(t->fp, 0, SEEK_END);
+				cszize = (int)SPC_FFTELL(t->fp);
 				if (cszize < limit) {
 					*sz = cszize;
 					break;
@@ -1400,7 +1400,7 @@ int spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 		/*
 		//t->fp = fopen(path, "a+");
 		*/
-		FFOPEN(t->fp, path, "a+");
+		SPC_FFOPEN(t->fp, path, "a+");
 		if (sz) {
 			*sz = 0;
 		}
@@ -1718,13 +1718,13 @@ spc_gen_topics(SPC_LOG_ST *t)
 					t->path_template, 
 					t->arr_topic[i].topic,
 				    t->arr_topic[i].index);
-				FFOPEN(t->arr_topic[i].fp, path, "a+");
+				SPC_FFOPEN(t->arr_topic[i].fp, path, "a+");
 				if (!t->arr_topic[i].fp) {
 					ret = SPC_LOG_TOPIC_FOPEN;
 					break;
 				}
-				FFSEEK(t->arr_topic[i].fp, 0, SEEK_END);
-				cszize = (LLU)FFTELL(t->arr_topic[i].fp);
+				SPC_FFSEEK(t->arr_topic[i].fp, 0, SEEK_END);
+				cszize = (LLU)SPC_FFTELL(t->arr_topic[i].fp);
 				if (cszize < t->file_limit_size) {
 					t->arr_topic[i].fizize = (int)cszize;
 					break;
@@ -1765,7 +1765,7 @@ spc_gen_topics(SPC_LOG_ST *t)
 					/*
 					//t->arr_topic[i].fp = fopen(path, "a+");
 					*/
-					FFOPEN(t->arr_topic[i].fp, path, "a+");
+					SPC_FFOPEN(t->arr_topic[i].fp, path, "a+");
 					if (!t->arr_topic[i].fp) {
 						ret = SPC_LOG_TOPIC_FOPEN;
 						break;
@@ -1801,13 +1801,13 @@ spc_gen_topics(SPC_LOG_ST *t)
 				/*
 				//t->arr_topic[i].fp = fopen(path, "a+");
 				*/
-				FFOPEN(t->arr_topic[i].fp, path, "a+");
+				SPC_FFOPEN(t->arr_topic[i].fp, path, "a+");
 				if (!t->arr_topic[i].fp) {
 					ret = SPC_LOG_TOPIC_FOPEN;
 					break;
 				}
-				FFSEEK(t->arr_topic[i].fp, 0, SEEK_END);
-				cszize = (LLU)FFTELL(t->arr_topic[i].fp);
+				SPC_FFSEEK(t->arr_topic[i].fp, 0, SEEK_END);
+				cszize = (LLU)SPC_FFTELL(t->arr_topic[i].fp);
 				if (cszize < t->file_limit_size) {
 					break;
 				}
