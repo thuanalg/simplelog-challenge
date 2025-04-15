@@ -1,5 +1,5 @@
 # Add main.cpp file of the project root directory as a source file
-project(simplelog-challenge-challenge-project)
+project(simplelog-challenge-project)
 set(SOURCE_LIB_FILES src/simplelog-challenge.c )
 set(SOURCE_BIN_FILES tests/c_test/main.c)
 set(SOURCE_BINCPP_FILES tests/cpp_test/main.cpp)
