@@ -8,7 +8,7 @@ If you have a problem of configuration/running or suspecting about honesty.
 Spdlog test file: https://github.com/thuanalg/simplelog-topic/blob/main/src/spd_example.cpp
 
 simplelog-topic: https://github.com/thuanalg/simplelog-challenge/blob/main/src/fork/main.c
-	Configuration file: performance/250415-CentOS-09-performance-8-Core.cfg
+	Configuration file: https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250415-CentOS-09-performance-8-Core.cfg
 	
 Environment for both:
 	- CentOS 09, 8 Cores
@@ -32,10 +32,10 @@ System Information
 ##Refer to source code: "src/linux/fork/main.c"  
 1. Come to "src/linux"  
 2. make clean; make  
-3. ./xmaster_run.sh  
+3. ./xmaster_run.sh  #Ceate  "trigger_master.txt" . https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/xmaster_run.sh
 #Fork 1 time, then there is one parent ( 10 threads), one child (10 threads).  **Total: 20 million records**.  
-4. ./xfork  
-5. ./xstop  
+4. ./xfork  #https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/xfork.sh
+5. ./xstop  #To stop: #https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/xfork.sh
 
 #[2025-04-15 13:59:59.750622821] [main.c:main:196] [thid: 140252787935040] ====================Start.
 
