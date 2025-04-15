@@ -30,7 +30,9 @@
 #include <stdio.h>
 #include <string.h>
 /*strrchr*/
+/*
 #define UNIX_LINUX
+*/
 #ifndef SPC_USING_SPIN_LOCK
 	/*// #define SPC_USING_SPIN_LOCK */
 #endif /* // !SPC_USING_SPIN_LOCK */
