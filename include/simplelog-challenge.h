@@ -160,7 +160,7 @@ typedef struct __SPC_CALLBACL_DATA__ {
 	char data[0];
 } SPC_CALLBACL_DATA;
 typedef int (*SPC_CALLBACL_FUNCTION)(void *);
-typedef struct __GENERIC_DATA__ {
+typedef struct __SPC_GENERIC_DATA__ {
 	int total; /*Total size*/
 	/*int range;					Total size*/
 	int pc; /*Point to the current*/
@@ -240,8 +240,7 @@ typedef struct __SPC_INPUT_ARG__ {
 	char folder[SPC_PATH_FOLDER];
 	char id_name[SPC_IDD_NAME];
 	char is_master;
-	SPC_CALLBACL_FUNCTION
-	fn;
+	SPC_CALLBACL_FUNCTION fn;
 	SPC_CALLBACL_DATA *obj;
 } SPC_INPUT_ARG;
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
