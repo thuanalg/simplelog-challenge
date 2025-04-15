@@ -98,6 +98,7 @@ Speed: 470 MB/s
 	- 1 master
 	- 4 slaver ( fork(); fork();), one process contains 10 threads
 	- 40 threads
+	- ncpu=15
 du log_simple
 	115809544	log_simple/2025/04
 	115809544	log_simple/2025
