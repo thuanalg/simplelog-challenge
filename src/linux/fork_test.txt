@@ -1,3 +1,33 @@
+
+#---------------------------------------------------------------------------------------------------------------------
+
+If you have a problem of configuration/running or suspecting about honesty.
+	Please contact me: <nguyenthaithuanalg@gmail.com>/Skype:<nguyenthaithuanalg>/Phone: +084.799.324.179
+
+#---------------------------------------------------------------------------------------------------------------------
+Spdlog test file: https://github.com/thuanalg/simplelog-topic/blob/main/src/spd_example.cpp
+
+simplelog-topic: https://github.com/thuanalg/simplelog-topic/blob/main/src/cpp_test/main.cpp
+	Configuration file: performance/250217-CentOS-09-performance-8-Core.cfg
+	
+Environment for both:
+	- CentOS 09, 8 Cores
+	- 10 threads
+	- 10(ten) million records.
+------------------
+System Information
+------------------
+      System Manufacturer: Gigabyte Technology Co., Ltd.
+             System Model: Z87M-D3H
+                     BIOS: F9 (type: UEFI)
+                Processor: Intel(R) Core(TM) i7-4770 CPU @ 3.40GHz (8 CPUs), ~3.4GHz
+                   Memory: 16384MB RAM
+      Available OS Memory: 16272MB RAM
+                Page File: 10589MB used, 8113MB available
+	- 10 threads/10(ten) million records.
+
+#---------------------------------------------------------------------------------------------------------------------
+
 ##Refer to source code: "src/linux/fork/main.c"  
 1. Come to "src/linux"  
 2. make clean; make  
