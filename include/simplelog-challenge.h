@@ -30,9 +30,11 @@
 #include <stdio.h>
 #include <string.h>
 /*strrchr*/
+
 /*
 #define UNIX_LINUX
 */
+
 #ifndef SPC_USING_SPIN_LOCK
 	/*// #define SPC_USING_SPIN_LOCK */
 #endif /* // !SPC_USING_SPIN_LOCK */
@@ -542,6 +544,10 @@ spc_control_obj();
 DLL_API_SPC_SIMEPLE_LOG
 LLU
 spc_process_id();
+
+DLL_API_SPC_SIMEPLE_LOG
+LLU
+spc_update_processid();
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 

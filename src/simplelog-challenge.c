@@ -636,7 +636,12 @@ spc_init_log_ext(SPC_INPUT_ARG *input)
 	} while (0);
 	return ret;
 }
-
+LLU spc_update_processid() {
+	snprintf(__spc_process_id, 32, 
+		"[pid \t %llu]\t", spc_process_id());
+	__spc_process_id_len = (int)strlen(__spc_process_id);	
+	return 0;
+}
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 int
