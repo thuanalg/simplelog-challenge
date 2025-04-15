@@ -14,7 +14,7 @@
 
 #[2025-04-15 14:00:04.905058491] [main.c:main:198] [thid: 140252787935040] ==================End.
 
-Speed: 3.879728 million records per second
+Speed: **3.879728 million records per second**
 Size of file: (2000200036 + 357589480) bytes
 
        1 
