@@ -23,9 +23,9 @@ Size of file: (2000200036 + 357589480) bytes
        4 [2025-04-15 13:59:59.750725175] [I] [tid        140252781094464]        [pid     21187] [main.c:posix_thread_routine:148] Log: 3
        5 [2025-04-15 13:59:59.750726285] [I] [tid        140252781094464]        [pid     21187] [main.c:posix_thread_routine:148] Log: 4
        6 [2025-04-15 13:59:59.750751755] [I] [tid        140252781094464]        [pid     21187] [main.c:posix_thread_routine:148] Log: 23
-       7 [2025-04-15 13:59:59.750762510] [I] [tid        140252781094464]        [pid     21187] [main.c:posix_thread_routine:148] Log: 33
+       7 [2025-04-15 13:59:59.750762510] [I] [tid        140252781094464]        [pid     21187] [main.c:posix_thread_routine:148] Log: 33  
 
-3030323 [2025-04-15 14:00:04.904978019] [I] [tid        140252781094464]        [pid     21188] [main.c:posix_thread_routine:148] Log: 999990
-3030324 [2025-04-15 14:00:04.904982264] [I] [tid        140252781094464]        [pid     21188] [main.c:posix_thread_routine:148] Log: 999996
-3030325 [2025-04-15 14:00:09.213771204] [I] [tid        140043502073664]        [pid     21182] [main.cpp:main:166] this is master process.
-3030326 [2025-04-15 14:00:14.213956571] [I] [tid        140043502073664]        [pid     21182] [main.cpp:main:166] this is master process.
+3030323 [2025-04-15 14:00:04.904978019] [I] [tid        140252781094464]        [pid     21188] [main.c:posix_thread_routine:148] Log: 999990  
+3030324 [2025-04-15 14:00:04.904982264] [I] [tid        140252781094464]        [pid     21188] [main.c:posix_thread_routine:148] Log: 999996  
+3030325 [2025-04-15 14:00:09.213771204] [I] [tid        140043502073664]        [pid     21182] [main.cpp:main:166] this is master process.  
+3030326 [2025-04-15 14:00:14.213956571] [I] [tid        140043502073664]        [pid     21182] [main.cpp:main:166] this is master process.  
