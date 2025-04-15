@@ -1,4 +1,4 @@
-#Refer to source code: "fork/main.c"  
+##Refer to source code: "src/linux/fork/main.c"  
 1. Come to "src/linux"  
 2. make clean; make  
 3. ./xmaster_run.sh  
