@@ -33,6 +33,7 @@ main__(int argc, char *argv[])
 {
 	int ret = 0, i = 0;
 	char cfgpath[1024];
+	snprintf(cfgpath, 1024, "simplelog.cfg");
 	for (i = 1; i < argc; ++i) {
 		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
 			ret = sscanf(argv[i], TNUMBEER_OF_THREADS "%d", &num_threads);
@@ -50,12 +51,13 @@ main__(int argc, char *argv[])
 			ret = sscanf(argv[i], TTOPIC_INDEX "%d", &topicindex);
 			continue;
 		}
+
+		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
+			ret = snprintf(argv[i], 1024, "%s", argv[i] + sizeof(TCONFIG_FILE) -1);
+			continue;
+		}
+
 	}
-#ifndef UNIX_LINUX
-	snprintf(cfgpath, 1024, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
-#else
-	snprintf(cfgpath, 1024, "simplelog.cfg");
-#endif
 	ret = spc_init_log(cfgpath);
 
 	spc_console_log("====================Start.\n");
@@ -160,6 +162,10 @@ main(int argc, char *argv[])
 	int ret = 0, i = 0;
 	SPC_INPUT_ARG input;
 	int count = 2;
+	memset(&input, 0, sizeof(input));
+	snprintf(input.id_name, SPC_IDD_NAME, "testlog");
+	snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");
+
 	for (i = 1; i < argc; ++i) {
 		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
 			ret = sscanf(argv[i], TNUMBEER_OF_THREADS "%d", &num_threads);
@@ -177,17 +183,12 @@ main(int argc, char *argv[])
 			ret = sscanf(argv[i], TTOPIC_INDEX "%d", &topicindex);
 			continue;
 		}
+		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
+			ret = snprintf(input.folder, SPC_PATH_FOLDER, "%s", argv[i] + sizeof(TCONFIG_FILE) - 1);
+			continue;
+		}
 	}
-	memset(&input, 0, sizeof(input));
-	snprintf(input.id_name, SPC_IDD_NAME, "testlog");
-	// int ret = spc_init_log((char *)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
-#ifndef UNIX_LINUX
-	// ret = spc_init_log((char*)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
-	snprintf(input.folder, SPC_PATH_FOLDER, "C:/z/simplelog-challenge/win64/Debug/simplelog.cfg");
-#else
-	// ret = spc_init_log((char*)"simplelog.cfg");
-	snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");
-#endif
+
 	input.is_master = ismaster ? 1 : 0;
 	ret = spc_init_log_ext(&input);
 

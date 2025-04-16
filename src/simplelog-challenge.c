@@ -2601,7 +2601,7 @@ spc_osx_sync_del()
 			spc_console_log("Already cleared.");
 			break;
 		}
-		if (t->isProcessMode && t->is_master) {
+		if ((t->isProcessMode && t->is_master) || !t->isProcessMode) {
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
 				"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
 			if (sem_close((sem_t *)t->sem_rwfile) == -1) {
@@ -2663,12 +2663,13 @@ spc_osx_sync_create()
 #else
 #endif
 
-		if (t->isProcessMode && t->is_master) {
+		if ((t->isProcessMode && t->is_master) || !t->isProcessMode) {
 			int retry = 0;
 			sem_t *hd = 0;
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
 				"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
 			do {
+                spc_console_log("nameobj: %s", nameobj);
 				hd = sem_open(nameobj, 
 					SPC_LOG_UNIX_CREATE_MODE, 
 					SPC_LOG_UNIX__SHARED_MODE, 1);
@@ -2706,6 +2707,7 @@ spc_osx_sync_create()
 				SPC_SHARED_NAME_LEN, "%s_%s", 
 				SPC_SEM_NAME_OFF, t->shared_key);
 			do {
+                spc_console_log("nameobj: %s", nameobj);
 				hd = sem_open(nameobj, 
 					SPC_LOG_UNIX_CREATE_MODE, 
 					SPC_LOG_UNIX__SHARED_MODE, 1);
