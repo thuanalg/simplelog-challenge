@@ -2752,8 +2752,8 @@ spc_osx_sync_create()
 				"%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
 			hd = sem_open(nameobj, SPC_LOG_UNIX_OPEN_MODE);
 			if (hd == SEM_FAILED) {
-				spc_console_log("sem_open, errno: %d, 
-					errno_text: %s.", errno, strerror(errno));
+				spc_console_log("sem_open, errno: %d, "
+					"errno_text: %s.", errno, strerror(errno));
 				ret = SPC_LOG_SEM_OSX_CREATED_ERROR;
 				break;
 			}
