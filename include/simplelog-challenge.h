@@ -226,7 +226,9 @@ typedef struct __SPC_LOG_ST__ {
 	int
 #endif
 	    hd; /* Handle of shared memory.*/
-	char shared_key[SPC_SHARED_KEY_LEN]; /* Name of shared key.*/
+	char shared_key[SPC_SHARED_KEY_LEN]; /* Name of shared key. 
+		MUST be different between applications, special with MAC OSX,
+		even process_mode=0.*/
 	char id_name[SPC_IDD_NAME]; /*To avoid duplicating of file name.*/
 	char isProcessMode; /*For cross processes mode.*/
 	int map_mem_size; /*Total mapped memory.*/
