@@ -10,12 +10,8 @@ Spdlog test file: https://github.com/thuanalg/simplelog-topic/blob/main/src/spd_
 simplelog-topic: https://github.com/thuanalg/simplelog-challenge/blob/main/src/fork/main.c
 	Configuration file: https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250415-CentOS-09-performance-8-Core.cfg
 	
-Environment for both:
+Environment for simplelog-challenge (spdlog have no support for process mode) :
 	- CentOS 09, 8 Cores
-	- 1 master-process
-	- 2 writer-processes (1 parent, 1 child by fork)
-	- 10 threads for 1 process.
-	- 20(twenty) million records.
 ------------------
 System Information
 ------------------
@@ -28,6 +24,10 @@ System Information
                 Page File: 10589MB used, 8113MB available
 
 #---------------------------------------------------------------------------------------------------------------------
+	- 1 master-process
+	- 2 writer-processes (1 parent, 1 child by fork)
+	- 10 threads for 1 process.
+	- 20(twenty) million records.
 
 ##Refer to source code: "src/linux/fork/main.c"  
 1. Come to "src/linux"  
@@ -64,6 +64,11 @@ System Information
 
 #---------------------------------------------------------------------------------------------------------------------
 
+	- 1 master-process
+	- 4 writer-processes (fork(); fork();)
+	- 10 threads for 1 writer-process.
+	- 40(forty) million records.
+
 with 4 processes ( fork(); fork();) 
 40M records
 68.405 - 58.613 = 9.792, 2.448 for 10M, Speed: 4.08496732 M records a second
@@ -90,6 +95,48 @@ Speed: 442 MB/s
 64.014679633 - 54.451305280 = 9.563374353, 2.390843588 ~ 2.4 for 10M, Speed: 4.182624096 M records a second
 Size: (2000135464 + 2000394526 + 715030830) = 4,715,560,820 = 4497.109241486 MB 
 Speed: 470 MB/s
+
+
+40M records
+[thuannt@localhost linux]$ ./xfork_run.sh 
+[2025-04-16 10:10:09.516830078] [simplelog-challenge.c:spc_calculate_size:2305] [thid: 139777868740416] buf size: 3000000, mtxsize: 640, semsize: 64
+[2025-04-16 10:10:09.516997526] [main.c:main:198] [thid: 139777868740416] ====================Start.
+
+[2025-04-16 10:10:09.517065199] [main.c:main:198] [thid: 139777868740416] ====================Start.
+
+[2025-04-16 10:10:09.517106646] [main.c:main:198] [thid: 139777868740416] ====================Start.
+
+[2025-04-16 10:10:09.517127698] [main.c:main:198] [thid: 139777868740416] ====================Start.
+
+[2025-04-16 10:10:18.998837406] [main.c:main:200] [thid: 139777868740416] ==================End.
+
+[2025-04-16 10:10:19.001812314] [main.c:main:200] [thid: 139777868740416] ==================End.
+
+[2025-04-16 10:10:19.018915888] [main.c:main:200] [thid: 139777868740416] ==================End.
+
+[thuannt@localhost linux]$ [2025-04-16 10:10:19.037796440] [main.c:main:200] [thid: 139777868740416] ==================End.
+
+
+
+
+40M records
+[thuannt@localhost linux]$ ./xfork_run.sh 
+[2025-04-16 10:23:06.369817630] [simplelog-challenge.c:spc_calculate_size:2305] [thid: 140237045983040] buf size: 3000000, mtxsize: 640, semsize: 64
+[2025-04-16 10:23:06.369971199] [main.c:main:198] [thid: 140237045983040] ====================Start.
+
+[2025-04-16 10:23:06.370024936] [main.c:main:198] [thid: 140237045983040] ====================Start.
+
+[2025-04-16 10:23:06.370047327] [main.c:main:198] [thid: 140237045983040] ====================Start.
+
+[2025-04-16 10:23:06.370064734] [main.c:main:198] [thid: 140237045983040] ====================Start.
+
+[2025-04-16 10:23:16.280131817] [main.c:main:200] [thid: 140237045983040] ==================End.
+
+[2025-04-16 10:23:16.327034971] [main.c:main:200] [thid: 140237045983040] ==================End.
+
+[thuannt@localhost linux]$ [2025-04-16 10:23:16.337523153] [main.c:main:200] [thid: 140237045983040] ==================End.
+
+[2025-04-16 10:23:16.361677404] [main.c:main:200] [thid: 140237045983040] ==================End.
 
 
 #---------------------------------------------------------------------------------------------------------------------
