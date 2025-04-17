@@ -29,7 +29,7 @@ System Information
 	- 10 threads for 1 process.
 	- 20(twenty) million records.
 
-##Refer to source code: "src/linux/fork/main.c"  
+##Refer to source code: "https://github.com/thuanalg/simplelog-challenge/blob/main/src/fork/main.c"  
 1. Come to "src/linux"  
 2. make clean; make  
 3. ./xmaster_run.sh  #Ceate  "trigger_master.txt" . https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/xmaster_run.sh
