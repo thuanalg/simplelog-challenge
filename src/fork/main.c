@@ -177,6 +177,12 @@ main(int argc, char *argv[])
 			ret = sscanf(argv[i], TTOPIC_INDEX "%d", &topicindex);
 			continue;
 		}
+
+		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
+			ret = snprintf(argv[i], 1024, "%s", argv[i] + sizeof(TCONFIG_FILE) -1);
+			continue;
+		}
+
 	}
 	memset(&input, 0, sizeof(input));
 	snprintf(input.id_name, SPC_IDD_NAME, "testlog");
