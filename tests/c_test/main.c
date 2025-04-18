@@ -27,7 +27,7 @@ int topicindex = 0;
 #define TLOOP_COUNT "--loopcount="
 #define TMASTER_MODE "--is_master="
 #define TTOPIC_INDEX "--topic_index="
-
+/*
 int
 main__(int argc, char *argv[])
 {
@@ -53,7 +53,7 @@ main__(int argc, char *argv[])
 		}
 
 		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
-			ret = snprintf(argv[i], 1024, "%s", argv[i] + sizeof(TCONFIG_FILE) -1);
+			ret = snprintf(input.folder, 1024, "%s", argv[i] + sizeof(TCONFIG_FILE) -1);
 			continue;
 		}
 
@@ -66,6 +66,7 @@ main__(int argc, char *argv[])
 	spc_finish_log();
 	return EXIT_SUCCESS;
 }
+*/
 void
 dotest()
 {

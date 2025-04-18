@@ -144,10 +144,10 @@ main(int argc, char *argv[])
 			ret = sscanf(argv[i], TTOPIC_INDEX "%d", &topicindex);
 			continue;
 		}
-        if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
-            ret = snprintf(input.folder, SPC_PATH_FOLDER, "%s", argv[i] + sizeof(TCONFIG_FILE) - 1);
-            continue;
-        }
+		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
+			ret = snprintf(input.folder, SPC_PATH_FOLDER, "%s", argv[i] + sizeof(TCONFIG_FILE) - 1);
+			continue;
+		}
 	}
 
 	input.is_master = ismaster ? 1 : 0;
