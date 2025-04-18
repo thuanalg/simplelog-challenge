@@ -169,7 +169,7 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 
 1. My family, friends.
 2. My colleagues: Lê Duy Cường, Bùi Khánh Duy, Nguyễn Công Đức , ....
-2. Jan Flik from Intel.  
+3. Jan Flik from Intel.  
 
 ---
 
