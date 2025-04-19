@@ -155,6 +155,7 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 	- For windows-64: **cmake .. -G "Visual Studio 17 2022"**.  
 	- For Linux: **cmake .. -DUNIX_LINUX=1**.  
 	- For MAC-OSX/Apple: **cmake .. -DUNIX_LINUX=1 -DMACOSX=1**.  
+	- UNIX - build/install: **make; sudo make install**.  
 	  
    
   
@@ -169,6 +170,7 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
 
 1. My family, friends.
 2. My colleagues: Lê Duy Cường, Bùi Khánh Duy, Nguyễn Công Đức , ....
+3. Jan Flik from Intel - https://www.intel.com.  
 
 ---
 

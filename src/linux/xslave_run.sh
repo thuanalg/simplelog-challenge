@@ -1,2 +1,2 @@
 export LD_LIBRARY_PATH=./
-./simple_cpp_example --is_master=0 --loopcount=1000000
+./simple_cpp_example --is_master=0 --loopcount=1000000 --cfg=z.cfg
