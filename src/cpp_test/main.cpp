@@ -98,6 +98,8 @@ posix_thread_routine(void *lpParam)
 {
 #endif // !UNIX_LINUX
 	int count = 0;
+	#define TEXT_PERFORMMANCE_TEXT "Log:%d"	
+	std::string s = TEXT_PERFORMMANCE_TEXT;
 	/*
 	char aa[10000];
 	memset(aa, 'A', sizeof(aa));
@@ -105,12 +107,12 @@ posix_thread_routine(void *lpParam)
 	*/
 	while (count < loop_count) {
 /*You can mix any topic togther. No problem.*/
-#define TEXT_PERFORMMANCE_TEXT "Log:%d"
+
 		if (topicindex < 1) {
-			spclog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
+			spclog(SPC_LOG_INFO, s.c_str(), count);
 			/*spclog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa);*/
 		} else {
-			spclogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
+			spclogtopic(SPC_LOG_INFO, topicindex - 1, s.c_str(), count);
 			/*spclogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa); */
 		}
 		++count;
