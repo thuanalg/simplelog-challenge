@@ -21,12 +21,16 @@ int num_threads = 10;
 int loop_count = 1000 * 1000;
 int ismaster = 0;
 int topicindex = 0;
+/*
+int mode_straight = 0;
+*/
 
 #define TNUMBEER_OF_THREADS "--nthread="
 #define TCONFIG_FILE "--cfg="
 #define TLOOP_COUNT "--loopcount="
 #define TMASTER_MODE "--is_master="
 #define TTOPIC_INDEX "--topic_index="
+#define TTOPIC_STRAIGHT "--mode_straight="
 
 void
 dotest()
@@ -146,12 +150,20 @@ main(int argc, char *argv[])
 			ret = sscanf(argv[i], TTOPIC_INDEX "%d", &topicindex);
 			continue;
 		}
+		/*
+		if (strstr(argv[i], TTOPIC_STRAIGHT) == argv[i]) {
+			ret = sscanf(argv[i], TTOPIC_STRAIGHT "%d", &mode_straight);
+			continue;
+		}		
+		*/
 		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
 			ret = snprintf(input.folder, SPC_PATH_FOLDER, "%s", argv[i] + sizeof(TCONFIG_FILE) - 1);
 			continue;
 		}
 	}
-
+	/*
+	input.mode_straight = mode_straight ? 1 : 0;
+	*/
 	input.is_master = ismaster ? 1 : 0;
 	ret = spc_init_log_ext(&input);
 

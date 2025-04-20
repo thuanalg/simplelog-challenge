@@ -20,6 +20,7 @@
  *		<2025-Jan-18>
  *		<2025-Feb-04>
  *		<2025-Apr-12>
+ *		<2025-Apr-20>
  * Decription:
  *		The (only) main file to implement simple log.
  */
@@ -175,6 +176,7 @@
 #define SPCLOG_TRIGGER "trigger="
 #define SPCLOG_PROCESS_MODE "process_mode="
 #define SPCLOG_SHARED_KEY "shared_key="
+#define SPCLOG_MODE_STRAIGHT "mode_straight="
 #define SPCLOG_END_CFG "end_configuring="
 
 #define SPC_FILE_NAME_FMT "%s\\%s\\%s_%.8d.log"
@@ -240,6 +242,7 @@ static const char *__spclog_pathfolder[] = {
 	SPCLOG_TRIGGER, 
 	SPCLOG_PROCESS_MODE, 
 	SPCLOG_SHARED_KEY, 
+	SPCLOG_MODE_STRAIGHT, 	
 	SPCLOG_END_CFG, 0};
 
 static SPC_LOG_ST __spc_log_statiic__;
@@ -604,6 +607,15 @@ int spc_init_log_parse(char *buff, char *key, char *isEnd)
 				SPC_SHARED_KEY_LEN, "%s", buff);
 			break;
 		}
+		if (strcmp(key, SPCLOG_MODE_STRAIGHT) == 0) {
+			int n = 0, sz = 0;
+			sz = sscanf(buff, "%d", &n);
+			t->mode_straight = n ? 1 : 0;
+			spc_console_log(
+				"buff %s, t->mode_straight: %d.",
+				buff, t->mode_straight);
+			break;
+		}		
 		if (strcmp(key, SPCLOG_END_CFG) == 0) {
 #ifdef SPC_SHOW_CONSOLE
 			spc_console_log("End configuration.\n");
@@ -627,6 +639,9 @@ spc_init_log_ext(SPC_INPUT_ARG *input)
 		memcpy(__spc_log_statiic__.id_name, 
 			input->id_name, SPC_IDD_NAME);
 		__spc_log_statiic__.is_master = input->is_master;
+		/*
+		__spc_log_statiic__.mode_straight = input->mode_straight;
+		*/
 		ret = spc_init_log(input->folder);
 		;
 		if (ret) {
@@ -1177,6 +1192,9 @@ char *spc_fmt_now_ext( char *fmtt, int len, int lv,
 	const char *filename, const char *funcname, 
 	int line, unsigned short *r, int *outlen)
 {
+	/*
+	SPC_LOG_ST *t = &__spc_log_statiic__;
+	*/
 	char *p = fmtt;
 	int ret = 0;
 	spc_local_time_st stt;
@@ -1189,12 +1207,20 @@ char *spc_fmt_now_ext( char *fmtt, int len, int lv,
 	if (ret) {
 		return p;
 	}
+	
+	if(__spc_log_statiic__.mode_straight ) {
+		*r = (threadiid % __spc_log_statiic__.ncpu);
+	} else {
+		*r = (stt.nn % __spc_log_statiic__.ncpu);
+	}
+	
+/*
 #ifndef __MODE_STRAIGHT__
 	*r = (stt.nn % __spc_log_statiic__.ncpu);
 #else
 	*r = (threadiid % __spc_log_statiic__.ncpu);
 #endif
-
+*/
 	n = sprintf(fmtt, SPC_FMT_DATE_ADDING_X "[%c] [tid\t%llu]\t", 
 		stt.year + YEAR_PADDING, stt.month + MONTH_PADDING,
 	    stt.day, stt.hour, stt.minute, stt.sec, 

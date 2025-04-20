@@ -20,8 +20,9 @@
  *		<2025-Jan-18>
  *		<2025-Feb-04>
  *		<2025-Apr-12>
+ *		<2025-Apr-20>
  * Decription:
- *		The (only) main header file to export 5 APIs: [spc_init_log, spc_init_log_ext, spclog, spclogtopic,
+ *		The (only) main header file to export 4 APIs: [spc_init_log_ext, spclog, spclogtopic,
  *spc_finish_log].
  */
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -219,6 +220,7 @@ typedef struct __SPC_LOG_ST__ {
 	int ncpu; /*Number of CPU.*/
 	int trigger_thread; /*Use trigger thread or not.*/
 	void **arr_mtx; /*List of lock: Spinlock or Mutex. Must be freed.*/
+	char mode_straight; /* The order of records in same thread is arranged.*/
 	/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
 #ifndef UNIX_LINUX
 	void *
@@ -233,15 +235,18 @@ typedef struct __SPC_LOG_ST__ {
 	char isProcessMode; /*For cross processes mode.*/
 	int map_mem_size; /*Total mapped memory.*/
 	char is_master;
-	SPC_CALLBACL_FUNCTION
-	fn;
+	SPC_CALLBACL_FUNCTION fn;
 	SPC_CALLBACL_DATA *obj;
+	
 } SPC_LOG_ST;
 
 typedef struct __SPC_INPUT_ARG__ {
 	char folder[SPC_PATH_FOLDER];
 	char id_name[SPC_IDD_NAME];
 	char is_master;
+	/*
+	char mode_straight;
+	*/
 	SPC_CALLBACL_FUNCTION fn;
 	SPC_CALLBACL_DATA *obj;
 } SPC_INPUT_ARG;

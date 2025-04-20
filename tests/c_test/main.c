@@ -21,52 +21,17 @@ int num_threads = 10;
 int loop_count = 1000 * 1000;
 int ismaster = 0;
 int topicindex = 0;
+/*
+int mode_straight = 0;
+*/
 
 #define TNUMBEER_OF_THREADS "--nthread="
 #define TCONFIG_FILE "--cfg="
 #define TLOOP_COUNT "--loopcount="
 #define TMASTER_MODE "--is_master="
 #define TTOPIC_INDEX "--topic_index="
-/*
-int
-main__(int argc, char *argv[])
-{
-	int ret = 0, i = 0;
-	char cfgpath[1024];
-	snprintf(cfgpath, 1024, "simplelog.cfg");
-	for (i = 1; i < argc; ++i) {
-		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
-			ret = sscanf(argv[i], TNUMBEER_OF_THREADS "%d", &num_threads);
-			continue;
-		}
-		if (strstr(argv[i], TLOOP_COUNT) == argv[i]) {
-			ret = sscanf(argv[i], TLOOP_COUNT "%d", &loop_count);
-			continue;
-		}
-		if (strstr(argv[i], TMASTER_MODE) == argv[i]) {
-			ret = sscanf(argv[i], TMASTER_MODE "%d", &ismaster);
-			continue;
-		}
-		if (strstr(argv[i], TTOPIC_INDEX) == argv[i]) {
-			ret = sscanf(argv[i], TTOPIC_INDEX "%d", &topicindex);
-			continue;
-		}
+#define TTOPIC_STRAIGHT "--mode_straight="
 
-		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
-			ret = snprintf(input.folder, 1024, "%s", argv[i] + sizeof(TCONFIG_FILE) -1);
-			continue;
-		}
-
-	}
-	ret = spc_init_log(cfgpath);
-
-	spc_console_log("====================Start.\n");
-	dotest();
-	spc_console_log("==================End.\n");
-	spc_finish_log();
-	return EXIT_SUCCESS;
-}
-*/
 void
 dotest()
 {
@@ -184,12 +149,20 @@ main(int argc, char *argv[])
 			ret = sscanf(argv[i], TTOPIC_INDEX "%d", &topicindex);
 			continue;
 		}
+		/*
+		if (strstr(argv[i], TTOPIC_STRAIGHT) == argv[i]) {
+			ret = sscanf(argv[i], TTOPIC_STRAIGHT "%d", &mode_straight);
+			continue;
+		}			
+		*/
 		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
 			ret = snprintf(input.folder, SPC_PATH_FOLDER, "%s", argv[i] + sizeof(TCONFIG_FILE) - 1);
 			continue;
 		}
 	}
-
+	/*
+	input.mode_straight = mode_straight ? 1 : 0;
+	*/
 	input.is_master = ismaster ? 1 : 0;
 	ret = spc_init_log_ext(&input);
 

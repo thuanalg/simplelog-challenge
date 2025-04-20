@@ -21,12 +21,17 @@ int num_threads = 10;
 int loop_count = 1000 * 1000;
 int ismaster = 0;
 int topicindex = 0;
+/*
+int mode_straight = 0;
+*/
 
 #define TNUMBEER_OF_THREADS "--nthread="
 #define TCONFIG_FILE "--cfg="
 #define TLOOP_COUNT "--loopcount="
 #define TMASTER_MODE "--is_master="
 #define TTOPIC_INDEX "--topic_index="
+#define TTOPIC_STRAIGHT "--mode_straight="
+
 
 void
 dotest()
@@ -70,7 +75,7 @@ dotest()
 	for (i = 0; i < num_threads; ++i) {
 		int err = pthread_create(pidds + i, 0, posix_thread_routine, 0);
 	}
-	for (int i = 0; i < num_threads; i++) {
+	for (i = 0; i < num_threads; i++) {
 		int s = pthread_join(pidds[i], 0);
 		if (s != 0) {
 			spc_console_log("pthread_join error.\n");
@@ -98,22 +103,20 @@ posix_thread_routine(void *lpParam)
 {
 #endif // !UNIX_LINUX
 	int count = 0;
-	#define TEXT_PERFORMMANCE_TEXT "Log:%d"	
-	std::string s = TEXT_PERFORMMANCE_TEXT;
-	/*
-	char aa[10000];
-	memset(aa, 'A', sizeof(aa));
-	aa[sizeof(aa) - 1] = 0;
-	*/
 	while (count < loop_count) {
-/*You can mix any topic togther. No problem.*/
+// spclog(SPC_LOG_INFO, "test log: %d", count);
+// spclogsys(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sys");
+// spcloglib(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "lib");
+// spclogexe(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "exe");
+// spclognaxyax(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "nayax");
+// spclogsksgn(SPC_LOG_INFO, "test log: %llu, topic: %s.", (LLU)time(0), "sksg");
 
+/*You can mix any topic togther. No problem.*/
+#define TEXT_PERFORMMANCE_TEXT "Log: %d"
 		if (topicindex < 1) {
-			spclog(SPC_LOG_INFO, s.c_str(), count);
-			/*spclog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa);*/
+			spclog(SPC_LOG_INFO, TEXT_PERFORMMANCE_TEXT, count);
 		} else {
-			spclogtopic(SPC_LOG_INFO, topicindex - 1, s.c_str(), count);
-			/*spclogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa); */
+			spclogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT, count);
 		}
 		++count;
 	}
@@ -126,9 +129,11 @@ main(int argc, char *argv[])
 	int ret = 0, i = 0;
 	SPC_INPUT_ARG input;
 	int count = 2;
-    memset(&input, 0, sizeof(input));
-    snprintf(input.id_name, SPC_IDD_NAME, "testlog");
-    snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");
+	memset(&input, 0, sizeof(input));
+	snprintf(input.id_name, SPC_IDD_NAME, "testlog");
+	// int ret = spc_init_log((char *)"C:/z/simplelog-topic/win64/Debug/simplelog.cfg");
+
+	snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");
 	for (i = 1; i < argc; ++i) {
 		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
 			ret = sscanf(argv[i], TNUMBEER_OF_THREADS "%d", &num_threads);
@@ -146,15 +151,27 @@ main(int argc, char *argv[])
 			ret = sscanf(argv[i], TTOPIC_INDEX "%d", &topicindex);
 			continue;
 		}
+		/*
+		if (strstr(argv[i], TTOPIC_STRAIGHT) == argv[i]) {
+			ret = sscanf(argv[i], TTOPIC_STRAIGHT "%d", &mode_straight);
+			continue;
+		}	
+		*/	
 		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
 			ret = snprintf(input.folder, SPC_PATH_FOLDER, "%s", argv[i] + sizeof(TCONFIG_FILE) - 1);
 			continue;
 		}
-	}
 
+	}
+	/*
+	input.mode_straight = mode_straight ? 1 : 0;
+	*/
 	input.is_master = ismaster ? 1 : 0;
 	ret = spc_init_log_ext(&input);
-
+	fork();
+	/*fork();*/
+	/*fork();*/
+	spc_update_processid();
 	if (!ismaster) {
 		spc_console_log("====================Start.\n");
 		dotest();
@@ -176,7 +193,7 @@ main(int argc, char *argv[])
 		}
 		if (fp) {
 			fclose(fp);
-snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");		}
+		}
 	}
 	spc_finish_log();
 	return 0;
