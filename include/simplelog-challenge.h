@@ -319,7 +319,7 @@ typedef struct __SPC_INPUT_ARG__ {
 #define SPC_MAX_AB(a, b) ((a) > (b)) ? (a) : (b)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-#define SPCKEYBUF(__t__, __i__) ((spc_gen_data_st *)((char *)__t__->buf + (__t__->buff_size * __i__)))
+#define SPC_KEYBUF(__t__, __i__) ((spc_gen_data_st *)((char *)__t__->buf + (__t__->buff_size * __i__)))
 #define __spc_log_buf_level__(__lv__, ___fmttt___, ...)                                                                     \
 	{                                                                                                                   \
 		;                                                                                                           \
@@ -355,16 +355,16 @@ typedef struct __SPC_INPUT_ARG__ {
 					;                                                                                   \
 					spc_mutex_lock(__t__->arr_mtx[__r__]);                                              \
 					;                                                                                   \
-					if (__t__->range > SPCKEYBUF(__t__, __r__)->pl) {                                   \
+					if (__t__->range > SPC_KEYBUF(__t__, __r__)->pl) {                                   \
 						;                                                                           \
-						memcpy(SPCKEYBUF(__t__, __r__)->data + SPCKEYBUF(__t__, __r__)->pl,         \
+						memcpy(SPC_KEYBUF(__t__, __r__)->data + SPC_KEYBUF(__t__, __r__)->pl,         \
 						    __pprefmt__, __outlen__);                                               \
 						;                                                                           \
-						SPCKEYBUF(__t__, __r__)->pl += __outlen__;                                  \
+						SPC_KEYBUF(__t__, __r__)->pl += __outlen__;                                  \
 						;                                                                           \
 						__len__ =                                                                   \
-						    snprintf(SPCKEYBUF(__t__, __r__)->data + SPCKEYBUF(__t__, __r__)->pl,   \
-							__t__->krange - SPCKEYBUF(__t__, __r__)->pl, ___fmttt___,           \
+						    snprintf(SPC_KEYBUF(__t__, __r__)->data + SPC_KEYBUF(__t__, __r__)->pl,   \
+							__t__->krange - SPC_KEYBUF(__t__, __r__)->pl, ___fmttt___,           \
 							##__VA_ARGS__);                                                     \
 						;                                                                           \
 						if (__len__ > 0) {                                                          \
@@ -372,11 +372,11 @@ typedef struct __SPC_INPUT_ARG__ {
 							;                                                                   \
 							;                                                                   \
 							__outlen__ = SPC_MIN_AB(                                            \
-							    __len__, __t__->krange - SPCKEYBUF(__t__, __r__)->pl);          \
+							    __len__, __t__->krange - SPC_KEYBUF(__t__, __r__)->pl);          \
 							;                                                                   \
 							; /*spc_console_log("outlen: %d", outlen);*/                        \
 							;                                                                   \
-							SPCKEYBUF(__t__, __r__)->pl += __outlen__;                          \
+							SPC_KEYBUF(__t__, __r__)->pl += __outlen__;                          \
 							;                                                                   \
 						};                                                                          \
 					}                                                                                   \
@@ -401,9 +401,9 @@ typedef struct __SPC_INPUT_ARG__ {
 		}                                                                                                           \
 	}
 
-#define STSPCLOBUFTOPIC(__t__, __i__) (&(__t__->arr_topic[__i__]))->buf
-#define STSPCLOBUFTOPIC_RANGE(__t__, __i__, __r__)                                                                          \
-	((spc_gen_data_st *)((char *)STSPCLOBUFTOPIC(__t__, __i__) + __t__->buff_size * __r__))
+#define SPC_ST_LOBUFTOPIC(__t__, __i__) (&(__t__->arr_topic[__i__]))->buf
+#define SPC_ST_LOBUFTOPIC_RANGE(__t__, __i__, __r__)                                                                          \
+	((spc_gen_data_st *)((char *)SPC_ST_LOBUFTOPIC(__t__, __i__) + __t__->buff_size * __r__))
 
 #define __spc_log_buf_topic_level__(__lv__, __tpic__, ___fmttt___, ...)                                                     \
 	{                                                                                                                   \
@@ -445,18 +445,19 @@ typedef struct __SPC_INPUT_ARG__ {
 				;                                                                                           \
 				;                                                                                           \
 				;                                                                                           \
-				if (__t__->range > STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl) {                      \
+				if (__t__->range > SPC_ST_LOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl) {                      \
 					;                                                                                   \
-					memcpy(STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +                         \
-						   STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,                        \
+					memcpy(SPC_ST_LOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +                         \
+						   SPC_ST_LOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,                        \
 					    __pprefmt__, __outlen__);                                                       \
 					;                                                                                   \
-					STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;                     \
+					SPC_ST_LOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;                     \
 					;                                                                                   \
 					;                                                                                   \
-					__len__ = snprintf(STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +             \
-							       STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,            \
-					    __t__->krange - STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl, ___fmttt___,  \
+					__len__ = snprintf(SPC_ST_LOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +             \
+							       SPC_ST_LOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,            \
+					    __t__->krange - SPC_ST_LOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl, \
+						___fmttt___,  								\
 					    ##__VA_ARGS__);                                                                 \
 					;                                                                                   \
 					;                                                                                   \
@@ -465,12 +466,12 @@ typedef struct __SPC_INPUT_ARG__ {
 						;                                                                           \
 						;                                                                           \
 						__outlen__ = SPC_MIN_AB(__len__,                                            \
-						    __t__->krange - STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl);      \
+						    __t__->krange - SPC_ST_LOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl);      \
 						; /*spc_console_log("outlen: %d", outlen);*/                                \
 						;                                                                           \
 						;                                                                           \
 						;                                                                           \
-						STSPCLOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;             \
+						SPC_ST_LOBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;             \
 					}                                                                                   \
 				}                                                                                           \
 				/*}*/                                                                                       \
