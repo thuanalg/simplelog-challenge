@@ -25,6 +25,37 @@ System Information
                 Page File: 10589MB used, 8113MB available
 	- 10 threads/10(ten) million records.
 
++       [thuannt@localhost simplelog-challenge]$ sudo smartctl -i /dev/sdb
++       smartctl 7.2 2020-12-30 r5155 [x86_64-linux-5.14.0-575.el9.x86_64] (local build)
++       Copyright (C) 2002-20, Bruce Allen, Christian Franke, www.smartmontools.org
++       
++       === START OF INFORMATION SECTION ===
++       Device Model:     CT500BX500SSD1
++       Serial Number:    2443E990CA3D
++       LU WWN Device Id: 5 00a075 1e990ca3d
++       Firmware Version: M6CR072
++       User Capacity:    500,107,862,016 bytes [500 GB]
++       Sector Size:      512 bytes logical/physical
++       Rotation Rate:    Solid State Device
++       Form Factor:      2.5 inches
++       TRIM Command:     Available
++       Device is:        Not in smartctl database [for details use: -P showall]
++       ATA Version is:   ACS-3 T13/2161-D revision 4
++       SATA Version is:  SATA 3.3, 6.0 Gb/s (current: 6.0 Gb/s)
++       Local Time is:    Mon Apr 21 12:04:13 2025 +07
++       SMART support is: Available - device has SMART capability.
++       SMART support is: Enabled
++
++               The write speed limitation is 500 MB/s.
++               Maximum sequential write speed: 500 megabytes per second (500 MB/s)
+
+#---------------------------------------------------------------------------------------------------------------------
+How to run
+1. Come to src/linux
+2. make clean; make
+3. ./xmaster_run.sh
+4. ./xslave_run.sh
+5. ./xstop
 #---------------------------------------------------------------------------------------------------------------------
 Spdlog 01 (first round)
 [2025-02-17 22:02:54.257] [A] [info] [example.cpp:log_messages:433] [Threadid 139977675503168] test log: 0

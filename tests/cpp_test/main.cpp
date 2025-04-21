@@ -102,7 +102,7 @@ posix_thread_routine(void *lpParam)
 {
 #endif // !UNIX_LINUX
 	int count = 0;
-	#define TEXT_PERFORMMANCE_TEXT "Log:%d"	
+#define TEXT_PERFORMMANCE_TEXT "Log:%d"
 	std::string s = TEXT_PERFORMMANCE_TEXT;
 	/*
 	char aa[10000];
@@ -110,7 +110,7 @@ posix_thread_routine(void *lpParam)
 	aa[sizeof(aa) - 1] = 0;
 	*/
 	while (count < loop_count) {
-/*You can mix any topic togther. No problem.*/
+		/*You can mix any topic togther. No problem.*/
 
 		if (topicindex < 1) {
 			spclog(SPC_LOG_INFO, s.c_str(), count);
@@ -130,9 +130,9 @@ main(int argc, char *argv[])
 	int ret = 0, i = 0;
 	SPC_INPUT_ARG input;
 	int count = 2;
-    memset(&input, 0, sizeof(input));
-    snprintf(input.id_name, SPC_IDD_NAME, "testlog");
-    snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");
+	memset(&input, 0, sizeof(input));
+	snprintf(input.id_name, SPC_IDD_NAME, "testlog");
+	snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");
 	for (i = 1; i < argc; ++i) {
 		if (strstr(argv[i], TNUMBEER_OF_THREADS) == argv[i]) {
 			ret = sscanf(argv[i], TNUMBEER_OF_THREADS "%d", &num_threads);
@@ -154,7 +154,7 @@ main(int argc, char *argv[])
 		if (strstr(argv[i], TTOPIC_STRAIGHT) == argv[i]) {
 			ret = sscanf(argv[i], TTOPIC_STRAIGHT "%d", &mode_straight);
 			continue;
-		}		
+		}
 		*/
 		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
 			ret = snprintf(input.folder, SPC_PATH_FOLDER, "%s", argv[i] + sizeof(TCONFIG_FILE) - 1);
@@ -188,7 +188,8 @@ main(int argc, char *argv[])
 		}
 		if (fp) {
 			fclose(fp);
-snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");		}
+			snprintf(input.folder, SPC_PATH_FOLDER, "simplelog.cfg");
+		}
 	}
 	spc_finish_log();
 	return 0;

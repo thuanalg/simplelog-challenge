@@ -153,7 +153,7 @@ main(int argc, char *argv[])
 		if (strstr(argv[i], TTOPIC_STRAIGHT) == argv[i]) {
 			ret = sscanf(argv[i], TTOPIC_STRAIGHT "%d", &mode_straight);
 			continue;
-		}			
+		}
 		*/
 		if (strstr(argv[i], TCONFIG_FILE) == argv[i]) {
 			ret = snprintf(input.folder, SPC_PATH_FOLDER, "%s", argv[i] + sizeof(TCONFIG_FILE) - 1);

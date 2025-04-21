@@ -1,6 +1,6 @@
 target=libsimplelog-challenge.so
-debugFlag=-g -fPIC -Wall -shared 
-releaseFlag=-fPIC -Wall -shared
+debugFlag=-g -fPIC -Wall -shared -Wextra -Wformat -Werror=format
+releaseFlag=-fPIC -Wall -shared -Wextra -Wformat -Werror=format
 LIBS+=-lpthread
 src=../simplelog-challenge.c
 INC=-I../ -I../../include
@@ -9,7 +9,7 @@ SRCTEST_PREFIX=../../tests
 CFLAGS=-std=gnu89 -D UNIX_LINUX
 #CPPFLAGS=-std=c++98 
 #CPPFLAGS=-std=c++98 -D UNIX_LINUX -D __UNIX_LINUX_CPP11_AND_NEWERS
-CPPFLAGS=-D UNIX_LINUX -D __UNIX_LINUX_CPP11_AND_NEWERS__
+CPPFLAGS=-D UNIX_LINUX -D __UNIX_LINUX_CPP11_AND_NEWERS__ -Wno-register
 
 debug:
 	gcc ${debugFlag} -o ${target} ${src} ${LIBS} ${CFLAGS} ${INC}

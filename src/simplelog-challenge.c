@@ -33,8 +33,8 @@
 #include <time.h>
 #ifndef UNIX_LINUX
 #include <Windows.h>
-#define YEAR_PADDING 0
-#define MONTH_PADDING 0
+#define YEAR_PADDING              0
+#define MONTH_PADDING             0
 #else
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -56,15 +56,15 @@
 #include <mach/clock.h>
 #include <mach/clock_types.h>
 #endif
-#define YEAR_PADDING 1900
-#define MONTH_PADDING 1
+#define YEAR_PADDING              1900
+#define MONTH_PADDING             1
 
 #define SPC_LOG_UNIX__SHARED_MODE (S_IRUSR | S_IWUSR | S_IRGRP | S_IROTH)
-#define SPC_LOG_UNIX_CREATE_MODE (O_CREAT | O_RDWR | O_EXCL)
-#define SPC_LOG_UNIX_OPEN_MODE (O_RDWR | O_EXCL)
+#define SPC_LOG_UNIX_CREATE_MODE  (O_CREAT | O_RDWR | O_EXCL)
+#define SPC_LOG_UNIX_OPEN_MODE    (O_RDWR | O_EXCL)
 /* #define SPC_LOG_UNIX_PROT_FLAGS	\
 	(PROT_READ | PROT_WRITE | PROT_EXEC) */
-#define SPC_LOG_UNIX_PROT_FLAGS (PROT_READ | PROT_WRITE)
+#define SPC_LOG_UNIX_PROT_FLAGS   (PROT_READ | PROT_WRITE)
 #endif
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -157,46 +157,51 @@
 	}
 #endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-#define SPC_SEM_NAME_RW "_SEM_RW"
-#define SPC_SEM_NAME_OFF "_SEM_OFF"
+#define SPC_SEM_NAME_RW           "_SEM_RW"
+#define SPC_SEM_NAME_OFF          "_SEM_OFF"
 
-#define SPC_MTX_NAME_RW "_MTX_RW"
-#define SPC_MTX_NAME_OFF "_MTX_OFF"
+#define SPC_MTX_NAME_RW           "_MTX_RW"
+#define SPC_MTX_NAME_OFF          "_MTX_OFF"
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-#define SPCLOG_PATHFOLDR "pathfoder="
-#define SPCLOG_LEVEL "level="
-#define SPCLOG_BUFF_SIZE "buffsize="
-#define SPC_MAX_SZ_MSG "max_sz_msg="
-#define SPCLOG_ROT_SIZE "rotation_size="
-#define SPCLOG_TOPIC "topic="
-#define SPCLOG_NCPU "ncpu="
-#define SPCLOG_TRIGGER "trigger="
-#define SPCLOG_PROCESS_MODE "process_mode="
-#define SPCLOG_SHARED_KEY "shared_key="
-#define SPCLOG_MODE_STRAIGHT "mode_straight="
-#define SPCLOG_END_CFG "end_configuring="
+#define SPCLOG_PATHFOLDR          "pathfoder="
+#define SPCLOG_LEVEL              "level="
+#define SPCLOG_BUFF_SIZE          "buffsize="
+#define SPC_MAX_SZ_MSG            "max_sz_msg="
+#define SPCLOG_ROT_SIZE           "rotation_size="
+#define SPCLOG_TOPIC              "topic="
+#define SPCLOG_NCPU               "ncpu="
+#define SPCLOG_TRIGGER            "trigger="
+#define SPCLOG_PROCESS_MODE       "process_mode="
+#define SPCLOG_SHARED_KEY         "shared_key="
+#define SPCLOG_MODE_STRAIGHT      "mode_straight="
+#define SPCLOG_END_CFG            "end_configuring="
+#ifndef UNIX_LINUX
+#define SPC_FILE_NAME_FMT         "%s\\%s\\%s_%.8d.log"
+#define SPC_FILE_NAME_FMT_TOPIC   "%s\\%s\\%s"
+#else
+#define SPC_FILE_NAME_FMT         "%s/%s/%s_%.8d.log"
+#define SPC_FILE_NAME_FMT_TOPIC   "%s/%s/%s"
+#endif
 
-#define SPC_FILE_NAME_FMT "%s\\%s\\%s_%.8d.log"
-#define SPC_FILE_NAME_FMT_TOPIC "%s\\%s\\%s"
-#define SPC_FMT_DATE_ADDING "%.4d-%.2d-%.2d"
-#define SPC_FMT_HOUR_ADDING "%.2d:%.2d:%.2d"
-#define SPC_FMT_DELT_ADDING "%s %s.%.9u"
-#define SPC_FMT_MILL_ADDING "%s %s.%.9d"
-#define SPC_FMT_DATE_ADDING_X "\n[%.4d-%.2d-%.2d %.2d:%.2d:%.2d.%.9d] "
-#define HHHHHHHHHHH "%llu]\t"
+#define SPC_FMT_DATE_ADDING       "%.4d-%.2d-%.2d"
+#define SPC_FMT_HOUR_ADDING       "%.2d:%.2d:%.2d"
+#define SPC_FMT_DELT_ADDING       "%s %s.%.9u"
+#define SPC_FMT_MILL_ADDING       "%s %s.%.9d"
+#define SPC_FMT_DATE_ADDING_X     "\n[%.4d-%.2d-%.2d %.2d:%.2d:%.2d.%.9d] "
+#define HHHHHHHHHHH               "%llu]\t"
 
-#define SPC_TEXT_UNKNOWN "U"
-#define SPC_TEXT_DEBUG "D"
-#define SPC_TEXT_INFO "I"
-#define SPC_TEXT_WARN "W"
-#define SPC_TEXT_ERROR "E"
-#define SPC_TEXT_FATAL "F"
+#define SPC_TEXT_UNKNOWN          "U"
+#define SPC_TEXT_DEBUG            "D"
+#define SPC_TEXT_INFO             "I"
+#define SPC_TEXT_WARN             "W"
+#define SPC_TEXT_ERROR            "E"
+#define SPC_TEXT_FATAL            "F"
 
-#define SPC_MILLION 1000000
-#define SPC_FNAME_LEN 128
+#define SPC_MILLION               1000000
+#define SPC_FNAME_LEN             128
 
 #define SPC_CASTGEN(__t__) ((spc_gen_data_st *)__t__)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -214,7 +219,7 @@ spc_UnlockSpinlock(volatile long *p);
 
 /*static
 	volatile long spc_rw_spin = 0;*/
-#define THREAD_ROUTINE LPTHREAD_START_ROUTINE
+#define THREAD_ROUTINE            LPTHREAD_START_ROUTINE
 #else
 typedef void *(*THREAD_ROUTINE)(void *);
 #endif
@@ -486,7 +491,8 @@ int spc_init_log_parse(char *buff, char *key, char *isEnd)
 				ret = SPC_INIT_PATH_FOLDER_EMPTY_ERROR;
 				break;
 			}
-			snprintf(__spc_log_statiic__.folder, 1024, "%s", buff);
+			snprintf(__spc_log_statiic__.folder, 
+				SPC_FOLDER_LEN, "%s", buff);
 			break;
 		}
 		if (strcmp(key, SPCLOG_LEVEL) == 0) {
@@ -612,8 +618,8 @@ int spc_init_log_parse(char *buff, char *key, char *isEnd)
 			sz = sscanf(buff, "%d", &n);
 			t->mode_straight = n ? 1 : 0;
 			spc_console_log(
-				"buff %s, t->mode_straight: %d.",
-				buff, t->mode_straight);
+				"buff %s, t->mode_straight: %d, sz: %d.",
+				buff, t->mode_straight, sz);
 			break;
 		}		
 		if (strcmp(key, SPCLOG_END_CFG) == 0) {
@@ -857,7 +863,7 @@ spc_verify_folder(char *folder)
 {
 	int ret = 0;
 	do {
-#ifdef WIN32
+#ifndef UNIX_LINUX
 		/*
 		https://learn.microsoft.com/en-us/windows/win32/fileio/retrieving-and-changing-file-attributes
 		// https://learn.microsoft.com/en-us/windows/win32/api/fileapi/nf-fileapi-createdirectorya
@@ -874,6 +880,8 @@ spc_verify_folder(char *folder)
 			}
 			ret = SPC_LOG_FOLDER_ERROR;
 		}
+#else
+		spc_console_log("folder: %s.", folder);
 #endif
 	} while (0);
 	return ret;
@@ -1207,20 +1215,19 @@ char *spc_fmt_now_ext( char *fmtt, int len, int lv,
 	if (ret) {
 		return p;
 	}
-	
-	if(__spc_log_statiic__.mode_straight ) {
-		*r = (threadiid % __spc_log_statiic__.ncpu);
-	} else {
-		*r = (stt.nn % __spc_log_statiic__.ncpu);
-	}
-	
-/*
+#if 1	
+	*r = __spc_log_statiic__.mode_straight ? 
+		(threadiid % __spc_log_statiic__.ncpu) : 
+		(stt.nn % __spc_log_statiic__.ncpu);
+#endif	
+
+#if 0
 #ifndef __MODE_STRAIGHT__
 	*r = (stt.nn % __spc_log_statiic__.ncpu);
 #else
 	*r = (threadiid % __spc_log_statiic__.ncpu);
 #endif
-*/
+#endif
 	n = sprintf(fmtt, SPC_FMT_DATE_ADDING_X "[%c] [tid\t%llu]\t", 
 		stt.year + YEAR_PADDING, stt.month + MONTH_PADDING,
 	    stt.day, stt.hour, stt.minute, stt.sec, 
@@ -1314,7 +1321,7 @@ int spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 	/*
 	//int renew = SPC_NO_CHANGE_NAME;
 	*/
-	char path[1024];
+	char path[SPC_FULLPATH_LEN + 1];
 	char fmt_file_name[SPC_FNAME_LEN];
 	int ferr = 0;
 	char yearmonth[16];
@@ -1342,11 +1349,11 @@ int spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 			do {
 				int err = 0;
 				int cszize = 0;
-				snprintf(path, 1024, 
+				snprintf(path, SPC_FULLPATH_LEN, 
 					SPC_FILE_NAME_FMT, 
 					t->folder, yearmonth, 
 					fmt_file_name, *index);
-				snprintf( t->path_template, 1024, 
+				snprintf( t->path_template, SPC_TEMPLATE_LEN, 
 					SPC_FILE_NAME_FMT_TOPIC, 
 					t->folder, yearmonth, fmt_file_name);
 				spc_standardize_path(path);
@@ -1413,11 +1420,11 @@ int spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 			spc_console_log("spc_folder_sup: ret: %d.\n", ret);
 			break;
 		}
-		snprintf(path, 1024, 
+		snprintf(path, SPC_FULLPATH_LEN, 
 			SPC_FILE_NAME_FMT, 
 			t->folder, 
 			yearmonth, fmt_file_name, *index);
-		snprintf(t->path_template, 1024, 
+		snprintf(t->path_template, SPC_TEMPLATE_LEN, 
 			SPC_FILE_NAME_FMT_TOPIC, 
 			t->folder, yearmonth, fmt_file_name);
 
@@ -1508,7 +1515,7 @@ int spc_folder_sup(char *folder,
 	spc_local_time_st *lctime, char *year_month)
 {
 	int ret = 0;
-	char path[1024];
+	char path[SPC_FOLDER_LEN];
 #ifndef UNIX_LINUX
 	int result = 0;
 #else
@@ -1529,7 +1536,7 @@ int spc_folder_sup(char *folder,
 			ret = SPC_LOG_CHECK_FOLDER_NULL_ERROR;
 			break;
 		}
-		snprintf(path, 1024, "%s", folder);
+		snprintf(path, SPC_FOLDER_LEN, "%s", folder);
 #ifndef UNIX_LINUX
 		result = CreateDirectoryA(path, 0);
 		if (!result) {
@@ -1539,7 +1546,7 @@ int spc_folder_sup(char *folder,
 				break;
 			}
 		}
-		snprintf(path, 1024, 
+		snprintf(path, SPC_FOLDER_LEN, 
 			"%s/%.4u", folder, lctime->year + YEAR_PADDING);
 		result = CreateDirectoryA(path, 0);
 		if (!result) {
@@ -1549,7 +1556,7 @@ int spc_folder_sup(char *folder,
 				break;
 			}
 		}
-		snprintf(path, 1024, 
+		snprintf(path, SPC_FOLDER_LEN, 
 			"%s/%.4d/%.2d", folder, 
 			(int)lctime->year + YEAR_PADDING,
 		    (int)lctime->month + MONTH_PADDING);
@@ -1581,7 +1588,7 @@ int spc_folder_sup(char *folder,
 		}
 
 		memset(&buf, 0, sizeof(buf));
-		snprintf(path, 1024, 
+		snprintf(path, SPC_FOLDER_LEN, 
 			"%s/%.4u", folder, 
 			lctime->year + YEAR_PADDING);
 		err = stat(path, &buf);
@@ -1597,7 +1604,7 @@ int spc_folder_sup(char *folder,
 			}
 		}
 		memset(&buf, 0, sizeof(buf));
-		snprintf(path, 1024, 
+		snprintf(path, SPC_FOLDER_LEN, 
 			"%s/%.4d/%.2d", folder, 
 			(int)lctime->year + YEAR_PADDING,
 		    (int)lctime->month + MONTH_PADDING);
@@ -1725,7 +1732,7 @@ int
 spc_gen_topics(SPC_LOG_ST *t)
 {
 	int ret = 0;
-	char path[1024];
+	char path[SPC_FULLPATH_LEN + 1];
 	/*
 	//int renew = 0;
 	*/
@@ -1744,7 +1751,7 @@ spc_gen_topics(SPC_LOG_ST *t)
 			}
 			do {
 				int err = 0;
-				snprintf(path, 1024, 
+				snprintf(path, SPC_FULLPATH_LEN, 
 					"%s-%s-%.7d.log", 
 					t->path_template, 
 					t->arr_topic[i].topic,
@@ -1756,7 +1763,7 @@ spc_gen_topics(SPC_LOG_ST *t)
 				}
 				SPC_FFSEEK(t->arr_topic[i].fp, 0, SEEK_END);
 				cszize = (LLU)SPC_FFTELL(t->arr_topic[i].fp);
-				if (cszize < t->file_limit_size) {
+				if (cszize < (LLU)t->file_limit_size) {
 					t->arr_topic[i].fizize = (int)cszize;
 					break;
 				}
@@ -1788,7 +1795,7 @@ spc_gen_topics(SPC_LOG_ST *t)
 					}
 					t->arr_topic[i].index = 0;
 					t->arr_topic[i].fizize = 0;
-					snprintf(path, 1024, 
+					snprintf(path, SPC_FULLPATH_LEN, 
 						"%s-%s-%.7d.log", 
 						t->path_template, 
 						t->arr_topic[i].topic,
@@ -1824,7 +1831,7 @@ spc_gen_topics(SPC_LOG_ST *t)
 
 				t->arr_topic[i].fizize = 0;
 
-				snprintf(path, 1024, 
+				snprintf(path, SPC_FULLPATH_LEN, 
 					"%s-%s-%.7d.log", 
 					t->path_template, 
 					t->arr_topic[i].topic,
@@ -1839,7 +1846,7 @@ spc_gen_topics(SPC_LOG_ST *t)
 				}
 				SPC_FFSEEK(t->arr_topic[i].fp, 0, SEEK_END);
 				cszize = (LLU)SPC_FFTELL(t->arr_topic[i].fp);
-				if (cszize < t->file_limit_size) {
+				if (cszize < (LLU)t->file_limit_size) {
 					break;
 				}
 				SPC_FCLOSE(t->arr_topic[i].fp, err);
@@ -1958,6 +1965,7 @@ spc_trigger_routine(void *arg)
 		spc_rel_sem(t->sem_rwfile);
 		spc_milli_sleep(t->trigger_thread);
 	}
+	return 0;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef UNIX_LINUX

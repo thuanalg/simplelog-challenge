@@ -27,14 +27,14 @@
  */
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef ___SPC_SIMEPLE_LOG__
-#define ___SPC_SIMEPLE_LOG__
+#define ___SPC_SIMEPLE_LOG__    
 #include <stdio.h>
 #include <string.h>
 /*strrchr*/
 
-/*
-#define UNIX_LINUX
-*/
+
+//#define UNIX_LINUX              
+
 
 #ifndef SPC_USING_SPIN_LOCK
 /*// #define SPC_USING_SPIN_LOCK */
@@ -50,21 +50,21 @@
 extern "C" {
 #endif
 
-#define LLU unsigned long long
+#define LLU                     unsigned long long
 
-#define SPC_LOG_BASE 0
-#define SPC_LOG_DEBUG 1
-#define SPC_LOG_INFO 2
-#define SPC_LOG_WARNING 3
-#define SPC_LOG_ERROR 4
-#define SPC_LOG_FATAL 5
-#define SPC_LOG_PEAK 6
+#define SPC_LOG_BASE            0
+#define SPC_LOG_DEBUG           1
+#define SPC_LOG_INFO            2
+#define SPC_LOG_WARNING         3
+#define SPC_LOG_ERROR           4
+#define SPC_LOG_FATAL           5
+#define SPC_LOG_PEAK            6
 
 /* // #define					SPC_RL_BUF						50 */
 
-#define SPC_RL_BUF 256
-#define SPC_PATH_FOLDER 1024
-#define SPC_IDD_NAME 64
+#define SPC_RL_BUF              256
+#define SPC_PATH_FOLDER         1024
+#define SPC_IDD_NAME            64
 
 #ifndef UNIX_LINUX
 #ifndef __SIMPLE_STATIC_LOG__
@@ -74,10 +74,10 @@ extern "C" {
 #define DLL_API_SPC_SIMEPLE_LOG __declspec(dllimport)
 #endif
 #else
-#define DLL_API_SPC_SIMEPLE_LOG
+#define DLL_API_SPC_SIMEPLE_LOG 
 #endif
 #else
-#define DLL_API_SPC_SIMEPLE_LOG
+#define DLL_API_SPC_SIMEPLE_LOG 
 #endif /*! UNIX_LINUX */
 
 typedef enum __SPC_LOG_ERR_CODE__ {
@@ -169,8 +169,8 @@ typedef struct __SPC_GENERIC_DATA__ {
 	char data[0]; /*Generic data */
 } spc_gen_data_st;
 
-#define spc_uchar unsigned char
-#define spc_uint unsigned int
+#define spc_uchar               unsigned char
+#define spc_uint                unsigned int
 
 typedef struct __spc_local_time_st__ {
 	spc_uint year;
@@ -182,10 +182,13 @@ typedef struct __spc_local_time_st__ {
 	spc_uint nn; /*Nanosecond*/
 } spc_local_time_st;
 
-#define SPC_TOPIC_SIZE 32
-#define SPC_MEMO_PADDING 1024
-#define SPC_SHARED_KEY_LEN 64
-#define SPC_SHARED_NAME_LEN 128
+#define SPC_TOPIC_SIZE          32
+#define SPC_MEMO_PADDING        1024
+#define SPC_SHARED_KEY_LEN      64
+#define SPC_SHARED_NAME_LEN     128
+#define SPC_FOLDER_LEN          1024
+#define SPC_TEMPLATE_LEN        (SPC_FOLDER_LEN + 256)
+#define SPC_FULLPATH_LEN        (SPC_TEMPLATE_LEN + 256)
 
 typedef struct __SPC_TOPIC_ST__ {
 	int index; /*Index of a topic*/
@@ -204,7 +207,7 @@ typedef struct __SPC_LOG_ST__ {
 	int max_sz_msg; /*If the size of the message is less than the number, it is safe to write. If not, it may be
 			   truncated.*/
 	int index; /*Index of default log, not in a topic. No nead SYNC.*/
-	char folder[1024]; /*Path of genera folder. No nead SYNC.*/
+	char folder[SPC_FOLDER_LEN]; /*Path of genera folder. No nead SYNC.*/
 	char off; /*Must be sync*/
 	void *mtx_rw; /*mtx: Need to close handle*/
 	void *sem_rwfile; /*sem_rwfile: Need to close handle*/
@@ -216,7 +219,7 @@ typedef struct __SPC_LOG_ST__ {
 	int n_topic; /*Number of topics, SPC_TOPIC_ST.*/
 	SPC_TOPIC_ST *arr_topic; /*List od topics: SPC_TOPIC_ST. Must be freed*/
 	int renew; /*In a thread of logger, NO NEED SYNC.*/
-	char path_template[1024]; /*In a thread of logger, NO NEED SYNC.*/
+	char path_template[SPC_TEMPLATE_LEN]; /*In a thread of logger, NO NEED SYNC.*/
 	int ncpu; /*Number of CPU.*/
 	int trigger_thread; /*Use trigger thread or not.*/
 	void **arr_mtx; /*List of lock: Spinlock or Mutex. Must be freed.*/
@@ -509,13 +512,13 @@ spc_init_log_ext(SPC_INPUT_ARG *input);
  * Export name:	spclog
  * Sample:		spclog(SPC_LOG_INFO, "Hello spclog: %llu", time(0));
  */
-#define spclog __spc_log_buf_level__
+#define spclog                  __spc_log_buf_level__
 
 /*
  * Export name:	spclogtopic
  * Sample:		spclogtopic(SPC_LOG_INFO, 0, "Hello spclog: %llu", time(0));
  */
-#define spclogtopic __spc_log_buf_topic_level__
+#define spclogtopic             __spc_log_buf_topic_level__
 
 /* Please demo with spc_finish_log */
 DLL_API_SPC_SIMEPLE_LOG int
