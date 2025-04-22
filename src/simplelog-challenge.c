@@ -22,7 +22,7 @@
  *		<2025-Apr-12>
  *		<2025-Apr-20>
  * Decription:
- *		The (only) main file to implement simple log.
+ *		The (only one) main file to implement simplelog-challenge.
  */
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
