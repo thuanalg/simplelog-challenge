@@ -67,8 +67,8 @@ extern "C" {
 /* // #define					SPC_RL_BUF						50 */
 
 #define SPC_RL_BUF                      256
-#define SPC_PATH_FOLDER                 1024
-#define SPC_IDD_NAME                    64
+#define SPC_PATH_FOLDER                 (256 + 16)
+#define SPC_IDD_NAME                    32
 
 #ifndef UNIX_LINUX
 #ifndef __SIMPLE_STATIC_LOG__
@@ -187,12 +187,12 @@ typedef struct __spc_local_time_st__ {
 } spc_local_time_st;
 
 #define SPC_MILLION                     1000000
-#define SPC_FNAME_LEN                   96
+#define SPC_FNAME_LEN                   (SPC_IDD_NAME + 32)
 #define SPC_TOPIC_SIZE                  32
 #define SPC_MEMO_PADDING                1024
-#define SPC_SHARED_KEY_LEN              64
-#define SPC_SHARED_NAME_LEN             128
-#define SPC_FOLDER_LEN                  (256 + 64)
+#define SPC_SHARED_KEY_LEN              32
+#define SPC_SHARED_NAME_LEN             64
+#define SPC_FOLDER_LEN                  SPC_PATH_FOLDER
 #define SPC_TEMPLATE_LEN                (SPC_FOLDER_LEN + SPC_FNAME_LEN + 32)
 #define SPC_FULLPATH_LEN                (SPC_TEMPLATE_LEN + 32 + 16)
 
