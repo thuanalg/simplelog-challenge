@@ -21,6 +21,7 @@
  *		<2025-Feb-04>
  *		<2025-Apr-12>
  *		<2025-Apr-20>
+ *		<2025-Apr-22>
  * Decription:
  *		The (only) main header file to export 4 APIs: [spc_init_log_ext, spclog, spclogtopic,
  *spc_finish_log].
@@ -192,8 +193,7 @@ typedef struct __spc_local_time_st__ {
 #define SPC_MEMO_PADDING                1024
 #define SPC_SHARED_KEY_LEN              32
 #define SPC_SHARED_NAME_LEN             64
-#define SPC_FOLDER_LEN                  SPC_PATH_FOLDER
-#define SPC_TEMPLATE_LEN                (SPC_FOLDER_LEN + SPC_FNAME_LEN + 32)
+#define SPC_TEMPLATE_LEN                (SPC_PATH_FOLDER + SPC_FNAME_LEN + 32)
 #define SPC_FULLPATH_LEN                (SPC_TEMPLATE_LEN + 32 + 16)
 
 typedef struct __SPC_TOPIC_ST__ {
@@ -213,7 +213,7 @@ typedef struct __SPC_LOG_ST__ {
 	int max_sz_msg; /*If the size of the message is less than the number, it is safe to write. If not, it may be
 			   truncated.*/
 	int index; /*Index of default log, not in a topic. No nead SYNC.*/
-	char folder[SPC_FOLDER_LEN]; /*Path of genera folder. No nead SYNC.*/
+	char folder[SPC_PATH_FOLDER]; /*Path of genera folder. No nead SYNC.*/
 	char off; /*Must be sync*/
 	void *mtx_rw; /*mtx: Need to close handle*/
 	void *sem_rwfile; /*sem_rwfile: Need to close handle*/

@@ -490,7 +490,7 @@ int spc_init_log_parse(char *buff, char *key, char *isEnd)
 				break;
 			}
 			snprintf(__spc_log_statiic__.folder, 
-				SPC_FOLDER_LEN, "%s", buff);
+				SPC_PATH_FOLDER, "%s", buff);
 			break;
 		}
 		if (strcmp(key, SPCLOG_LEVEL) == 0) {
@@ -1513,7 +1513,7 @@ int spc_folder_sup(char *folder,
 	spc_local_time_st *lctime, char *year_month)
 {
 	int ret = 0;
-	char path[SPC_FOLDER_LEN];
+	char path[SPC_PATH_FOLDER];
 #ifndef UNIX_LINUX
 	int result = 0;
 #else
@@ -1534,7 +1534,7 @@ int spc_folder_sup(char *folder,
 			ret = SPC_LOG_CHECK_FOLDER_NULL_ERROR;
 			break;
 		}
-		snprintf(path, SPC_FOLDER_LEN, "%s", folder);
+		snprintf(path, SPC_PATH_FOLDER, "%s", folder);
 #ifndef UNIX_LINUX
 		result = CreateDirectoryA(path, 0);
 		if (!result) {
@@ -1544,7 +1544,7 @@ int spc_folder_sup(char *folder,
 				break;
 			}
 		}
-		snprintf(path, SPC_FOLDER_LEN, 
+		snprintf(path, SPC_PATH_FOLDER, 
 			"%s/%.4u", folder, lctime->year + YEAR_PADDING);
 		result = CreateDirectoryA(path, 0);
 		if (!result) {
@@ -1554,7 +1554,7 @@ int spc_folder_sup(char *folder,
 				break;
 			}
 		}
-		snprintf(path, SPC_FOLDER_LEN, 
+		snprintf(path, SPC_PATH_FOLDER, 
 			"%s/%.4d/%.2d", folder, 
 			(int)lctime->year + YEAR_PADDING,
 		    (int)lctime->month + MONTH_PADDING);
@@ -1586,7 +1586,7 @@ int spc_folder_sup(char *folder,
 		}
 
 		memset(&buf, 0, sizeof(buf));
-		snprintf(path, SPC_FOLDER_LEN, 
+		snprintf(path, SPC_PATH_FOLDER, 
 			"%s/%.4u", folder, 
 			lctime->year + YEAR_PADDING);
 		err = stat(path, &buf);
@@ -1602,7 +1602,7 @@ int spc_folder_sup(char *folder,
 			}
 		}
 		memset(&buf, 0, sizeof(buf));
-		snprintf(path, SPC_FOLDER_LEN, 
+		snprintf(path, SPC_PATH_FOLDER, 
 			"%s/%.4d/%.2d", folder, 
 			(int)lctime->year + YEAR_PADDING,
 		    (int)lctime->month + MONTH_PADDING);
