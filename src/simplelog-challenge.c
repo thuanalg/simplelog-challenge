@@ -200,8 +200,6 @@
 #define SPC_TEXT_ERROR            "E"
 #define SPC_TEXT_FATAL            "F"
 
-#define SPC_MILLION               1000000
-#define SPC_FNAME_LEN             128
 
 #define SPC_CASTGEN(__t__) ((spc_gen_data_st *)__t__)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
