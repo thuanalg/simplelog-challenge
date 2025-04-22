@@ -34,7 +34,9 @@
 /*strrchr*/
 
 #if 0
-#define UNIX_LINUX                      
+#ifndef UNIX_LINUX
+#define UNIX_LINUX
+#endif                      
 #endif
 
 #if 0
