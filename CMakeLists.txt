@@ -78,7 +78,7 @@ endif()
 
 
 if(DEFINED UNIX_LINUX)
-	install(TARGETS simplelog-challenge LIBRARY DESTINATION lib)
+	install(TARGETS simplelog-challenge LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR})
 	install(FILES include/simplelog-challenge.h DESTINATION include)
 	install(FILES src/simplelog-challenge.cfg DESTINATION include)
 endif()
