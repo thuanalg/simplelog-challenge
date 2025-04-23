@@ -5,8 +5,7 @@ Providing a logger which must be SIMPLE-STABLE-POWERFUL for embedded devices to 
 
 ### Motivation
 SimpleLog-Challenge is designed to provide:
-- Dedicate to W. Richard Stevens (1951 - 1999) by his books and legacy.
-- Simple.
+- Simplicity.
 - Multi-thread and multi-process safe logging.
 - Portability across Windows, Linux, macOS, ...
 - Compatibility from ANSI C89 to C++20.
