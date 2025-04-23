@@ -16,6 +16,13 @@ simplelog-challenge, run with command "simpplelog_cpp_direct_sample"
 #==========================================================================================================================================	
 A-With 4 CPUs
 #---------------------------------------------------------------------------------------------------------------------
+How to run
+1. Come to src/linux, create "trigger_master.txt"
+2. make clean; make
+3. ./xmaster_run.sh
+4. ./xslave_run.sh
+5. ./xstop
+#---------------------------------------------------------------------------------------------------------------------
 Spdlog 01 (first round)
 [2025-01-13 18:49:59.026] [A] [info] [example.cpp:log_messages:432] [Threadid 140518575031872] test log: 999999
 [2025-01-13 18:49:43.797] [A] [info] [example.cpp:log_messages:432] [Threadid 140518600209984] test log: 0
