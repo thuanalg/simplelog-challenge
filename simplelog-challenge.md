@@ -23,7 +23,7 @@ It is suitable on most of platforms I know, especially with high precision as op
 - Uses native APIs: POSIX thread (Unix-Like), `Win32` APIs (Windows)
 - Supports topics, log levels, rotation, asynchronous logging
 - High configurability (buffer size, CPU-based tuning)
-- Performance surpasses spdlog by 2x–4x in benchmarked environments
+- Performance surpasses **spdlog** by 2x–4x in benchmarked environments.
 - Successfully logged 1 billion records (~113GB) in ~30 minutes on 12-year-old hardware
 
 ### Alternatives Considered
