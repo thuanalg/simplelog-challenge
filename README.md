@@ -57,6 +57,10 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 	- **SimpleLog-Challenge: ~3.358 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt)
 	- **spdlog: ~7.051 seconds**  
    In this environment simplelog-topic is faster at **3.72s (~110%, 2x)** than spdlog.
+	
+	**With 8 CPUs / PC with fork() 20/40 threads (spdlog doesn't support multi-thread with logging to file):**	
+	- **20 threads 20M records: ~5.2 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt)
+	- **40 threads 40M records: ~10. seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt)
 
 3. **Large-Scale Logging Test (1 Billion Records, 10 Threads):**
 
