@@ -51,7 +51,7 @@ System Information
 
 #---------------------------------------------------------------------------------------------------------------------
 How to run
-1. Come to src/linux
+1. Come to src/linux, create trigger_master.txt
 2. make clean; make
 3. ./xmaster_run.sh
 4. ./xslave_run.sh

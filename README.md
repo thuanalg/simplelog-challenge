@@ -31,7 +31,7 @@ At its core, SimpleLog-Challenge follows the **Unix Philosophy** of **KISS (Keep
    Just use POSIX APIs and Win32 APIs.
 
 8. **Message safety feature**  
-   The **message safety feature** in your logger allows users to configure a size limit for each log message (e.g., 10,000 bytes). If a message exceeds this size, it, sometimes, **may be truncated**, but the first 10,000 bytes will still be logged. This ensures that large messages do not cause memory overflow or uncontrolled log writing, while still preserving the beginning of the message for logging. This feature is particularly useful in resource-constrained environments like embedded devices, providing both flexibility and safety in log management. **max_sz_msg**: (https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog.cfg)
+   The **message safety feature** in your logger allows users to configure a size limit for each log message (e.g., 10,000 bytes). If a message exceeds this size, it, sometimes, **may be truncated**, but the first 10,000 bytes will still be logged. This ensures that large messages do not cause memory overflow or uncontrolled log writing, while still preserving the beginning of the message for logging. This feature is particularly useful in resource-constrained environments like embedded devices, providing both flexibility and safety in log management. **max_sz_msg**: (https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg)
    
 ### **Performance Highlights: Speed and Efficiency**
 
@@ -57,6 +57,10 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 	- **SimpleLog-Challenge: ~3.358 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt)
 	- **spdlog: ~7.051 seconds**  
    In this environment simplelog-topic is faster at **3.72s (~110%, 2x)** than spdlog.
+	
+	**With 8 CPUs / PC with fork() 20/40 threads (spdlog doesn't support multi-thread with logging to file):**	
+	- **20 threads 20M records: ~5.2 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt)
+	- **40 threads 40M records: ~10. seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt)
 
 3. **Large-Scale Logging Test (1 Billion Records, 10 Threads):**
 
@@ -82,10 +86,10 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 #### **Optimized for Low Latency and High Throughput**
 
 - **Minimal Latency:**  
-  SimpleLog-Challenge is designed to minimize latency in logging, even when the system is under heavy load. Whether you’re dealing with **real-time systems** or large volumes of logs, SimpleLog-Challenge ensures fast log writing with minimal delay. (https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog.cfg)
+  SimpleLog-Challenge is designed to minimize latency in logging, even when the system is under heavy load. Whether you’re dealing with **real-time systems** or large volumes of logs, SimpleLog-Challenge ensures fast log writing with minimal delay. (https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog-challenge.cfg)
 
 - **Low Memory Usage:**  
-  The library is optimized to use **minimal memory**. Memory buffers are dynamically adjusted based on the available system resources, allowing SimpleLog-Challenge to be used in **resource-constrained embedded systems** without consuming unnecessary memory.(https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog.cfg)
+  The library is optimized to use **minimal memory**. Memory buffers are dynamically adjusted based on the available system resources, allowing SimpleLog-Challenge to be used in **resource-constrained embedded systems** without consuming unnecessary memory.(https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog-challenge.cfg)
 
 - **Asynchronous Logging Support:**  
   SimpleLog-Challenge offers **asynchronous logging** capabilities, allowing logs to be written in the background without blocking the main application flow. This ensures that logging does not interfere with the critical performance of the application.
@@ -103,7 +107,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
 - **Simple and Easy to Use:** The **minimalistic API** keeps things simple, adhering to the Unix philosophy of **KISS**, making it easy to integrate and maintain.
 
-### **A Tribute to W. Richard Stevens**
+### **A Tribute to W. Richard Stevens (1951 - 1999)**
 
 **W. Richard Stevens** was a pioneer in the field of **network programming** and **systems design**, best known for his influential work, *Unix Network Programming*. His writing, characterized by clarity, precision, and practical insight, has shaped the way developers approach system-level programming. **SimpleLog-Challenge** is inspired by Stevens' philosophy of simplicity, efficiency, and clarity.
 
