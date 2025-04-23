@@ -31,7 +31,7 @@ At its core, SimpleLog-Challenge follows the **Unix Philosophy** of **KISS (Keep
    Just use POSIX APIs and Win32 APIs.
 
 8. **Message safety feature**  
-   The **message safety feature** in your logger allows users to configure a size limit for each log message (e.g., 10,000 bytes). If a message exceeds this size, it, sometimes, **may be truncated**, but the first 10,000 bytes will still be logged. This ensures that large messages do not cause memory overflow or uncontrolled log writing, while still preserving the beginning of the message for logging. This feature is particularly useful in resource-constrained environments like embedded devices, providing both flexibility and safety in log management. **max_sz_msg**: (https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog.cfg)
+   The **message safety feature** in your logger allows users to configure a size limit for each log message (e.g., 10,000 bytes). If a message exceeds this size, it, sometimes, **may be truncated**, but the first 10,000 bytes will still be logged. This ensures that large messages do not cause memory overflow or uncontrolled log writing, while still preserving the beginning of the message for logging. This feature is particularly useful in resource-constrained environments like embedded devices, providing both flexibility and safety in log management. **max_sz_msg**: (https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg)
    
 ### **Performance Highlights: Speed and Efficiency**
 
@@ -86,10 +86,10 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 #### **Optimized for Low Latency and High Throughput**
 
 - **Minimal Latency:**  
-  SimpleLog-Challenge is designed to minimize latency in logging, even when the system is under heavy load. Whether you’re dealing with **real-time systems** or large volumes of logs, SimpleLog-Challenge ensures fast log writing with minimal delay. (https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog.cfg)
+  SimpleLog-Challenge is designed to minimize latency in logging, even when the system is under heavy load. Whether you’re dealing with **real-time systems** or large volumes of logs, SimpleLog-Challenge ensures fast log writing with minimal delay. (https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog-challenge.cfg)
 
 - **Low Memory Usage:**  
-  The library is optimized to use **minimal memory**. Memory buffers are dynamically adjusted based on the available system resources, allowing SimpleLog-Challenge to be used in **resource-constrained embedded systems** without consuming unnecessary memory.(https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog.cfg)
+  The library is optimized to use **minimal memory**. Memory buffers are dynamically adjusted based on the available system resources, allowing SimpleLog-Challenge to be used in **resource-constrained embedded systems** without consuming unnecessary memory.(https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog-challenge.cfg)
 
 - **Asynchronous Logging Support:**  
   SimpleLog-Challenge offers **asynchronous logging** capabilities, allowing logs to be written in the background without blocking the main application flow. This ensures that logging does not interfere with the critical performance of the application.
