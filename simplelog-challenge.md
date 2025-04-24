@@ -12,9 +12,18 @@ Created: April 24, 2025
   
   
 
+  
+### Problem Statement  
+Providing a logger which must be SIMPLE-STABLE-POWERFUL for embedded devices to PC and mainframe with flexible configuration.  
+Multi-process C/C++ logger.  
+  
+  
+### Requirements
+- POSIX thread in UNIX-Like.  
+- Win32 APIs in Windows.  
 
-### Problem Statement
-Providing a logger which must be SIMPLE-STABLE-POWERFUL for embedded devices to PC and mainframe with flexible configuration.
+### Background and References  
+- No.  
 
 ### Motivation
 SimpleLog-Challenge is designed to provide:
@@ -31,7 +40,7 @@ SimpleLog-Challenge is designed to provide:
 It is suitable on most of platforms I know, especially with high precision as openBMC.
 
   
-### 🧩 Design Details
+### 🧩 Proposed Design
 
 
 | Component | Description |
@@ -57,7 +66,11 @@ SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process c
 - No. Give one more option.
 
 ### Impact
-There is no intention to replace old libraries, because it needs time to verify, but is really worthy for trying new applications.
+No.  
+
+### Organizational
+- Does this proposal require a new repository? No.  
+- Which repositories are expected to be modified to execute this design? [github](https://github.com/thuanalg/simplelog-challenge)  
 
 ### Testing and Validation
 - [Benchmarks on Windows, Linux, macOS vs spdlog](https://github.com/thuanalg/simplelog-challenge/blob/x1/README.md#benchmarking-performance)
@@ -66,8 +79,8 @@ There is no intention to replace old libraries, because it needs time to verify,
 - However, you can try with [Benchmarking Linux 8 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt) first ( find **How to run**). And do same with Windows/MAC OSX.  
 
 ### References
-   - [UNIX Network Programming, Volume 2: Interprocess Communications, Second Edition](https://www.amazon.com/UNIX-Network-Programming-Interprocess-Communications/dp/0130810819)  
-   - [Unix Network Programming: The Sockets Networking API](https://www.amazon.com/Unix-Network-Programming-Sockets-Networking/dp/0131411551) 
+- [UNIX Network Programming, Volume 2: Interprocess Communications, Second Edition](https://www.amazon.com/UNIX-Network-Programming-Interprocess-Communications/dp/0130810819)  
+- [Unix Network Programming: The Sockets Networking API](https://www.amazon.com/Unix-Network-Programming-Sockets-Networking/dp/0131411551) 
 
 ---
 
