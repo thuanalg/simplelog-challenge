@@ -1,4 +1,4 @@
-**SimpleLog-Challenge: High-Performance, Cross-Platform Logging Library**
+**SimpleLog-Challenge: High-Performance, Cross-Platform Logging Library**  
 ---  
 Author: [Thuan Nguyen Thai](nguyenthaithuanalg@gmail.com)  
 Other contributors: None.  
