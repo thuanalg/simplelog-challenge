@@ -68,7 +68,7 @@ SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process c
 ### Impact
 No.  
 
-###Organizational
+### Organizational
 - Does this proposal require a new repository? No.  
 - Who will be the initial maintainer(s) of this repository? [Thuan Nguyen Thai](mailto:nguyenthaithuanalg@gmail.com) or anyone wants to invole.  
 - Which repositories are expected to be modified to execute this design? [github](https://github.com/thuanalg/simplelog-challenge)  
