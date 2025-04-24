@@ -5,7 +5,7 @@
 
 
 Author: [Thuan Nguyen Thai](mailto:nguyenthaithuanalg@gmail.com)  
-Contributors: None  
+Other contributors: None  
 Created: April 24, 2025  
 
 
@@ -23,7 +23,7 @@ SimpleLog-Challenge is designed to provide:
 - Portability across Windows, Linux, macOS, ...
 - Compatibility from ANSI C89 to C++20.
 - Zero external dependencies.
-- Extremely high performance (1.1M+ msg/sec) even up to 3M+ msg.sec (may reach limitation of SSD 450MB/500MB in a few cases) on PC-Linux.
+- Extremely high performance (1.1M+ msg/sec) even up to 3M+ msg.sec (may reach limitation of SSD [450MB/500MB](https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt) in a few cases) on PC-Linux.
 - Stable up to billions of records.
 - Message safety.
 - Nano sec accuracy.
