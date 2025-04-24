@@ -13,19 +13,19 @@ Created: April 24, 2025
   
 
   
-###Problem Statement  
+### Problem Statement  
 Providing a logger which must be SIMPLE-STABLE-POWERFUL for embedded devices to PC and mainframe with flexible configuration.  
 Multi-process C/C++ logger.  
   
   
-###Requirements
+### Requirements
 - POSIX thread in UNIX-Like.  
 - Win32 APIs in Windows.  
 
-###Background and References  
+### Background and References  
 - No.  
 
-###Motivation
+### Motivation
 SimpleLog-Challenge is designed to provide:
 - Simplicity.
 - Multi-thread and multi-process safe logging.
