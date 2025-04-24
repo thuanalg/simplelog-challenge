@@ -53,6 +53,7 @@ System Information
 	- 10 threads for 1 process.
 	- 20(twenty) million records.
 
+How to run:
 ##Refer to source code: "https://github.com/thuanalg/simplelog-challenge/blob/main/src/fork/main.c"  
 1. Come to "src/linux"  
 2. make clean; make  
