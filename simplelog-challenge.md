@@ -1,4 +1,11 @@
 **SimpleLog-Challenge: High-Performance, Cross-Platform Logging Library**
+---  
+Author: [Thuan Nguyen Thai](nguyenthaithuanalg@gmail.com)  
+Other contributors: None.  
+Created: 2025-04-24  
+---  
+  
+
 
 ### Problem Statement
 Providing a logger which must be SIMPLE-STABLE-POWERFUL for embedded devices to PC and mainframe with flexible configuration.
