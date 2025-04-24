@@ -2,13 +2,13 @@
 
 **High-Performance, Cross-Platform Logging Library for C/C++**
 
----
 
-- **Author:** [Thuan Nguyen Thai](mailto:nguyenthaithuanalg@gmail.com)  
-- **Contributors:** None  
-- **Created:** April 24, 2025  
 
----
+Author: [Thuan Nguyen Thai](mailto:nguyenthaithuanalg@gmail.com)  
+Contributors: None  
+Created: April 24, 2025  
+
+
   
   
 
