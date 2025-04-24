@@ -34,8 +34,8 @@ SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process c
 | `int spc_init_log_ext(SPC_INPUT_ARG *input);` | **[Mandatory]** Initialize the logger with extended input settings. |
 | `int spc_finish_log();` | **[Mandatory]** Finalize and clean up the logger. |
 | `spclog(log_level, fmt, ...);` | **[Mandatory]** Log a message with the specified level. |
-| `spclogtopic(log_level, topic_index, fmt, ...);` | **[Optional]** Log by topic index (requires a configured topic table). |
-| `LLU spc_update_processid();` | **[Optional]** Update process ID, typically used after `fork()`. |
+| `spclogtopic(log_level, topic_index, fmt, ...);` | **[Optional]** Log by [topics=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg). |
+| `LLU spc_update_processid();` | **[Optional]** Update process ID, typically used after `fork()` [example](https://github.com/thuanalg/simplelog-challenge/blob/main/tests/fork/main.c). |
 
 
 ### Alternatives Considered
