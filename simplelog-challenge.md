@@ -35,7 +35,7 @@ This does not replace old libraries, because it needs time to verify, but is rea
 - Benchmarks on Windows, Linux, macOS vs spdlog
 - 1B record stress test
 - Verified performance and integrity across threads and processes
-- [Benchmarking Performance](https://github.com/thuanalg/simplelog-challenge/blob/x1/README.md#benchmarking-performance). However, you can try with [Benchmarking Linux 8 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt) first ( find **How to run**).  
+- [Benchmarking Performance](https://github.com/thuanalg/simplelog-challenge/blob/x1/README.md#benchmarking-performance). However, you can try with [Benchmarking Linux 8 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt) first ( find **How to run**). And do same with Windows/MAC OSX.  
 
 ### References
 - [GitHub: SimpleLog-Challenge](https://github.com/thuanalg/simplelog-challenge)
