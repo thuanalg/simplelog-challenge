@@ -24,7 +24,16 @@ It is suitable on most of platforms I know, especially with high precision as op
 - High configurability (buffer size, CPU-based tuning)
 - Performance surpasses **spdlog** by 2x–4x in benchmarked environments.
 - Successfully logged 1 billion records (~113GB) in ~30 minutes on 12-year-old hardware
+  
+### 🧩 Design Details
 
+
+| Component | Description |
+|-----------|-------------|
+| `spc_written_thread_routine` | **[Mandatory]** The main thread responsible for writing log data to the file or output stream. |
+| `spc_trigger_routine` | **[Optional]** A secondary thread that can be enabled via configuration to trigger log flushing or timed events. |
+  
+  
 ### 🛠️ Exported APIs
 
 SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process control:
@@ -34,7 +43,7 @@ SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process c
 | `int spc_init_log_ext(SPC_INPUT_ARG *input);` | **[Mandatory]** Initialize the logger with extended input settings. |
 | `int spc_finish_log();` | **[Mandatory]** Finalize and clean up the logger. |
 | `spclog(log_level, fmt, ...);` | **[Mandatory]** Log a message with the specified level. |
-| `spclogtopic(log_level, topic_index, fmt, ...);` | **[Optional]** Log by [topics=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg). |
+| `spclogtopic(log_level, topic_index, fmt, ...);` | **[Optional]** Log by [topics=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg) from 1 to n. |
 | `LLU spc_update_processid();` | **[Optional]** Update process ID, typically used after `fork()` [example](https://github.com/thuanalg/simplelog-challenge/blob/main/tests/fork/main.c). |
 
 
