@@ -31,7 +31,7 @@ At its core, SimpleLog-Challenge follows the **Unix Philosophy** of **KISS (Keep
    Just use POSIX APIs and Win32 APIs.
 
 8. **Message safety feature**  
-   The **message safety feature** in your logger allows users to configure a size limit for each log message (e.g., 10,000 bytes). If a message exceeds this size, it, sometimes, **may be truncated**, but the first 10,000 bytes will still be logged. This ensures that large messages do not cause memory overflow or uncontrolled log writing, while still preserving the beginning of the message for logging. This feature is particularly useful in resource-constrained environments like embedded devices, providing both flexibility and safety in log management. **max_sz_msg**: (https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg)
+   The **message safety feature** in your logger allows users to configure a size limit for each log message (e.g., 10,000 bytes). If a message exceeds this size, it, sometimes, **may be truncated**, but the first 10,000 bytes will still be logged. This ensures that large messages do not cause memory overflow or uncontrolled log writing, while still preserving the beginning of the message for logging. This feature is particularly useful in resource-constrained environments like embedded devices, providing both flexibility and safety in log management. [max_sz_msg](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg)
    
 ### **Performance Highlights: Speed and Efficiency**
 
@@ -41,7 +41,7 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 
 1. **Windows10/MSVC 2022 with 10 Threads and 10 Million Records:**
 
-   - **SimpleLog-Challenge:** **15 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-MSVC-2022-performance-multi-processes.txt)
+   - **SimpleLog-Challenge:** **15 seconds** [Win10 - 8 cores - 10M records](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-MSVC-2022-performance-multi-processes.txt)
    - **spdlog:** **66 seconds**
 
    In this test, **SimpleLog-Challenge** logged **10 million records** in just **16 seconds**, compared to **66 seconds** taken by **spdlog**. This demonstrates **4x faster performance** in multithreaded environments, showing that SimpleLog-Challenge efficiently manages logging tasks without unnecessary performance bottlenecks.
@@ -49,36 +49,36 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 2. **Linux Performance Benchmark (10 Threads and 10 Million Records), VM CentOs9:**  
 	
 	**With 4 CPUs / VM:**	
-	- **SimpleLog-Challenge: ~12.5 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-LinuxCentOs09-4CPU-multi-processes.txt)
+	- **SimpleLog-Challenge: ~12.5 seconds** [VM-CentOS-09 - 4 cores - 10 threads - 10M records](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-LinuxCentOs09-4CPU-multi-processes.txt)
 	- **spdlog: ~15 seconds**  
    In this environment simplelog-topic is faster at **2.5s (~20%)** than spdlog.   
 	
 	**With 8 CPUs / PC:**	
-	- **SimpleLog-Challenge: ~3.358 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt)
+	- **SimpleLog-Challenge: ~3.358 seconds** [CentOS-09 - 8 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt)
 	- **spdlog: ~7.051 seconds**  
    In this environment simplelog-topic is faster at **3.72s (~110%, 2x)** than spdlog.
 	
 	**With 8 CPUs / PC with fork() 20/40 threads (spdlog doesn't support multi-thread with logging to file):**	
-	- **20 threads 20M records: ~5.2 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt)
-	- **40 threads 40M records: ~10. seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt)
+	- **20 threads 20M records: ~5.2 seconds** [CentOS-09 - 8 cores - 20 threads - 20M records](https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt)
+	- **40 threads 40M records: ~10. seconds** [CentOS-09 - 8 cores - 40 threads - 40M records](https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt)
 
 3. **Large-Scale Logging Test (1 Billion Records, 10 Threads):**
 
 	**Windows 10/PC CPU - 8cores:** 
    - **Time Taken:** **31 minutes** (**1860 seconds**)
-   - **Log Size:** **Size on disk: 102 GB (110,389,039,104 bytes)**: (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-1billion-multi-processes.txt)
+   - **Log Size:** **Size on disk: 102 GB (110,389,039,104 bytes)**: [1 Billion - Windows 10 - 8 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-1billion-multi-processes.txt)
 
 
 	**CentOS 09/PC CPU - 8cores:** 
    - **Time Taken:** **19 minutes** (**1140 seconds**) 
-   - **Log Size:** **Size on disk: 113GB (120,888,922,262 bytes)**: (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core-1Billion.txt)
+   - **Log Size:** **Size on disk: 113GB (120,888,922,262 bytes)**: [1 Billion - Linux CentOS 09 - 8 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core-1Billion.txt)
 
    In an extreme scenario, Linux is better Windows. More CPUs more effective.
 
 4. **OSX/Apple clang version 11.0.3 (clang-1103.0.32.29) with 10 Threads and 10 Million Records (Total Number of Cores: 2, Model Name: Mac mini(Late 2012)):**
 
    - **SimpleLog-challenge: 35 seconds** 
-   - **spdlog: 26 seconds** (https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250205-MacOSX-performance-2-Core.txt) 
+   - **spdlog: 26 seconds** [MAC OSX - 2 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250205-MacOSX-performance-2-Core.txt) 
 
    In this environment **spdlog** is faster at **9s (~35%)** than **simplelog-challenge**. However, I shall re-verify with PC with more CPU cores.
 
@@ -86,10 +86,10 @@ One of the core objectives of SimpleLog-Challenge is to provide exceptional **pe
 #### **Optimized for Low Latency and High Throughput**
 
 - **Minimal Latency:**  
-  SimpleLog-Challenge is designed to minimize latency in logging, even when the system is under heavy load. Whether you’re dealing with **real-time systems** or large volumes of logs, SimpleLog-Challenge ensures fast log writing with minimal delay. (https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog-challenge.cfg)
+  SimpleLog-Challenge is designed to minimize latency in logging, even when the system is under heavy load. Whether you’re dealing with **real-time systems** or large volumes of logs, SimpleLog-Challenge ensures fast log writing with minimal delay. [simplelog-challenge.cfg](https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog-challenge.cfg)
 
 - **Low Memory Usage:**  
-  The library is optimized to use **minimal memory**. Memory buffers are dynamically adjusted based on the available system resources, allowing SimpleLog-Challenge to be used in **resource-constrained embedded systems** without consuming unnecessary memory.(https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog-challenge.cfg)
+  The library is optimized to use **minimal memory**. Memory buffers are dynamically adjusted based on the available system resources, allowing SimpleLog-Challenge to be used in **resource-constrained embedded systems** without consuming unnecessary memory.[simplelog-challenge.cfg](https://github.com/thuanalg/SimpleLog-Challenge/blob/main/src/simplelog-challenge.cfg)
 
 - **Asynchronous Logging Support:**  
   SimpleLog-Challenge offers **asynchronous logging** capabilities, allowing logs to be written in the background without blocking the main application flow. This ensures that logging does not interfere with the critical performance of the application.
@@ -129,7 +129,7 @@ This tool is a **tribute to his legacy**—a small way to express **gratitude** 
 
 **SimpleLog-Challenge** isn't just about logging—it's about building a better, more efficient foundation for your application, with a tool that allows you to focus on what's important: your core functionality.
 
-**Open-Source on GitHub**  (https://github.com/thuanalg/SimpleLog-Challenge/)
+**Open-Source on GitHub**  [SimpleLog-Challenge](https://github.com/thuanalg/SimpleLog-Challenge/)
 SimpleLog-Challenge is open-source and available on GitHub. Feel free to contribute, modify, or integrate it into your projects, and be part of a community that values **simplicity**, **performance**, and the principles of **Unix**.
 
 By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging solution—you’re embracing the legacy of **Richard Stevens**, honoring his work in **Unix network programming**, and following his principles of creating clear, efficient, and practical tools.
@@ -164,10 +164,10 @@ By using **SimpleLog-Challenge**, you’re not just choosing a powerful logging 
    
   
 **Video Install/Demo ( old way):**  
-	- For Windows 10 64bit: (https://drive.google.com/file/d/1gccgtO84U7_R9a1WuPcLnT3Iw7hBN7Wr/view?usp=sharing)  
-	- For VM Linux CentOs9 64bit: (https://drive.google.com/file/d/1a2OWwSoa1bIbzYvhhoFKDAhS3eTXkPv9/view?usp=sharing)  
+	- For [Windows 10 64bit](https://drive.google.com/file/d/1gccgtO84U7_R9a1WuPcLnT3Iw7hBN7Wr/view?usp=sharing)  
+	- For [VM Linux CentOs9 64bit](https://drive.google.com/file/d/1a2OWwSoa1bIbzYvhhoFKDAhS3eTXkPv9/view?usp=sharing)  
 	- For MacOSX 64bit, come to **src/mach**, and do similar steps of Linux.  
-	- If you want to test with both processes and threads, or fork please see: https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt .
+	- If you want to test with both processes and threads, or fork please see: [fork_test.txt](https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt).
 
 ---
 **Thanks a lot to:**

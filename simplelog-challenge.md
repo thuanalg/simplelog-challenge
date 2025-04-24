@@ -14,30 +14,18 @@ Created: April 24, 2025
 
   
 ### Problem Statement  
-Providing a logger which must be SIMPLE-STABLE-POWERFUL for embedded devices to PC and mainframe with flexible configuration.  
-Multi-process C/C++ logger.  
+- Providing a logger which is simple-STABLE-powerful for embedded devices to PC and mainframe with flexible configuration.  
+- Multi-process C/C++ logger, portable.  
+- A meaningful demo for Systems Programming inspired by W. Richard Stevens(1951-1999).  
   
   
 ### Requirements
-- POSIX thread in UNIX-Like.  
+- POSIX thread/POSIX APIs in UNIX-Like.  
 - Win32 APIs in Windows.  
 
 ### Background and References  
 - No.  
 
-### Motivation
-SimpleLog-Challenge is designed to provide:
-- Simplicity.
-- Multi-thread and multi-process safe logging.
-- Portability across Windows, Linux, macOS, ...
-- Compatibility from ANSI C89 to C++20.
-- Zero external dependencies.
-- Extremely high performance (1.1M+ msg/sec) even up to 3M+ msg.sec (may reach limitation of SSD [450MB/500MB](https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt) in a few cases) on PC-Linux.
-- Stable up to billions of records.
-- Message safety.
-- Nano sec accuracy.
-
-It is suitable on most of platforms I know, especially with high precision as openBMC.
 
   
 ### 🧩 Proposed Design
@@ -45,8 +33,19 @@ It is suitable on most of platforms I know, especially with high precision as op
 
 | Component | Description |
 |-----------|-------------|
-| `spc_written_thread_routine` | **[Mandatory]** The main thread responsible for writing log data to the file or output stream. |
-| `spc_trigger_routine` | **[Optional]** A secondary thread that can be enabled via configuration to trigger log flushing, [trigger=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg). |
+| `Log folder` | **[Mandatory]** [pathfolder=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg)|
+| `Daily` | **[Mandatory]** |
+| `Log rotation` | **[Mandatory]** [rotation_size=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg)|
+| `Time` | **[Mandatory]** `[yyyy-mm-dd hh-mm-ss.nano]`|
+| `Info` | **[Mandatory]** `[tid] [pid] [file:func:line]`|
+| `Number of CPU` | **[Mandatory]** [ncpu=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg)|
+| `topic` | **[Optional]** [topic=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg), can comment this feature.|
+| `Log level` | **[Mandatory]** [level=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg).|
+| `Buffer size` | **[Mandatory]** [buffsize=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg).|
+| `Timer trigger` | **[Mandatory]** [trigger=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg).|
+| `Safe size of message` | **[Mandatory]** [max_sz_msg=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg).|
+| `Shared memory key` | **[Mandatory]** [shared_key=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg).|
+| `process_mode` | **[Mandatory]** [process_mode=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg).|
   
   
 ### 🛠️ Exported APIs
@@ -63,14 +62,14 @@ SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process c
 
 
 ### Alternatives Considered
-- No. Give one more option.
+- No. It should be one more option. It should NOT alternate any libraries, but is really worthy to try with new applications.
 
 ### Impact
-No.  
+- No.  
 
 ### Organizational
 - Does this proposal require a new repository? No.  
-- Which repositories are expected to be modified to execute this design? [github](https://github.com/thuanalg/simplelog-challenge)  
+- Which repositories are expected to be modified to execute this design? `phosphor-logging`  
 
 ### Testing and Validation
 - [Benchmarks on Windows, Linux, macOS vs spdlog](https://github.com/thuanalg/simplelog-challenge/blob/x1/README.md#benchmarking-performance)
