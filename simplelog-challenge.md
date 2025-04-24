@@ -17,13 +17,6 @@ SimpleLog-Challenge is designed to provide:
 
 It is suitable on most of platforms I know, especially with high precision as openBMC.
 
-### Design Details
-- Core written in ANSI C (optionally usable in C++)
-- Uses native APIs: POSIX thread (Unix-Like), `Win32` APIs (Windows)
-- Supports topics, log levels, rotation, asynchronous logging
-- High configurability (buffer size, CPU-based tuning)
-- Performance surpasses **spdlog** by 2x–4x in benchmarked environments.
-- Successfully logged 1 billion records (~113GB) in ~30 minutes on 12-year-old hardware
   
 ### 🧩 Design Details
 
@@ -31,14 +24,14 @@ It is suitable on most of platforms I know, especially with high precision as op
 | Component | Description |
 |-----------|-------------|
 | `spc_written_thread_routine` | **[Mandatory]** The main thread responsible for writing log data to the file or output stream. |
-| `spc_trigger_routine` | **[Optional]** A secondary thread that can be enabled via configuration to trigger log flushing or timed events. |
+| `spc_trigger_routine` | **[Optional]** A secondary thread that can be enabled via configuration to trigger log flushing, [trigger=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg). |
   
   
 ### 🛠️ Exported APIs
 
 SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process control:
 
-| Function Signature | Description |
+| APIs | Description |
 |--------------------|-------------|
 | `int spc_init_log_ext(SPC_INPUT_ARG *input);` | **[Mandatory]** Initialize the logger with extended input settings. |
 | `int spc_finish_log();` | **[Mandatory]** Finalize and clean up the logger. |
