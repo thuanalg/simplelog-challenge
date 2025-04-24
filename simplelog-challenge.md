@@ -1,4 +1,17 @@
-**SimpleLog-Challenge: High-Performance, Cross-Platform Logging Library**
+# SimpleLog-Challenge
+
+**High-Performance, Cross-Platform Logging Library for C/C++**
+
+
+
+Author: [Thuan Nguyen Thai](mailto:nguyenthaithuanalg@gmail.com)  
+Other contributors: None  
+Created: April 24, 2025  
+
+
+  
+  
+
 
 ### Problem Statement
 Providing a logger which must be SIMPLE-STABLE-POWERFUL for embedded devices to PC and mainframe with flexible configuration.
@@ -10,35 +23,51 @@ SimpleLog-Challenge is designed to provide:
 - Portability across Windows, Linux, macOS, ...
 - Compatibility from ANSI C89 to C++20.
 - Zero external dependencies.
-- Extremely high performance (1.1M+ msg/sec) even up to 3M+ msg.sec (may reach limitation of SSD 450MB/500MB in a few cases) on PC-Linux.
+- Extremely high performance (1.1M+ msg/sec) even up to 3M+ msg.sec (may reach limitation of SSD [450MB/500MB](https://github.com/thuanalg/simplelog-challenge/blob/main/src/linux/fork_test.txt) in a few cases) on PC-Linux.
 - Stable up to billions of records.
 - Message safety.
 - Nano sec accuracy.
 
 It is suitable on most of platforms I know, especially with high precision as openBMC.
 
-### Design Details
-- Core written in ANSI C (optionally usable in C++)
-- Uses native APIs: POSIX thread (Unix-Like), `Win32` APIs (Windows)
-- Supports topics, log levels, rotation, asynchronous logging
-- High configurability (buffer size, CPU-based tuning)
-- Performance surpasses **spdlog** by 2x–4x in benchmarked environments.
-- Successfully logged 1 billion records (~113GB) in ~30 minutes on 12-year-old hardware
+  
+### 🧩 Design Details
+
+
+| Component | Description |
+|-----------|-------------|
+| `spc_written_thread_routine` | **[Mandatory]** The main thread responsible for writing log data to the file or output stream. |
+| `spc_trigger_routine` | **[Optional]** A secondary thread that can be enabled via configuration to trigger log flushing, [trigger=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg). |
+  
+  
+### 🛠️ Exported APIs
+
+SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process control:
+
+| APIs | Description |
+|--------------------|-------------|
+| `int spc_init_log_ext(SPC_INPUT_ARG *input);` | **[Mandatory]** Initialize the logger with extended input settings. |
+| `int spc_finish_log();` | **[Mandatory]** Finalize and clean up the logger. |
+| `spclog(log_level, fmt, ...);` | **[Mandatory]** Log a message with the specified level. |
+| `spclogtopic(log_level, topic_index, fmt, ...);` | **[Optional]** Log by [topics=](https://github.com/thuanalg/simplelog-challenge/blob/main/src/simplelog-challenge.cfg) from 1 to n. |
+| `LLU spc_update_processid();` | **[Optional]** Update process ID, typically used after `fork()` [example](https://github.com/thuanalg/simplelog-challenge/blob/main/tests/fork/main.c). |
+
 
 ### Alternatives Considered
 - No. Give one more option.
 
 ### Impact
-This does not replace old libraries, because it needs time to verify, but is really worthy for trying new applications.
+There is no intention to replace old libraries, because it needs time to verify, but is really worthy for trying new applications.
 
 ### Testing and Validation
-- Benchmarks on Windows, Linux, macOS vs spdlog
-- 1B record stress test
-- Verified performance and integrity across threads and processes
-- **Benchmarking Performance evidence**: https://github.com/thuanalg/simplelog-challenge/blob/x1/README.md#benchmarking-performance. However, you can try with https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt first ( find **How to run**).  
+- [Benchmarks on Windows, Linux, macOS vs spdlog](https://github.com/thuanalg/simplelog-challenge/blob/x1/README.md#benchmarking-performance)
+- [1B record stress test Windows](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-1billion-multi-processes.txt)
+- [1B record stress test Linux](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core-1Billion.txt)
+- However, you can try with [Benchmarking Linux 8 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt) first ( find **How to run**). And do same with Windows/MAC OSX.  
 
 ### References
-- [GitHub: SimpleLog-Challenge](https://github.com/thuanalg/simplelog-challenge)
+   - [UNIX Network Programming, Volume 2: Interprocess Communications, Second Edition](https://www.amazon.com/UNIX-Network-Programming-Interprocess-Communications/dp/0130810819)  
+   - [Unix Network Programming: The Sockets Networking API](https://www.amazon.com/Unix-Network-Programming-Sockets-Networking/dp/0131411551) 
 
 ---
 
