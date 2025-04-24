@@ -57,7 +57,7 @@ SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process c
 - No. Give one more option.
 
 ### Impact
-This does not replace old libraries, because it needs time to verify, but is really worthy for trying new applications.
+There is no intention to replace old libraries, because it needs time to verify, but is really worthy for trying new applications.
 
 ### Testing and Validation
 - [Benchmarks on Windows, Linux, macOS vs spdlog](https://github.com/thuanalg/simplelog-challenge/blob/x1/README.md#benchmarking-performance)
@@ -66,7 +66,8 @@ This does not replace old libraries, because it needs time to verify, but is rea
 - However, you can try with [Benchmarking Linux 8 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt) first ( find **How to run**). And do same with Windows/MAC OSX.  
 
 ### References
-- [GitHub: SimpleLog-Challenge](https://github.com/thuanalg/simplelog-challenge)
+   - [UNIX Network Programming, Volume 2: Interprocess Communications, Second Edition](https://www.amazon.com/UNIX-Network-Programming-Interprocess-Communications/dp/0130810819)  
+   - [Unix Network Programming: The Sockets Networking API](https://www.amazon.com/Unix-Network-Programming-Sockets-Networking/dp/0131411551) 
 
 ---
 
