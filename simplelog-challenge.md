@@ -25,6 +25,19 @@ It is suitable on most of platforms I know, especially with high precision as op
 - Performance surpasses **spdlog** by 2x–4x in benchmarked environments.
 - Successfully logged 1 billion records (~113GB) in ~30 minutes on 12-year-old hardware
 
+### 🛠️ Exported APIs
+
+SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process control:
+
+| Function Signature | Description |
+|--------------------|-------------|
+| `int spc_init_log_ext(SPC_INPUT_ARG *input);` | **[Mandatory]** Initialize the logger with extended input settings. |
+| `int spc_finish_log();` | **[Mandatory]** Finalize and clean up the logger. |
+| `spclog(log_level, fmt, ...);` | **[Mandatory]** Log a message with the specified level. |
+| `spclogtopic(log_level, topic_index, fmt, ...);` | **[Optional]** Log by topic index (requires a configured topic table). |
+| `LLU spc_update_processid();` | **[Optional]** Update process ID, typically used after `fork()`. |
+
+
 ### Alternatives Considered
 - No. Give one more option.
 
