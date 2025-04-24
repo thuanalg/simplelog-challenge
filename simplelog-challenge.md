@@ -1,9 +1,15 @@
-**SimpleLog-Challenge: High-Performance, Cross-Platform Logging Library**  
----  
-Author: [Thuan Nguyen Thai](nguyenthaithuanalg@gmail.com)  
-Other contributors: None.  
-Created: 2025-04-24  
----  
+# SimpleLog-Challenge
+
+**High-Performance, Cross-Platform Logging Library for C/C++**
+
+---
+
+- **Author:** [Thuan Nguyen Thai](mailto:nguyenthaithuanalg@gmail.com)  
+- **Contributors:** None  
+- **Created:** April 24, 2025  
+
+---
+  
   
 
 
