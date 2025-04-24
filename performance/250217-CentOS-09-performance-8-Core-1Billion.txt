@@ -26,6 +26,9 @@ System Information
 	- 10 threads/1 billion records.
 
 #---------------------------------------------------------------------------------------------------------------------
+How to run:
+simple_cpp_example.exe --nthread=10 --loopcount=100000000 --cfg=z.cfg
+#---------------------------------------------------------------------------------------------------------------------
  1 billion:
 [thuannt@localhost linux]$ du -sb log_simple
 	120888922262 log_simple

@@ -6,7 +6,9 @@ If you have a problem of configuration/running or suspecting about honesty.
 1 BILLION records/Windows 10/x64/MSVC 2022
 Configuration file: performance/250113-1billion-multi-processes.cfg
 ------------------------------------------------------------------------------------------------------------------
-simple_c_example.exe --nthread=10 --loopcount=100000000
+How to run:
+simple_c_example.exe --nthread=10 --loopcount=100000000 --cfg=z.cfg
+
 ------------------------------------------------------------------------------------------------------------------
 [2025-01-13 12:17:14.693548244] [I] [tid	8712]	[pid 	 3180]	[main.c:main:191] this is master process.
 [2025-01-13 12:17:19.706684576] [I] [tid	8712]	[pid 	 3180]	[main.c:main:191] this is master process.
