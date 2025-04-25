@@ -72,7 +72,7 @@ SimpleLog-Challenge provides 5 key APIs for initializing, logging, and process c
 - Which repositories are expected to be modified to execute this design? `phosphor-logging`  
 
 ### Testing and Validation
-- [Benchmarks on Windows, Linux, macOS vs spdlog](https://github.com/thuanalg/simplelog-challenge/blob/x1/README.md#benchmarking-performance)
+- [Benchmarks on Windows, Linux, macOS vs spdlog](https://github.com/thuanalg/simplelog-challenge/blob/main/README.md#benchmarking-performance)
 - [1B record stress test Windows](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250113-1billion-multi-processes.txt)
 - [1B record stress test Linux](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core-1Billion.txt)
 - However, you can try with [Benchmarking Linux 8 cores](https://github.com/thuanalg/simplelog-challenge/blob/main/performance/250217-CentOS-09-performance-8-Core.txt) first ( find **How to run**). And do same with Windows/MAC OSX.  
