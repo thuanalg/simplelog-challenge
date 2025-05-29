@@ -1,4 +1,4 @@
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 /* Email:
  *		<nguyenthaithuanalg@gmail.com> - Nguyễn Thái Thuận
  * Mobile:
@@ -22,11 +22,12 @@
  *		<2025-Apr-12>
  *		<2025-Apr-20>
  *		<2025-Apr-22>
+ *		<2025-May-29>
  * Decription:
- *		The (only) main header file to export 4 APIs: [spc_init_log_ext, spclog, spclogtopic,
- *spc_finish_log].
+ *		The (only) main header file to export 4 APIs: [spc_init_log_ext,
+ *spclog, spclogtopic, spc_finish_log].
  */
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef ___SPC_SIMEPLE_LOG__
 #define ___SPC_SIMEPLE_LOG__            
 #include <stdio.h>
@@ -36,7 +37,7 @@
 #if 0
 #ifndef UNIX_LINUX
 #define UNIX_LINUX                      
-#endif                      
+#endif
 #endif
 
 #if 0
@@ -68,7 +69,7 @@ extern "C" {
 #define SPC_LOG_PEAK                    6
 
 #if 0
-#define SPC_RL_BUF                      50 
+#define SPC_RL_BUF                      50
 #endif
 
 #define SPC_RL_BUF                      256
@@ -82,7 +83,6 @@ extern "C" {
 #define SPC_SHARED_NAME_LEN             64
 #define SPC_TEMPLATE_LEN                (SPC_PATH_FOLDER + SPC_FNAME_LEN + 32)
 #define SPC_FULLPATH_LEN                (SPC_TEMPLATE_LEN + 32 + 16)
-
 
 #ifndef UNIX_LINUX
 #ifndef __SIMPLE_STATIC_LOG__
@@ -169,7 +169,7 @@ typedef enum __SPC_LOG_ERR_CODE__ {
 
 	SPC_END_ERROR,
 } SPC_LOG_ERR_CODE;
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 typedef struct __SPC_CALLBACL_DATA__ {
 	int total;
 	int eventid;
@@ -214,8 +214,8 @@ typedef struct __SPC_LOG_ST__ {
 	int buff_size; /*Buffer size for each buffer. No nead SYNC.*/
 	int range; /*The limitation of usage buffer.*/
 	int krange; /*The limitation of usage buffer.*/
-	int max_sz_msg; /*If the size of the message is less than the number, it is safe to write. If not, it may be
-			   truncated.*/
+	int max_sz_msg; /*If the size of the message is less than the number, it
+			   is safe to write. If not, it may be truncated.*/
 	int index; /*Index of default log, not in a topic. No nead SYNC.*/
 	char folder[SPC_PATH_FOLDER]; /*Path of genera folder. No nead SYNC.*/
 	char off; /*Must be sync*/
@@ -229,12 +229,14 @@ typedef struct __SPC_LOG_ST__ {
 	int n_topic; /*Number of topics, SPC_TOPIC_ST.*/
 	SPC_TOPIC_ST *arr_topic; /*List od topics: SPC_TOPIC_ST. Must be freed*/
 	int renew; /*In a thread of logger, NO NEED SYNC.*/
-	char path_template[SPC_TEMPLATE_LEN]; /*In a thread of logger, NO NEED SYNC.*/
+	char path_template[SPC_TEMPLATE_LEN]; /*In a thread of logger, NO NEED
+						 SYNC.*/
 	int ncpu; /*Number of CPU.*/
 	int trigger_thread; /*Use trigger thread or not.*/
 	void **arr_mtx; /*List of lock: Spinlock or Mutex. Must be freed.*/
-	char mode_straight; /* The order of records in same thread is arranged.*/
-	/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+	char
+	    mode_straight; /* The order of records in same thread is arranged.*/
+	/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef UNIX_LINUX
 	void *
 #else
@@ -263,252 +265,312 @@ typedef struct __SPC_INPUT_ARG__ {
 	SPC_CALLBACL_FUNCTION fn;
 	SPC_CALLBACL_DATA *obj;
 } SPC_INPUT_ARG;
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-#define __FILLE__(__p__)                                                                                                    \
-	do {                                                                                                                \
-		__p__ = strrchr(__FILE__, '/');                                                                             \
-		if (__p__) {                                                                                                \
-			++__p__;                                                                                            \
-			break;                                                                                              \
-		}                                                                                                           \
-		__p__ = strrchr(__FILE__, '\\');                                                                            \
-		if (__p__) {                                                                                                \
-			++__p__;                                                                                            \
-			break;                                                                                              \
-		}                                                                                                           \
-		__p__ = __FILE__;                                                                                           \
+#define __FILLE__(__p__)                                                       \
+	do {                                                                   \
+		__p__ = strrchr(__FILE__, '/');                                \
+		if (__p__) {                                                   \
+			++__p__;                                               \
+			break;                                                 \
+		}                                                              \
+		__p__ = strrchr(__FILE__, '\\');                               \
+		if (__p__) {                                                   \
+			++__p__;                                               \
+			break;                                                 \
+		}                                                              \
+		__p__ = __FILE__;                                              \
 	} while (0);
 
 #ifndef __UNIX_LINUX_CPP11_AND_NEWERS__
-#define spc_console_log(___fmttt___, ...)                                                                                   \
-	{                                                                                                                   \
-		char buf[1024];                                                                                             \
-		const char *pfn = 0;                                                                                        \
-		__FILLE__(pfn);                                                                                             \
-		spc_fmmt_now(buf, 1024);                                                                                    \
-		fprintf(stdout,                                                                                             \
-		    "[%s] [%s:%s:%d] [thid: %llu] "___fmttt___                                                              \
-		    "\n",                                                                                                   \
-		    (char *)buf, (char *)pfn, (char *)__FUNCTION__, (int)__LINE__, spc_get_threadid(), ##__VA_ARGS__);      \
+#define spc_console_log(___fmttt___, ...)                                      \
+	{                                                                      \
+		char buf[1024];                                                \
+		const char *pfn = 0;                                           \
+		__FILLE__(pfn);                                                \
+		spc_fmmt_now(buf, 1024);                                       \
+		fprintf(stdout,                                                \
+		    "[%s] [%s:%s:%d] [thid: %llu] "___fmttt___                 \
+		    "\n",                                                      \
+		    (char *)buf, (char *)pfn, (char *)__FUNCTION__,            \
+		    (int)__LINE__, spc_get_threadid(), ##__VA_ARGS__);         \
 	}
 #else
-#define spc_console_log(___fmttt___, ...)                                                                                   \
-	{                                                                                                                   \
-		std::string __c11fmt__ = "[%s] [%s:%s:%d] [thid: %llu] ";                                                   \
-		__c11fmt__ += ___fmttt___;                                                                                  \
-		__c11fmt__ += "\n";                                                                                         \
-		;                                                                                                           \
-		char buf[1024];                                                                                             \
-		const char *pfn = 0;                                                                                        \
-		__FILLE__(pfn);                                                                                             \
-		spc_fmmt_now(buf, 1024);                                                                                    \
-		fprintf(stdout, __c11fmt__.c_str(), (char *)buf, (char *)pfn, (char *)__FUNCTION__, (int)__LINE__,          \
-		    spc_get_threadid(), ##__VA_ARGS__);                                                                     \
+#define spc_console_log(___fmttt___, ...)                                      \
+	{                                                                      \
+		std::string __c11fmt__ = "[%s] [%s:%s:%d] [thid: %llu] ";      \
+		__c11fmt__ += ___fmttt___;                                     \
+		__c11fmt__ += "\n";                                            \
+		;                                                              \
+		char buf[1024];                                                \
+		const char *pfn = 0;                                           \
+		__FILLE__(pfn);                                                \
+		spc_fmmt_now(buf, 1024);                                       \
+		fprintf(stdout, __c11fmt__.c_str(), (char *)buf, (char *)pfn,  \
+		    (char *)__FUNCTION__, (int)__LINE__, spc_get_threadid(),   \
+		    ##__VA_ARGS__);                                            \
 	}
 #endif
 
-#define spc_malloc(__nn__, __obj__, __type__)                                                                               \
-	{                                                                                                                   \
-		(__obj__) = (__type__ *)malloc(__nn__);                                                                     \
-		if (__obj__) { /*spc_console_log("Malloc: 0x%p\n", (__obj__));*/                                            \
-			;                                                                                                   \
-			memset((void *)(__obj__), 0, (__nn__));                                                             \
-		} else {                                                                                                    \
-			spc_console_log("Malloc: error.\n");                                                                \
-		}                                                                                                           \
+#define spc_malloc(__nn__, __obj__, __type__)                                  \
+	{                                                                      \
+		(__obj__) = (__type__ *)malloc(__nn__);                        \
+		if (__obj__) { /*spc_console_log("Malloc: 0x%p\n",             \
+				  (__obj__));*/                                \
+			;                                                      \
+			memset((void *)(__obj__), 0, (__nn__));                \
+		} else {                                                       \
+			spc_console_log("Malloc: error.\n");                   \
+		}                                                              \
 	}
 
-#define spc_free(__obj__)                                                                                                   \
-	{ /*spc_console_log("Free: 0x%p.\n", (__obj__));*/                                                                  \
-		;                                                                                                           \
-		free(__obj__);                                                                                              \
-		;                                                                                                           \
-		(__obj__) = 0;                                                                                              \
+#define spc_free(__obj__)                                                      \
+	{ /*spc_console_log("Free: 0x%p.\n", (__obj__));*/                     \
+		;                                                              \
+		free(__obj__);                                                 \
+		;                                                              \
+		(__obj__) = 0;                                                 \
 	}
 
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #define SPC_MIN_AB(a, b) ((a) < (b)) ? (a) : (b)
 #define SPC_MAX_AB(a, b) ((a) > (b)) ? (a) : (b)
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-#define SPC_KEYBUF(__t__, __i__) ((spc_gen_data_st *)((char *)__t__->buf + (__t__->buff_size * __i__)))
-#define __spc_log_buf_level__(__lv__, ___fmttt___, ...)                                                                     \
-	{                                                                                                                   \
-		;                                                                                                           \
-		;                                                                                                           \
-		SPC_LOG_ST *__t__ = spc_control_obj();                                                                      \
-		if (__t__->llevel <= (__lv__) && ___fmttt___[0]) {                                                          \
-			;                                                                                                   \
-			;                                                                                                   \
-			int __outlen__ = 0;                                                                                 \
-			;                                                                                                   \
-			const char *__pfn__ = 0; /*char __isOof = 0;*/                                                      \
-			;                                                                                                   \
-			;                                                                                                   \
-			unsigned short __r__ = 0;                                                                           \
-			;                                                                                                   \
-			char __tnow__[SPC_RL_BUF];                                                                          \
-			char *__pprefmt__ = 0;                                                                              \
-			;                                                                                                   \
-			;                                                                                                   \
-			;                                                                                                   \
-			__FILLE__(__pfn__);                                                                                 \
-			__pprefmt__ = spc_fmt_now_ext(                                                                      \
-			    __tnow__, SPC_RL_BUF, __lv__, __pfn__, __FUNCTION__, __LINE__, &__r__, &__outlen__);            \
-			;                                                                                                   \
-			{                                                                                                   \
-				do {                                                                                        \
-					;                                                                                   \
-					int __len__ = 0;                                                                    \
-					;                                                                                   \
-                                                                                                                            \
-					;                                                                                   \
-					;                                                                                   \
-					;                                                                                   \
-					spc_mutex_lock(__t__->arr_mtx[__r__]);                                              \
-					;                                                                                   \
-					if (__t__->range > SPC_KEYBUF(__t__, __r__)->pl) {                                  \
-						;                                                                           \
-						memcpy(SPC_KEYBUF(__t__, __r__)->data + SPC_KEYBUF(__t__, __r__)->pl,       \
-						    __pprefmt__, __outlen__);                                               \
-						;                                                                           \
-						SPC_KEYBUF(__t__, __r__)->pl += __outlen__;                                 \
-						;                                                                           \
-						__len__ =                                                                   \
-						    snprintf(SPC_KEYBUF(__t__, __r__)->data + SPC_KEYBUF(__t__, __r__)->pl, \
-							__t__->krange - SPC_KEYBUF(__t__, __r__)->pl, ___fmttt___,          \
-							##__VA_ARGS__);                                                     \
-						;                                                                           \
-						if (__len__ > 0) {                                                          \
-							; /*spc_console_log("len: %d", len);*/                              \
-							;                                                                   \
-							;                                                                   \
-							__outlen__ = SPC_MIN_AB(                                            \
-							    __len__, __t__->krange - SPC_KEYBUF(__t__, __r__)->pl);         \
-							;                                                                   \
-							; /*spc_console_log("outlen: %d", outlen);*/                        \
-							;                                                                   \
-							SPC_KEYBUF(__t__, __r__)->pl += __outlen__;                         \
-							;                                                                   \
-						};                                                                          \
-					}                                                                                   \
-                                                                                                                            \
-					spc_mutex_unlock(__t__->arr_mtx[__r__]);                                            \
-                                                                                                                            \
-					if (__len__ > 0)                                                                    \
-						break;                                                                      \
-					;                                                                                   \
-					__r__++;                                                                            \
-					__r__ %= __t__->ncpu;                                                               \
-					;                                                                                   \
-					;                                                                                   \
-					continue;                                                                           \
-				} while (1);                                                                                \
-				if (!__t__->trigger_thread)                                                                 \
-					spc_rel_sem(__t__->sem_rwfile);                                                     \
-				if (__pprefmt__ != __tnow__) {                                                              \
-					spc_free(__pprefmt__);                                                              \
-				}                                                                                           \
-			}                                                                                                   \
-		}                                                                                                           \
+#define SPC_KEYBUF(__t__, __i__)                                               \
+	((spc_gen_data_st *)((char *)__t__->buf + (__t__->buff_size * __i__)))
+#define __spc_log_buf_level__(__lv__, ___fmttt___, ...)                              \
+	{                                                                            \
+		;                                                                    \
+		;                                                                    \
+		SPC_LOG_ST *__t__ = spc_control_obj();                               \
+		if (__t__->llevel <= (__lv__) && ___fmttt___[0]) {                   \
+			;                                                            \
+			;                                                            \
+			int __outlen__ = 0;                                          \
+			;                                                            \
+			const char *__pfn__ = 0; /*char __isOof = 0;*/               \
+			;                                                            \
+			;                                                            \
+			unsigned short __r__ = 0;                                    \
+			;                                                            \
+			char __tnow__[SPC_RL_BUF];                                   \
+			char *__pprefmt__ = 0;                                       \
+			;                                                            \
+			;                                                            \
+			;                                                            \
+			__FILLE__(__pfn__);                                          \
+			__pprefmt__ = spc_fmt_now_ext(__tnow__, SPC_RL_BUF,          \
+			    __lv__, __pfn__, __FUNCTION__, __LINE__, &__r__,         \
+			    &__outlen__);                                            \
+			;                                                            \
+			{                                                            \
+				do {                                                 \
+					;                                            \
+					int __len__ = 0;                             \
+					;                                            \
+                                                                                     \
+					;                                            \
+					;                                            \
+					;                                            \
+					spc_mutex_lock(__t__->arr_mtx[__r__]);       \
+					;                                            \
+					if (__t__->range >                           \
+					    SPC_KEYBUF(__t__, __r__)->pl) {          \
+						;                                    \
+						memcpy(                              \
+						    SPC_KEYBUF(__t__, __r__)         \
+							    ->data +                 \
+							SPC_KEYBUF(                  \
+							    __t__, __r__)            \
+							    ->pl,                    \
+						    __pprefmt__, __outlen__);        \
+						;                                    \
+						SPC_KEYBUF(__t__, __r__)             \
+						    ->pl += __outlen__;              \
+						;                                    \
+						__len__ = snprintf(                  \
+						    SPC_KEYBUF(__t__, __r__)         \
+							    ->data +                 \
+							SPC_KEYBUF(                  \
+							    __t__, __r__)            \
+							    ->pl,                    \
+						    __t__->krange -                  \
+							SPC_KEYBUF(                  \
+							    __t__, __r__)            \
+							    ->pl,                    \
+						    ___fmttt___,                     \
+						    ##__VA_ARGS__);                  \
+						;                                    \
+						if (__len__ > 0) {                   \
+							; /*spc_console_log("len:    \
+							     %d", len);*/            \
+							;                            \
+							;                            \
+							__outlen__ =                 \
+							    SPC_MIN_AB(              \
+								__len__,             \
+								__t__->krange -      \
+								    SPC_KEYBUF(      \
+									__t__,       \
+									__r__)       \
+									->pl);       \
+							;                            \
+							; /*spc_console_log("outlen: \
+							     %d", outlen);*/         \
+							;                            \
+							SPC_KEYBUF(                  \
+							    __t__, __r__)            \
+							    ->pl +=                  \
+							    __outlen__;              \
+							;                            \
+						};                                   \
+					}                                            \
+                                                                                     \
+					spc_mutex_unlock(                            \
+					    __t__->arr_mtx[__r__]);                  \
+                                                                                     \
+					if (__len__ > 0)                             \
+						break;                               \
+					;                                            \
+					__r__++;                                     \
+					__r__ %= __t__->ncpu;                        \
+					;                                            \
+					;                                            \
+					continue;                                    \
+				} while (1);                                         \
+				if (!__t__->trigger_thread)                          \
+					spc_rel_sem(__t__->sem_rwfile);              \
+				if (__pprefmt__ != __tnow__) {                       \
+					spc_free(__pprefmt__);                       \
+				}                                                    \
+			}                                                            \
+		}                                                                    \
 	}
 
 #define SPC_ST_LOGBUFTOPIC(__t__, __i__) (&(__t__->arr_topic[__i__]))->buf
-#define SPC_ST_LOGBUFTOPIC_RANGE(__t__, __i__, __r__)                                                                       \
-	((spc_gen_data_st *)((char *)SPC_ST_LOGBUFTOPIC(__t__, __i__) + __t__->buff_size * __r__))
+#define SPC_ST_LOGBUFTOPIC_RANGE(__t__, __i__, __r__)                          \
+	((spc_gen_data_st *)((char *)SPC_ST_LOGBUFTOPIC(__t__, __i__) +        \
+			     __t__->buff_size * __r__))
 
-#define __spc_log_buf_topic_level__(__lv__, __tpic__, ___fmttt___, ...)                                                     \
-	{                                                                                                                   \
-		;                                                                                                           \
-		SPC_LOG_ST *__t__ = spc_control_obj();                                                                      \
-		;                                                                                                           \
-		if (__t__->llevel <= (__lv__) && ___fmttt___[0] && __t__->arr_topic) {                                      \
-			;                                                                                                   \
-			short __tpp__ = 0;                                                                                  \
-			int __len__ = 0;                                                                                    \
-			unsigned short __r__ = 0;                                                                           \
-			;                                                                                                   \
-			const char *__pfn__ = 0;                                                                            \
-			;                                                                                                   \
-			;                                                                                                   \
-			int __outlen__ = 0;                                                                                 \
-			;                                                                                                   \
-			char *__pprefmt__ = 0;                                                                              \
-			;                                                                                                   \
-			char __tnow__[SPC_RL_BUF];                                                                          \
-			;                                                                                                   \
-			__tpp__ = __tpic__ % __t__->n_topic;                                                                \
-			;                                                                                                   \
-			;                                                                                                   \
-			;                                                                                                   \
-			__FILLE__(__pfn__);                                                                                 \
-			;                                                                                                   \
-			;                                                                                                   \
-			__pprefmt__ = spc_fmt_now_ext(                                                                      \
-			    __tnow__, SPC_RL_BUF, __lv__, __pfn__, __FUNCTION__, __LINE__, &__r__, &__outlen__);            \
-			;                                                                                                   \
-			do {                                                                                                \
-				;                                                                                           \
-				;                                                                                           \
-				spc_mutex_lock(__t__->arr_mtx[__r__]);                                                      \
-				/*do                                                                                        \
-				{*/                                                                                         \
-				/*if(t->arr_topic){*/;                                                                      \
-				;                                                                                           \
-				;                                                                                           \
-				;                                                                                           \
-				if (__t__->range > SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl) {                   \
-					;                                                                                   \
-					memcpy(SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +                      \
-						   SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,                     \
-					    __pprefmt__, __outlen__);                                                       \
-					;                                                                                   \
-					SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;                  \
-					;                                                                                   \
-					;                                                                                   \
-					__len__ = snprintf(SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +          \
-							       SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,         \
-					    __t__->krange - SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,            \
-					    ___fmttt___, ##__VA_ARGS__);                                                    \
-					;                                                                                   \
-					;                                                                                   \
-					if (__len__ > 0) {                                                                  \
-						; /*spc_console_log("len: %d", len);*/                                      \
-						;                                                                           \
-						;                                                                           \
-						__outlen__ = SPC_MIN_AB(__len__,                                            \
-						    __t__->krange - SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl);   \
-						; /*spc_console_log("outlen: %d", outlen);*/                                \
-						;                                                                           \
-						;                                                                           \
-						;                                                                           \
-						SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;          \
-					}                                                                                   \
-				}                                                                                           \
-				/*}*/                                                                                       \
-				/*}                                                                                         \
-				while(0);*/                                                                                 \
-				spc_mutex_unlock(__t__->arr_mtx[__r__]);                                                    \
-				if (__len__ > 0)                                                                            \
-					break;                                                                              \
-				;                                                                                           \
-				;                                                                                           \
-				__r__++;                                                                                    \
-				__r__ %= __t__->ncpu;                                                                       \
-				;                                                                                           \
-				continue;                                                                                   \
-			} while (1);                                                                                        \
-			if (!__t__->trigger_thread)                                                                         \
-				spc_rel_sem(__t__->sem_rwfile);                                                             \
-			;                                                                                                   \
-			if (__pprefmt__ != __tnow__) {                                                                      \
-				spc_free(__pprefmt__);                                                                      \
-			}                                                                                                   \
-		}                                                                                                           \
+#define __spc_log_buf_topic_level__(__lv__, __tpic__, ___fmttt___, ...)           \
+	{                                                                         \
+		;                                                                 \
+		SPC_LOG_ST *__t__ = spc_control_obj();                            \
+		;                                                                 \
+		if (__t__->llevel <= (__lv__) && ___fmttt___[0] &&                \
+		    __t__->arr_topic) {                                           \
+			;                                                         \
+			short __tpp__ = 0;                                        \
+			int __len__ = 0;                                          \
+			unsigned short __r__ = 0;                                 \
+			;                                                         \
+			const char *__pfn__ = 0;                                  \
+			;                                                         \
+			;                                                         \
+			int __outlen__ = 0;                                       \
+			;                                                         \
+			char *__pprefmt__ = 0;                                    \
+			;                                                         \
+			char __tnow__[SPC_RL_BUF];                                \
+			;                                                         \
+			__tpp__ = __tpic__ % __t__->n_topic;                      \
+			;                                                         \
+			;                                                         \
+			;                                                         \
+			__FILLE__(__pfn__);                                       \
+			;                                                         \
+			;                                                         \
+			__pprefmt__ = spc_fmt_now_ext(__tnow__, SPC_RL_BUF,       \
+			    __lv__, __pfn__, __FUNCTION__, __LINE__, &__r__,      \
+			    &__outlen__);                                         \
+			;                                                         \
+			do {                                                      \
+				;                                                 \
+				;                                                 \
+				spc_mutex_lock(__t__->arr_mtx[__r__]);            \
+				/*do                                              \
+				{*/                                               \
+				/*if(t->arr_topic){*/;                            \
+				;                                                 \
+				;                                                 \
+				;                                                 \
+				if (__t__->range > SPC_ST_LOGBUFTOPIC_RANGE(      \
+						       __t__, __tpp__, __r__)     \
+						       ->pl) {                    \
+					;                                         \
+					memcpy(SPC_ST_LOGBUFTOPIC_RANGE(          \
+						   __t__, __tpp__, __r__)         \
+						       ->data +                   \
+						   SPC_ST_LOGBUFTOPIC_RANGE(      \
+						       __t__, __tpp__, __r__)     \
+						       ->pl,                      \
+					    __pprefmt__, __outlen__);             \
+					;                                         \
+					SPC_ST_LOGBUFTOPIC_RANGE(                 \
+					    __t__, __tpp__, __r__)                \
+					    ->pl += __outlen__;                   \
+					;                                         \
+					;                                         \
+					__len__ = snprintf(                       \
+					    SPC_ST_LOGBUFTOPIC_RANGE(             \
+						__t__, __tpp__, __r__)            \
+						    ->data +                      \
+						SPC_ST_LOGBUFTOPIC_RANGE(         \
+						    __t__, __tpp__, __r__)        \
+						    ->pl,                         \
+					    __t__->krange -                       \
+						SPC_ST_LOGBUFTOPIC_RANGE(         \
+						    __t__, __tpp__, __r__)        \
+						    ->pl,                         \
+					    ___fmttt___, ##__VA_ARGS__);          \
+					;                                         \
+					;                                         \
+					if (__len__ > 0) {                        \
+						; /*spc_console_log("len: %d",    \
+						     len);*/                      \
+						;                                 \
+						;                                 \
+						__outlen__ = SPC_MIN_AB(          \
+						    __len__,                      \
+						    __t__->krange -               \
+							SPC_ST_LOGBUFTOPIC_RANGE( \
+							    __t__, __tpp__,       \
+							    __r__)                \
+							    ->pl);                \
+						; /*spc_console_log("outlen:      \
+						     %d", outlen);*/              \
+						;                                 \
+						;                                 \
+						;                                 \
+						SPC_ST_LOGBUFTOPIC_RANGE(         \
+						    __t__, __tpp__, __r__)        \
+						    ->pl += __outlen__;           \
+					}                                         \
+				}                                                 \
+				/*}*/                                             \
+				/*}                                               \
+				while(0);*/                                       \
+				spc_mutex_unlock(__t__->arr_mtx[__r__]);          \
+				if (__len__ > 0)                                  \
+					break;                                    \
+				;                                                 \
+				;                                                 \
+				__r__++;                                          \
+				__r__ %= __t__->ncpu;                             \
+				;                                                 \
+				continue;                                         \
+			} while (1);                                              \
+			if (!__t__->trigger_thread)                               \
+				spc_rel_sem(__t__->sem_rwfile);                   \
+			;                                                         \
+			if (__pprefmt__ != __tnow__) {                            \
+				spc_free(__pprefmt__);                            \
+			}                                                         \
+		}                                                                 \
 	}
 
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 /* Please demo with spc_init_log */
 DLL_API_SPC_SIMEPLE_LOG int
@@ -526,7 +588,8 @@ spc_init_log_ext(SPC_INPUT_ARG *input);
 
 /*
  * Export name:	spclogtopic
- * Sample:		spclogtopic(SPC_LOG_INFO, 0, "Hello spclog: %llu", time(0));
+ * Sample:		spclogtopic(SPC_LOG_INFO, 0, "Hello spclog: %llu",
+ * time(0));
  */
 #define spclogtopic                     __spc_log_buf_topic_level__
 
@@ -534,10 +597,11 @@ spc_init_log_ext(SPC_INPUT_ARG *input);
 DLL_API_SPC_SIMEPLE_LOG int
 spc_finish_log();
 
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 DLL_API_SPC_SIMEPLE_LOG char *
-spc_fmt_now_ext(char *fmtt, int len, int lv, const char *filename, const char *funcname, int line, unsigned short *r, int *);
+spc_fmt_now_ext(char *fmtt, int len, int lv, const char *filename,
+    const char *funcname, int line, unsigned short *r, int *);
 DLL_API_SPC_SIMEPLE_LOG int
 spc_fmmt_now(char *fmtt, int len);
 DLL_API_SPC_SIMEPLE_LOG int
@@ -568,7 +632,9 @@ DLL_API_SPC_SIMEPLE_LOG
 LLU
 spc_update_processid();
 
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+DLL_API_SPC_SIMEPLE_LOG const char *
+spc_err_txt(int i);
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #ifdef __cplusplus
 }
