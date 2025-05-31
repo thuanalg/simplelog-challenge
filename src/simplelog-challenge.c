@@ -228,13 +228,13 @@ spc_UnlockSpinlock(volatile long *p);
 
 /*static
 	volatile long spc_rw_spin = 0;*/
-#define THREAD_ROUTINE            LPTHREAD_START_ROUTINE
+#define SPC_THREAD_ROUTINE            LPTHREAD_START_ROUTINE
 #else
-typedef void *(*THREAD_ROUTINE)(void *);
+typedef void *(*SPC_THREAD_ROUTINE)(void *);
 #endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
-typedef enum __CHANGE_NAME_E__ {
+typedef enum __SPC_CHANGE_NAME_E__ {
 	SPC_NO_CHANGE_NAME = 0,
 	SPC_CHANGE_FILE_SIZE,
 	SPC_CHANGE_DAY,
@@ -242,7 +242,7 @@ typedef enum __CHANGE_NAME_E__ {
 	SPC_CHANGE_YEAR,
 
 	SPC_CHANGE_FINISH
-} __CHANGE_NAME_E__;
+} SPC_CHANGE_NAME_E;
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 static const char *__spclog_pathfolder[] = {SPCLOG_PATHFOLDR, SPCLOG_LEVEL,
@@ -320,10 +320,10 @@ spc_trigger_routine(void *arg);
 
 #ifndef UNIX_LINUX
 static int
-spc_create_thread(THREAD_ROUTINE f, void *arg, HANDLE *outhd);
+spc_create_thread(SPC_THREAD_ROUTINE f, void *arg, HANDLE *outhd);
 #else
 static int
-spc_create_thread(THREAD_ROUTINE f, void *arg, pthread_t *outid);
+spc_create_thread(SPC_THREAD_ROUTINE f, void *arg, pthread_t *outid);
 #endif
 
 static int
@@ -1978,10 +1978,10 @@ spc_trigger_routine(void *arg)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef UNIX_LINUX
 int
-spc_create_thread(THREAD_ROUTINE f, void *arg, HANDLE *outhd)
+spc_create_thread(SPC_THREAD_ROUTINE f, void *arg, HANDLE *outhd)
 #else
 int
-spc_create_thread(THREAD_ROUTINE f, void *arg, pthread_t *outid)
+spc_create_thread(SPC_THREAD_ROUTINE f, void *arg, pthread_t *outid)
 #endif
 {
 	int ret = 0;
