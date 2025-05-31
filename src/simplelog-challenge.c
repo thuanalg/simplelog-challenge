@@ -117,7 +117,15 @@
 			    "CloseHandle %s", bl ? "DONE" : "ERROR");          \
 		(__obj) = 0;                                                   \
 	}
+#define spc_err(__fmt__, ...)                                                  \
+	spc_console_log(                                                       \
+	    "[E] errcode: %d, " __fmt__, (int)GetLastError(), ##__VA_ARGS__)
 #else
+
+#define spc_err(__fmt__, ...)                                                  \
+	spc_console_log("[E] errno: %d, errtext: %s: " __fmt__, errno,         \
+	    strerror(errno), ##__VA_ARGS__)
+
 #define SPC_sem_wait(__obj) sem_wait((sem_t *)(__obj))
 #define SPC_sem_post(__obj) sem_post((sem_t *)(__obj))
 #define SPC_sem_destroy(__obj, __err)                                          \
@@ -297,7 +305,13 @@ static int
 spc_osx_sync_create();
 static int
 spc_osx_sync_del();
+#else
+#ifdef SPC_USING_SPIN_LOCK
+static int 
+	spc_spinlock_init(pthread_spinlock_t *mtx, char shared);
 #endif
+#endif
+
 static int
 spc_mtx_init(void *mtx, char shared);
 static void *
@@ -456,8 +470,7 @@ spc_set_off(int isoff)
 #ifndef UNIX_LINUX
 		errCode = (int)WaitForSingleObject(t->sem_off, INFINITE);
 		if (errCode == WAIT_FAILED) {
-			spc_console_log(
-			    "------- errCode: %d\n", (int)GetLastError());
+			spc_err("WaitForSingleObject");
 		}
 #else
 		errCode = SPC_sem_wait(t->sem_off);
@@ -650,7 +663,8 @@ spc_init_log_ext(SPC_INPUT_ARG *input)
 	} while (0);
 	return ret;
 }
-LLU
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+SPC_LLU
 spc_update_processid()
 {
 	snprintf(__spc_process_id, 32, "[pid \t %llu]\t", spc_process_id());
@@ -675,7 +689,9 @@ spc_init_log(char *pathcfg)
 	do {
 		snprintf(
 		    __spc_process_id, 32, "[pid \t %llu]\t", spc_process_id());
+
 		__spc_process_id_len = (int)strlen(__spc_process_id);
+
 		memset(buf, 0, sizeof(buf));
 		/* // fp = fopen(pathcfg, "r");*/
 		SPC_FFOPEN(fp, pathcfg, "r");
@@ -876,6 +892,7 @@ spc_verify_folder(char *folder)
 				*/
 				break;
 			}
+			spc_err("CreateDirectoryA");
 			ret = SPC_LOG_FOLDER_ERROR;
 		}
 #else
@@ -953,7 +970,7 @@ spc_written_thread_routine(void *lpParam)
 		main_src_thrd_buf[i] = p + t->buff_size * i;
 	}
 
-	/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+	/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 	if (t->arr_topic) {
 		spc_malloc(
@@ -968,7 +985,7 @@ spc_written_thread_routine(void *lpParam)
 		}
 	}
 
-	/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+	/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 	if (t->trigger_thread > 0) {
 		spc_create_thread(spc_trigger_routine, t, &trigger_handle_id);
 	}
@@ -1014,13 +1031,13 @@ spc_written_thread_routine(void *lpParam)
 					continue;
 				}
 
-				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 				if (!is_off) {
 					spc_mutex_lock(t->mtx_rw);
 					is_off = t->off;
 					spc_mutex_unlock(t->mtx_rw);
 				}
-				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 				for (i = 0; i < t->ncpu; ++i) {
 					spc_mutex_lock(t->arr_mtx[i]);
 					/*
@@ -1056,11 +1073,10 @@ spc_written_thread_routine(void *lpParam)
 				/*only_cast->pl*/
 				if (err) {
 					ret = SPC_LOG_TOPIC_FLUSH;
-					spc_console_log(
-					    "--fflush, ret: %d --\n", err);
+					spc_err("fflush");
 					break;
 				}
-				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 				if (t->n_topic > 0) {
 					char *src = 0;
 					for (i = 0; i < t->n_topic; ++i) {
@@ -1125,7 +1141,7 @@ spc_written_thread_routine(void *lpParam)
 						/*only_cast->pl*/
 					}
 				}
-				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 				if (is_off) {
 					break;
 				}
@@ -1236,9 +1252,9 @@ spc_fmt_now_ext(char *fmtt, int len, int lv, const char *filename,
 	int ret = 0;
 	spc_local_time_st stt;
 	int n = 0;
-	LLU threadiid = 0;
+	SPC_LLU threadiid = 0;
 
-	threadiid = (LLU)spc_get_threadid();
+	threadiid = (SPC_LLU)spc_get_threadid();
 	*outlen = 0;
 	ret = spc_local_time_now(&stt);
 	if (ret) {
@@ -1261,6 +1277,7 @@ spc_fmt_now_ext(char *fmtt, int len, int lv, const char *filename,
 	    stt.year + YEAR_PADDING, stt.month + MONTH_PADDING, stt.day,
 	    stt.hour, stt.minute, stt.sec, (int)stt.nn,
 	    spc_text_gb_c[lv % SPC_LOG_PEAK], threadiid);
+
 	if (n < 1) {
 		ret = SPC_LOG_PRINTF_ERROR;
 		return p;
@@ -1377,9 +1394,11 @@ spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 				snprintf(path, SPC_FULLPATH_LEN,
 				    SPC_FILE_NAME_FMT, t->folder, yearmonth,
 				    fmt_file_name, *index);
+
 				snprintf(t->path_template, SPC_TEMPLATE_LEN,
 				    SPC_FILE_NAME_FMT_TOPIC, t->folder,
 				    yearmonth, fmt_file_name);
+
 				spc_standardize_path(path);
 				spc_standardize_path(t->path_template);
 
@@ -1444,6 +1463,7 @@ spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 		}
 		snprintf(path, SPC_FULLPATH_LEN, SPC_FILE_NAME_FMT, t->folder,
 		    yearmonth, fmt_file_name, *index);
+
 		snprintf(t->path_template, SPC_TEMPLATE_LEN,
 		    SPC_FILE_NAME_FMT_TOPIC, t->folder, yearmonth,
 		    fmt_file_name);
@@ -1471,13 +1491,13 @@ spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 }
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-LLU
+SPC_LLU
 spc_get_threadid()
 {
 #ifndef UNIX_LINUX
-	return (LLU)GetCurrentThreadId();
+	return (SPC_LLU)GetCurrentThreadId();
 #else
-	return (LLU)pthread_self();
+	return (SPC_LLU)pthread_self();
 #endif
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -1564,6 +1584,7 @@ spc_folder_sup(char *folder, spc_local_time_st *lctime, char *year_month)
 			DWORD xerr = GetLastError();
 			if (xerr != ERROR_ALREADY_EXISTS) {
 				ret = SPC_LOG_CHECK_FOLDER_ERROR;
+				spc_err("CreateDirectoryA");
 				break;
 			}
 		}
@@ -1574,17 +1595,20 @@ spc_folder_sup(char *folder, spc_local_time_st *lctime, char *year_month)
 			DWORD xerr = GetLastError();
 			if (xerr != ERROR_ALREADY_EXISTS) {
 				ret = SPC_LOG_CHECK_FOLDER_YEAR_ERROR;
+				spc_err("CreateDirectoryA");
 				break;
 			}
 		}
 		snprintf(path, SPC_PATH_FOLDER, "%s/%.4d/%.2d", folder,
 		    (int)lctime->year + YEAR_PADDING,
 		    (int)lctime->month + MONTH_PADDING);
+
 		result = CreateDirectoryA(path, 0);
 		if (!result) {
 			DWORD xerr = GetLastError();
 			if (xerr != ERROR_ALREADY_EXISTS) {
 				ret = SPC_LOG_CHECK_FILE_YEAR_ERROR;
+				spc_err("CreateDirectoryA");
 				break;
 			}
 		}
@@ -1600,8 +1624,7 @@ spc_folder_sup(char *folder, spc_local_time_st *lctime, char *year_month)
 			stat(path, &buf);
 			if (!S_ISDIR(buf.st_mode)) {
 				ret = SPC_LOG_CHECK_FOLDER_ERROR;
-				spc_console_log(
-				    "Mkdir err path: %s, err: %d\n", path, err);
+				spc_err("mkdir, path: %s", path);
 				break;
 			}
 		}
@@ -1615,8 +1638,7 @@ spc_folder_sup(char *folder, spc_local_time_st *lctime, char *year_month)
 			    mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 			if (err) {
 				ret = SPC_LOG_CHECK_FOLDER_YEAR_ERROR;
-				spc_console_log(
-				    "Mkdir err path: %s, err: %d\n", path, err);
+				spc_err("mkdir, path: %s", path);
 				break;
 			}
 		}
@@ -1624,13 +1646,13 @@ spc_folder_sup(char *folder, spc_local_time_st *lctime, char *year_month)
 		snprintf(path, SPC_PATH_FOLDER, "%s/%.4d/%.2d", folder,
 		    (int)lctime->year + YEAR_PADDING,
 		    (int)lctime->month + MONTH_PADDING);
+
 		err = stat(path, &buf);
 		if (!S_ISDIR(buf.st_mode)) {
 			err =
 			    mkdir(path, S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);
 			if (err) {
-				spc_console_log(
-				    "Mkdir err path: %s, err: %d\n", path, err);
+				spc_err("mkdir, path: %s", path);
 				ret = SPC_LOG_CHECK_FILE_YEAR_ERROR;
 				break;
 			}
@@ -1639,6 +1661,7 @@ spc_folder_sup(char *folder, spc_local_time_st *lctime, char *year_month)
 		snprintf(year_month, 10, "%.4d\\%.2d",
 		    (int)lctime->year + YEAR_PADDING,
 		    (int)lctime->month + MONTH_PADDING);
+
 	} while (0);
 	return ret;
 }
@@ -1751,7 +1774,7 @@ spc_gen_topics(SPC_LOG_ST *t)
 	/*
 	//int renew = 0;
 	*/
-	LLU cszize = 0;
+	SPC_LLU cszize = 0;
 	do {
 		int i = 0;
 		if (t->n_topic < 1) {
@@ -1770,14 +1793,16 @@ spc_gen_topics(SPC_LOG_ST *t)
 				    "%s-%s-%.7d.log", t->path_template,
 				    t->arr_topic[i].topic,
 				    t->arr_topic[i].index);
+
 				SPC_FFOPEN(t->arr_topic[i].fp, path, "a+");
 				if (!t->arr_topic[i].fp) {
 					ret = SPC_LOG_TOPIC_FOPEN;
 					break;
 				}
 				SPC_FFSEEK(t->arr_topic[i].fp, 0, SEEK_END);
-				cszize = (LLU)SPC_FFTELL(t->arr_topic[i].fp);
-				if (cszize < (LLU)t->file_limit_size) {
+				cszize =
+				    (SPC_LLU)SPC_FFTELL(t->arr_topic[i].fp);
+				if (cszize < (SPC_LLU)t->file_limit_size) {
 					t->arr_topic[i].fizize = (int)cszize;
 					break;
 				}
@@ -1859,8 +1884,9 @@ spc_gen_topics(SPC_LOG_ST *t)
 					break;
 				}
 				SPC_FFSEEK(t->arr_topic[i].fp, 0, SEEK_END);
-				cszize = (LLU)SPC_FFTELL(t->arr_topic[i].fp);
-				if (cszize < (LLU)t->file_limit_size) {
+				cszize =
+				    (SPC_LLU)SPC_FFTELL(t->arr_topic[i].fp);
+				if (cszize < (SPC_LLU)t->file_limit_size) {
 					break;
 				}
 				SPC_FCLOSE(t->arr_topic[i].fp, err);
@@ -1880,10 +1906,10 @@ spc_gen_topics(SPC_LOG_ST *t)
 }
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-LLU
+SPC_LLU
 spc_milli_now()
 {
-	LLU ret = 0;
+	SPC_LLU ret = 0;
 	time_t t0 = time(0);
 	do {
 #ifndef UNIX_LINUX
@@ -1906,43 +1932,15 @@ spc_milli_now()
 int
 spc_fclose_err(int terr, void *ffp)
 {
-	int ret = 0;
-	do {
-#ifndef UNIX_LINUX
-		spc_console_log("ffp: %p, terr: %d, GetLastError: 0x%x.", ffp,
-		    terr, (int)GetLastError());
-#else
-		char buf[64];
-		/* https://linux.die.net/man/3/strerror_r , */
-		/* - The strerror_r() function is similar
-			to strerror(), but is thread safe */
-		strerror_r(errno, buf, 64);
-		spc_console_log("ffp: %p,terr: %d, errno: %d, strerror_r: %s.",
-		    ffp, terr, (int)errno, buf);
-#endif
-	} while (0);
-	return ret;
+	spc_err("fpp: 0x%p, terr: %d", ffp, terr);
+	return 0;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int
 spc_fflush_err(int terr, void *ffp)
 {
-	int ret = 0;
-	do {
-#ifndef UNIX_LINUX
-		spc_console_log("ffp: %p, terr: %d, GetLastError: 0x%x.", ffp,
-		    terr, (int)GetLastError());
-#else
-		char buf[64];
-		/* https://linux.die.net/man/3/strerror_r , */
-		/* - The strerror_r() function is similar
-			to strerror(), but is thread safe */
-		strerror_r(errno, buf, 64);
-		spc_console_log("ffp: %p, terr: %d, errno: %d, strerror_r: %s.",
-		    ffp, terr, (int)errno, buf);
-#endif
-	} while (0);
-	return ret;
+	spc_err("fpp: 0x%p, terr: %d", ffp, terr);
+	return 0;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef UNIX_LINUX
@@ -1995,16 +1993,14 @@ spc_create_thread(THREAD_ROUTINE f, void *arg, pthread_t *outid)
 	hThread = CreateThread(NULL, 0, f, arg, 0, &dwThreadId);
 	if (!hThread) {
 		ret = SPC_LOG_THREAD_W32_CREATE;
-		spc_console_log("CreateThread error: %d", (int)GetLastError());
+		spc_err("CreateThread");
 	}
 	*outhd = hThread;
 #else
 	pthread_t tidd = 0;
 	ret = pthread_create(&tidd, 0, f, arg);
 	if (ret) {
-		ret = SPC_LOG_THREAD_PX_CREATE;
-		spc_console_log("pthread_create: ret: %d, errno: %d, text: %s.",
-		    ret, errno, strerror(errno));
+		spc_err("pthread_create");
 	}
 	*outid = tidd;
 #endif
@@ -2020,14 +2016,11 @@ spc_del_memory()
 #ifndef UNIX_LINUX
 		int isWell = (int)UnmapViewOfFile((void *)t->buf);
 		if (!isWell) {
-			spc_console_log(
-			    "UnmapViewOfFile error: %d", (int)GetLastError());
+			spc_err("UnmapViewOfFile");
 			ret = SPC_LOG_SHM_WIN_UNMAP;
 		}
 		isWell = (int)CloseHandle((HANDLE)t->hd);
 		if (!isWell) {
-			spc_console_log("SPC_LOG_WIN_SHM_CLOSE, err: %d",
-			    (int)GetLastError());
 			ret = SPC_LOG_WIN_SHM_CLOSE;
 		}
 #else
@@ -2039,18 +2032,13 @@ spc_del_memory()
 			ret = pthread_spin_destroy(
 			    (pthread_spinlock_t *)t->mtx_rw);
 			if (ret) {
-				spc_console_log("pthread_spin_destroy/mtx_rw: "
-						"err: %d, errno: %d, text: %s.",
-				    ret, errno, strerror(errno));
+				spc_err("pthread_spin_destroy/mtx_rw");
 			}
 			for (i = 0; i < t->ncpu; ++i) {
 				ret = pthread_spin_destroy(
 				    (pthread_spinlock_t *)t->arr_mtx[i]);
 				if (ret) {
-					spc_console_log(
-					    "pthread_spin_destroy/arr_mtx: "
-					    "err: %d, errno: %d, text: %s.",
-					    ret, errno, strerror(errno));
+					spc_err("pthread_spin_destroy/arr_mtx");
 				}
 			}
 #else
@@ -2059,18 +2047,14 @@ spc_del_memory()
 			ret =
 			    pthread_mutex_destroy((pthread_mutex_t *)t->mtx_rw);
 			if (ret) {
-				spc_console_log("pthread_mutex_destroy/mtx_rw: "
-						"err: %d, errno: %d, text: %s.",
-				    ret, errno, strerror(errno));
+				spc_err("pthread_mutex_destroy/arr_mtx");
 			}
 			for (i = 0; i < t->ncpu; ++i) {
 				ret = pthread_mutex_destroy(
 				    (pthread_mutex_t *)t->arr_mtx[i]);
 				if (ret) {
-					spc_console_log(
-					    "pthread_mutex_destroy/arr_mtx: "
-					    "err: %d, errno: %d, text: %s.",
-					    ret, errno, strerror(errno));
+					spc_err(
+					    "pthread_mutex_destroy/arr_mtx");
 				}
 			}
 #endif
@@ -2082,24 +2066,18 @@ spc_del_memory()
 			/* https://linux.die.net/man/3/sem_destroy */
 			ret = sem_destroy((sem_t *)t->sem_rwfile);
 			if (ret) {
-				spc_console_log("sem_destroy/sem_rwfile: "
-						"err: %d, errno: %d, text: %s.",
-				    ret, errno, strerror(errno));
+				spc_err("sem_destroy/sem_rwfile");
 			}
 			ret = sem_destroy((sem_t *)t->sem_off);
 			if (ret) {
-				spc_console_log("sem_destroy/sem_off: err: "
-						"%d, errno: %d, text: %s.",
-				    ret, errno, strerror(errno));
+				spc_err("sem_destroy/sem_off");
 			}
 #endif
 		}
 		ret = munmap((void *)t->buf, (size_t)t->map_mem_size);
 		if (ret) {
 			ret = SPC_LOG_SHM_UNIX_UNMAP;
-			spc_console_log("munmap: err: %d, errno: %d, "
-					"text: %s, name: %s.",
-			    ret, errno, strerror(errno), "__name__");
+			spc_err("munmap");
 		}
 		if (t->is_master) {
 			/* https://linux.die.net/man/3/shm_unlink */
@@ -2131,9 +2109,7 @@ spc_create_memory(
 			    NULL, PAGE_READWRITE, 0, size_shared, shared_key);
 
 			if (!hMapFile) {
-				spc_console_log("Cannot create SHM. "
-						"error: %d\n",
-				    (int)GetLastError());
+				spc_err("CreateFileMappingA");
 				ret = 1;
 				break;
 			}
@@ -2142,9 +2118,7 @@ spc_create_memory(
 			    FILE_MAP_ALL_ACCESS, 0, shared_key);
 			if (!hMapFile) {
 				ret = 2;
-				spc_console_log("Cannot open SHM. "
-						"error: %d\n",
-				    (int)GetLastError());
+				spc_err("OpenFileMappingA");
 				break;
 			}
 		}
@@ -2155,8 +2129,7 @@ spc_create_memory(
 		    hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, size_shared);
 		if (!p) {
 			ret = 3;
-			spc_console_log("Cannot MapViewOfFile. error: %d\n",
-			    (int)GetLastError());
+			spc_err("MapViewOfFile");
 			break;
 		}
 #else
@@ -2168,13 +2141,10 @@ spc_create_memory(
 				hMapFile = shm_open(shared_key,
 				    SPC_LOG_UNIX_CREATE_MODE,
 				    SPC_LOG_UNIX__SHARED_MODE);
+
 				if (hMapFile < 0) {
 					if (retry) {
-						spc_console_log(
-						    "shm_open/creating+open, "
-						    "errno: %d, errno_text: "
-						    "%s, shared_key: %s.",
-						    errno, strerror(errno),
+						spc_err("shm_open, key: %s",
 						    shared_key);
 						ret = SPC_LOG_SHM_UNIX_CREATE;
 					}
@@ -2191,10 +2161,9 @@ spc_create_memory(
 		} else {
 			hMapFile = shm_open(shared_key, SPC_LOG_UNIX_OPEN_MODE,
 			    SPC_LOG_UNIX__SHARED_MODE);
+
 			if (hMapFile < 0) {
-				spc_console_log("shm_open/open, errno: %d, "
-						"errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("shm_open, key: %s", shared_key);
 				ret = SPC_LOG_SHM_UNIX_OPEN;
 				break;
 			}
@@ -2206,35 +2175,22 @@ spc_create_memory(
 			if (t->is_master) {
 				err = ftruncate(hMapFile, size_shared);
 				if (err) {
-					spc_console_log(
-					    "ftruncate, errno: %d, "
-					    "errno_text: %s, shared_key: %s.",
-					    errno, strerror(errno), shared_key);
+					spc_err(
+					    "ftruncate, key: %s", shared_key);
 					ret = SPC_LOG_SHM_UNIX_TRUNC;
 					break;
 				}
 			}
 		}
-		/*
-			err = ftruncate(hMapFile, size_shared);
-			if (err) {
-		    spc_console_log("ftruncate, errno: %d,
-				errno_text: %s, shared_key: %s.", errno,
-		   strerror(errno), shared_key); ret = SPC_LOG_SHM_UNIX_TRUNC;
-		   break;
-			}
-		*/
+
 		p = (char *)mmap(0, size_shared, SPC_LOG_UNIX_PROT_FLAGS,
 		    MAP_SHARED, hMapFile, 0);
 		/* p = (char*)mmap(0, size_shared,
 			PROT_WRITE, MAP_SHARED, hMapFile, 0); //PROT_WRITE */
 		if (p == MAP_FAILED || p == 0) {
 			ret = SPC_LOG_SHM_UNIX_MAP_FAILED;
-			spc_console_log(
-			    "mmap, errno: %d, "
-			    "errno_text: %s, hMapFile: %d, size_shared: %d.",
-			    errno, strerror(errno), hMapFile, (int)size_shared);
-			p = 0;
+			spc_err(", mmap: %d, size_shared: %d", hMapFile,
+			    (int)size_shared) p = 0;
 			break;
 		}
 #endif
@@ -2289,8 +2245,7 @@ spc_calculate_size()
 			spc_malloc(size_arr_mtx, t->arr_mtx, void *);
 			if (!t->arr_mtx) {
 				ret = SPC_LOG_ARR_MTX_NULL;
-				spc_console_log(
-				    "spc_malloc: SPC_LOG_ARR_MTX_NULL.");
+				spc_err("SPC_LOG_ARR_MTX_NULL.");
 				break;
 			}
 		}
@@ -2343,13 +2298,13 @@ spc_calculate_size()
 		/*k: For buffer.*/
 		/*mtxsize: mutex size.*/
 		/*semsize: sem size.*/
-		/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
-		spc_console_log("buf size: %d, mtxsize: %d, "
-				"semsize: %d",
+		/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+		spc_console_log("buf size: %d, mtxsize: %d, semsize: %d",
 		    (int)k, (int)mtxsize, (int)semsize);
+
 		n = k + mtxsize + semsize;
 		t->map_mem_size = n;
-		/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+		/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 		/* // int spc_create_memory(void** output,
 			char* shared_key, int size_shared, char isCreating) { */
 		if (t->isProcessMode) {
@@ -2360,8 +2315,7 @@ spc_calculate_size()
 		}
 		if (!buff) {
 			ret = SPC_LOG_BUFF_MALLOC_ERROR;
-			spc_console_log(
-			    "spc_malloc: SPC_LOG_BUFF_MALLOC_ERROR.");
+			spc_err("SPC_LOG_BUFF_MALLOC_ERROR.");
 			break;
 		}
 		t->buf = (spc_gen_data_st *)buff;
@@ -2385,35 +2339,12 @@ spc_calculate_size()
 		t->mtx_rw = (void *)(buff + k);
 #ifdef SPC_USING_SPIN_LOCK
 		if (t->mtx_rw) {
-			pthread_spinlock_t *mtx =
-			    (pthread_spinlock_t *)t->mtx_rw;
-			if (t->isProcessMode) {
-				if (t->is_master) {
-					int err = 0;
-					err = pthread_spin_init(
-					    mtx, PTHREAD_PROCESS_SHARED);
-					if (err) {
-						ret =
-						    SPC_LOG_SPINLOCK_INIT_SHARED;
-						spc_console_log(
-						    "pthread_spin_init, errno: "
-						    "%d, "
-						    "errno_text: %s.",
-						    errno, strerror(errno));
-					}
-				}
-			} else {
-				int err = 0;
-				err = pthread_spin_init(
-				    mtx, PTHREAD_PROCESS_PRIVATE);
-				if (err) {
-					ret = SPC_LOG_SPINLOCK_INIT_PRIVATE;
-					spc_console_log(
-					    "pthread_spin_init, errno: %d, "
-					    "errno_text: %s.",
-					    errno, strerror(errno));
-				}
-			}
+			pthread_spinlock_t *mtx = 0;
+			mtx = (pthread_spinlock_t *) t->mtx_rw;
+			ret = spc_spinlock_init(mtx, t->isProcessMode);	
+		}
+		if(ret) {
+			break;
 		}
 		step_size = sizeof(pthread_spinlock_t);
 		p = buff + k + step_size;
@@ -2421,29 +2352,9 @@ spc_calculate_size()
 			pthread_spinlock_t *mtx = 0;
 			t->arr_mtx[i] = (void *)(p + i * step_size);
 			mtx = (pthread_spinlock_t *)t->arr_mtx[i];
-			if (t->isProcessMode) {
-				if (t->is_master) {
-					ret = pthread_spin_init(
-					    mtx, PTHREAD_PROCESS_SHARED);
-					if (ret) {
-						spc_console_log(
-						    "pthread_spin_init, errno: "
-						    "%d, errno_text: %s.",
-						    errno, strerror(errno));
-						break;
-						;
-					}
-				}
-			} else {
-				ret = pthread_spin_init(
-				    mtx, PTHREAD_PROCESS_PRIVATE);
-				if (ret) {
-					spc_console_log(
-					    "pthread_spin_init, errno: %d, "
-					    "errno_text: %s.",
-					    errno, strerror(errno));
-					break;
-				}
+			ret = spc_spinlock_init(mtx, t->isProcessMode);
+			if(ret) {
+				break;
 			}
 		}
 #else
@@ -2469,6 +2380,9 @@ spc_calculate_size()
 #ifdef __MACH__
 		/* Semaphore UNIX_LINUX MAC OSX */
 		ret = spc_osx_sync_create();
+		if(ret) {
+			break;
+		}
 #else
 		/*Semaphore UNIX_LINUX*/
 		p = buff + k + mtxsize;
@@ -2484,20 +2398,18 @@ spc_calculate_size()
 				int err = 0;
 				err = sem_init((sem_t *)t->sem_rwfile,
 				    (int)t->isProcessMode, 0);
+
 				if (err) {
 					ret = SPC_LOG_SEM_INIT_UNIX;
-					spc_console_log("sem_init, errno: %d, "
-							"errno_text: %s.",
-					    errno, strerror(errno));
+					spc_err("sem_init");
 					break;
 				}
 				err = sem_init((sem_t *)t->sem_off,
 				    (int)t->isProcessMode, 0);
+
 				if (err) {
 					ret = SPC_LOG_SEM_INIT_UNIX;
-					spc_console_log("sem_init, errno: %d, "
-							"errno_text: %s.",
-					    errno, strerror(errno));
+					spc_err("sem_init");
 					break;
 				}
 			}
@@ -2505,20 +2417,18 @@ spc_calculate_size()
 			int err = 0;
 			err = sem_init(
 			    (sem_t *)t->sem_rwfile, (int)t->isProcessMode, 0);
+
 			if (err) {
 				ret = SPC_LOG_SEM_INIT_UNIX;
-				spc_console_log("sem_init, errno: %d, "
-						"errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_init");
 				break;
 			}
 			err = sem_init(
 			    (sem_t *)t->sem_off, (int)t->isProcessMode, 0);
+
 			if (err) {
 				ret = SPC_LOG_SEM_INIT_UNIX;
-				spc_console_log("sem_init, errno: %d, "
-						"errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_init");
 				break;
 			}
 		}
@@ -2545,8 +2455,7 @@ spc_win32_sync_create()
 			spc_malloc(n, t->arr_mtx, void *);
 			if (!t->arr_mtx) {
 				ret = SPC_LOG_ARR_MTX_NULL;
-				spc_console_log(
-				    "spc_malloc: SPC_LOG_ARR_MTX_NULL");
+				spc_err("SPC_LOG_ARR_MTX_NULL");
 				break;
 			}
 		}
@@ -2555,11 +2464,11 @@ spc_win32_sync_create()
 			int i = 0;
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_MTX_NAME_OFF, t->shared_key);
+
 			hd = CreateMutexA(0, 0, nameobj);
 			if (!hd) {
 				ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
-				spc_console_log("CreateMutexA, errno: %d.",
-				    (int)GetLastError());
+				spc_err("CreateMutexA");
 				break;
 			}
 			t->mtx_rw = hd;
@@ -2568,12 +2477,11 @@ spc_win32_sync_create()
 				snprintf(nameobj, SPC_SHARED_NAME_LEN,
 				    "%s_%s_%0.2d", SPC_MTX_NAME_OFF,
 				    t->shared_key, i);
+
 				hd = CreateMutexA(0, 0, nameobj);
 				if (!hd) {
 					ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
-					spc_console_log(
-					    "CreateMutexA, errno: %d.",
-					    (int)GetLastError());
+					spc_err("CreateMutexA");
 					break;
 				}
 				t->arr_mtx[i] = hd;
@@ -2584,8 +2492,7 @@ spc_win32_sync_create()
 			hd = CreateMutexA(0, 0, 0);
 			if (!hd) {
 				ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
-				spc_console_log("CreateMutexA, errno: %d.",
-				    (int)GetLastError());
+				spc_err("CreateMutexA");
 				break;
 			}
 			t->mtx_rw = hd;
@@ -2594,9 +2501,7 @@ spc_win32_sync_create()
 				hd = CreateMutexA(0, 0, 0);
 				if (!hd) {
 					ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
-					spc_console_log(
-					    "CreateMutexA, errno: %d.",
-					    (int)GetLastError());
+					spc_err("CreateMutexA");
 					break;
 				}
 				t->arr_mtx[i] = hd;
@@ -2610,21 +2515,21 @@ spc_win32_sync_create()
 			HANDLE hd = 0;
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_SEM_NAME_RW, t->shared_key);
+
 			hd = CreateSemaphoreA(0, 0, 1, nameobj);
 			if (!hd) {
-				spc_console_log("CreateSemaphoreA, errno: %d.",
-				    (int)GetLastError());
 				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
+				spc_err("CreateSemaphoreA");
 				break;
 			}
 			t->sem_rwfile = hd;
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_SEM_NAME_OFF, t->shared_key);
+
 			hd = CreateSemaphoreA(0, 0, 1, nameobj);
 			if (!hd) {
-				spc_console_log("CreateSemaphoreA, errno: %d.",
-				    (int)GetLastError());
 				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
+				spc_err("CreateSemaphoreA");
 				break;
 			}
 			t->sem_off = hd;
@@ -2632,17 +2537,15 @@ spc_win32_sync_create()
 			HANDLE hd = 0;
 			hd = CreateSemaphoreA(0, 0, 1, 0);
 			if (!hd) {
-				spc_console_log("CreateSemaphoreA, errno: %d.",
-				    (int)GetLastError());
 				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
+				spc_err("CreateSemaphoreA");
 				break;
 			}
 			t->sem_rwfile = hd;
 			hd = CreateSemaphoreA(0, 0, 1, 0);
 			if (!hd) {
-				spc_console_log("CreateSemaphoreA, errno: %d.",
-				    (int)GetLastError());
 				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
+				spc_err("CreateSemaphoreA");
 				break;
 			}
 			t->sem_off = hd;
@@ -2652,6 +2555,7 @@ spc_win32_sync_create()
 }
 #else
 #ifdef __MACH__
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int
 spc_osx_sync_del()
 {
@@ -2666,58 +2570,86 @@ spc_osx_sync_del()
 		if ((t->isProcessMode && t->is_master) || !t->isProcessMode) {
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_SEM_NAME_RW, t->shared_key);
+
 			if (sem_close((sem_t *)t->sem_rwfile) == -1) {
-				spc_console_log("sem_close, errno: %d, "
-						"errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_close");
 				ret = SPC_LOG_OSX_SEM_CLOSE;
 			}
 			if (sem_unlink(nameobj) == -1) {
-				spc_console_log("sem_unlink, errno: %d, "
-						"errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_unlink");
 				ret = SPC_LOG_OSX_SEM_UNLINK;
 			}
 			t->sem_rwfile = 0;
 
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_SEM_NAME_OFF, t->shared_key);
+
 			if (sem_close((sem_t *)t->sem_off) == -1) {
-				spc_console_log(
-				    "sem_close, errno: %d, errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_close");
 				ret = SPC_LOG_OSX_SEM_CLOSE;
 			}
 			if (sem_unlink(nameobj) == -1) {
-				spc_console_log(
-				    "sem_unlink, errno: %d, errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_unlink");
 				ret = SPC_LOG_OSX_SEM_UNLINK;
 			}
 			t->sem_off = 0;
 		} else {
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_SEM_NAME_RW, t->shared_key);
+
 			if (sem_close((sem_t *)t->sem_rwfile) == -1) {
-				spc_console_log(
-				    "sem_close, errno: %d, errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_close");
 				ret = SPC_LOG_OSX_SEM_CLOSE;
 			}
 			t->sem_rwfile = 0;
 
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_SEM_NAME_OFF, t->shared_key);
+
 			if (sem_close((sem_t *)t->sem_off) == -1) {
-				spc_console_log(
-				    "sem_close, errno: %d, errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_close");
 				ret = SPC_LOG_OSX_SEM_CLOSE;
 			}
 			t->sem_off = 0;
 		}
 	} while (0);
 	return ret;
+}
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+static sem_t*
+spc_osx_sync_sem_create(char *nameobj, int *pret)
+{
+	sem_t *hd = 0;
+	int retry = 0;
+	int ret = 0;
+
+	do {
+		ret = 0;
+		hd = sem_open(nameobj, SPC_LOG_UNIX_CREATE_MODE,
+		    SPC_LOG_UNIX__SHARED_MODE, 1);
+		if (hd != SEM_FAILED) {
+			break;
+		}
+		ret = SPC_LOG_SEM_OSX_CREATED_ERROR;
+		spc_err("sem_open, name: %s.", nameobj);
+		if (retry) {
+			break;
+		}
+		ret = sem_unlink(nameobj);
+		if (ret) {
+			spc_err("sem_unlink, name: %s.", nameobj);
+			ret = SPC_LOG_SEM_OSX_UNLINK_ERROR;
+			break;
+		}
+		retry++;
+		continue;
+	} while (1);
+
+	if (pret) {
+		*pret = ret;
+	}
+
+	return hd;
 }
 
 int
@@ -2732,91 +2664,31 @@ spc_osx_sync_create()
 #endif
 
 		if ((t->isProcessMode && t->is_master) || !t->isProcessMode) {
-			int retry = 0;
 			sem_t *hd = 0;
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_SEM_NAME_RW, t->shared_key);
-			do {
-				hd = sem_open(nameobj, SPC_LOG_UNIX_CREATE_MODE,
-				    SPC_LOG_UNIX__SHARED_MODE, 1);
-				if (hd == SEM_FAILED) {
-					spc_console_log("sem_open, errno: %d, "
-							"errno_text: %s.",
-					    errno, strerror(errno));
-					ret = SPC_LOG_SEM_OSX_CREATED_ERROR;
-					if (retry) {
-						break;
-					} else {
-						ret = sem_unlink(nameobj);
-						if (ret) {
-							spc_console_log(
-							    "sem_unlink, "
-							    "errno: %d, "
-							    "errno_text: %s.",
-							    errno,
-							    strerror(errno));
-							ret =
-							    SPC_LOG_SEM_OSX_UNLINK_ERROR;
-							break;
-						}
-						retry++;
-						continue;
-					}
-				}
-				break;
-			} while (1);
+			hd = spc_osx_sync_sem_create(nameobj, &ret);
 
 			if (ret) {
 				break;
 			}
 			t->sem_rwfile = hd;
 
-			retry = 0;
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_SEM_NAME_OFF, t->shared_key);
-			do {
-				hd = sem_open(nameobj, SPC_LOG_UNIX_CREATE_MODE,
-				    SPC_LOG_UNIX__SHARED_MODE, 1);
-				if (hd == SEM_FAILED) {
-					spc_console_log("sem_open, errno: %d, "
-							"errno_text: %s.",
-					    errno, strerror(errno));
-					ret = SPC_LOG_SEM_OSX_CREATED_ERROR;
-					if (retry) {
-						break;
-					} else {
-						ret = sem_unlink(nameobj);
-						if (ret) {
-							spc_console_log(
-							    "sem_unlink, "
-							    "errno: %d, "
-							    "errno_text: %s.",
-							    errno,
-							    strerror(errno));
-							ret =
-							    SPC_LOG_SEM_OSX_UNLINK_ERROR;
-							break;
-						}
-						retry++;
-						continue;
-					}
-				}
-				break;
-			} while (1);
+			hd = spc_osx_sync_sem_create(nameobj, &ret);
 			if (ret) {
 				break;
 			}
-			sem_wait(hd);
 			t->sem_off = hd;
+			sem_wait(hd);
 		} else {
 			sem_t *hd = 0;
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s",
 			    SPC_SEM_NAME_RW, t->shared_key);
 			hd = sem_open(nameobj, SPC_LOG_UNIX_OPEN_MODE);
 			if (hd == SEM_FAILED) {
-				spc_console_log("sem_open, errno: %d, "
-						"errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_open");
 				ret = SPC_LOG_SEM_OSX_CREATED_ERROR;
 				break;
 			}
@@ -2826,9 +2698,7 @@ spc_osx_sync_create()
 			    SPC_SEM_NAME_OFF, t->shared_key);
 			hd = sem_open(nameobj, SPC_LOG_UNIX_OPEN_MODE);
 			if (hd == SEM_FAILED) {
-				spc_console_log("sem_open, errno: %d, "
-						"errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("sem_open");
 				ret = SPC_LOG_SEM_OSX_CREATED_ERROR;
 				break;
 			}
@@ -2837,7 +2707,39 @@ spc_osx_sync_create()
 	} while (0);
 	return ret;
 }
+#else
+#ifdef SPC_USING_SPIN_LOCK
+/*Apply for LINUX-Unix but not MACH*/
+int spc_spinlock_init(pthread_spinlock_t *mtx, char shared) {
+	int ret = 0;
+	int err = 0;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
+	do {
+		if(!shared) {
+			err = pthread_spin_init(
+				mtx, PTHREAD_PROCESS_PRIVATE);
+			if (err) {
+				ret = SPC_LOG_SPINLOCK_INIT_PRIVATE;
+				spc_err("pthread_spin_init");
+			}			
+			break;
+		}
+
+		if (t->is_master) {
+			err = pthread_spin_init(
+				mtx, PTHREAD_PROCESS_SHARED);
+			if (err) {
+				ret = SPC_LOG_SPINLOCK_INIT_SHARED;
+				spc_err("pthread_spin_init");
+			}
+		}
+
+	} while(0);
+	return ret;
+}
 #endif
+#endif
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int
 spc_mtx_init(void *obj, char shared)
 {
@@ -2845,52 +2747,45 @@ spc_mtx_init(void *obj, char shared)
 	int err = 0;
 	SPC_LOG_ST *t = &__spc_log_statiic__;
 	pthread_mutex_t *mtx = (pthread_mutex_t *)obj;
+	pthread_mutexattr_t psharedm;
+
 	do {
 		if (t->isProcessMode && !t->is_master) {
 			break;
 		}
-		if (shared) {
-			pthread_mutexattr_t psharedm;
-			err = pthread_mutexattr_init(&psharedm);
-			if (err) {
-				ret = SPC_LOG_MTX_ATT_SHARED_MODE;
-				spc_console_log(
-				    "pthread_mutexattr_init, errno: %d, "
-				    "errno_text: %s.",
-				    errno, strerror(errno));
-				break;
-			}
-			err = pthread_mutexattr_setpshared(
-			    &psharedm, PTHREAD_PROCESS_SHARED);
-			if (err) {
-				ret = SPC_LOG_MTX_ATT_SHARED_MODE_SET;
-				spc_console_log(
-				    "pthread_mutexattr_setpshared, errno: %d, "
-				    "errno_text: %s.",
-				    errno, strerror(errno));
-				break;
-			}
-			err = pthread_mutex_init(mtx, &psharedm);
-			if (err) {
-				ret = SPC_LOG_SHM_UNIX_INIT_MUTEX;
-				spc_console_log(
-				    "pthread_mutex_init, errno: %d, "
-				    "errno_text: %s.",
-				    errno, strerror(errno));
-				break;
-			}
-		} else {
+
+		if (!shared) {
 			err = pthread_mutex_init(mtx, 0);
 			if (err) {
 				ret = SPC_LOG_MTX_INIT_ERR;
-				spc_console_log(
-				    "pthread_mutex_init, errno: %d, "
-				    "errno_text: %s.",
-				    errno, strerror(errno));
+				spc_err("pthread_mutex_init");
 				break;
 			}
+			break;
+		}
+
+		err = pthread_mutexattr_init(&psharedm);
+		if (err) {
+			ret = SPC_LOG_MTX_ATT_SHARED_MODE;
+			spc_err("pthread_mutexattr_setpshared");
+			break;
+		}
+		err = pthread_mutexattr_setpshared(
+		    &psharedm, PTHREAD_PROCESS_SHARED);
+
+		if (err) {
+			ret = SPC_LOG_MTX_ATT_SHARED_MODE_SET;
+			spc_err("pthread_mutexattr_setpshared");
+			break;
+		}
+		err = pthread_mutex_init(mtx, &psharedm);
+		if (err) {
+			ret = SPC_LOG_SHM_UNIX_INIT_MUTEX;
+			spc_err("pthread_mutex_init");
+			break;
 		}
 	} while (0);
+
 	return ret;
 }
 #endif
@@ -2904,6 +2799,7 @@ spc_fmt_segment(spc_gen_data_st *sgment)
 	sgment->pl = 0;
 	sgment->pc = 0;
 }
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int
 spc_init_segments()
 {
@@ -2917,27 +2813,27 @@ spc_init_segments()
 	SPC_LOG_ST *t = &__spc_log_statiic__;
 	p = (char *)t->buf;
 	if (!t->range) {
-		t->range = t->buff_size - (sizeof(spc_gen_data_st) +
-					      t->max_sz_msg + SPC_RL_BUF);
+		t->range = t->buff_size;
+		t->range -= sizeof(spc_gen_data_st);
+		t->range -= (t->max_sz_msg + SPC_RL_BUF);
+
 		t->krange = t->range + t->max_sz_msg;
 	}
-	do {
+	for (i = 0; i < t->ncpu; ++i) {
+		seg = p + i * t->buff_size;
+		sgment = (spc_gen_data_st *)seg;
+		spc_fmt_segment(sgment);
+	}
+	step = t->buff_size * t->ncpu;
+	for (k = 0; k < t->n_topic; ++k) {
+		p += step;
+		t->arr_topic[k].buf = (spc_gen_data_st *)p;
 		for (i = 0; i < t->ncpu; ++i) {
 			seg = p + i * t->buff_size;
 			sgment = (spc_gen_data_st *)seg;
 			spc_fmt_segment(sgment);
 		}
-		step = t->buff_size * t->ncpu;
-		for (k = 0; k < t->n_topic; ++k) {
-			p += step;
-			t->arr_topic[k].buf = (spc_gen_data_st *)p;
-			for (i = 0; i < t->ncpu; ++i) {
-				seg = p + i * t->buff_size;
-				sgment = (spc_gen_data_st *)seg;
-				spc_fmt_segment(sgment);
-			}
-		}
-	} while (0);
+	}
 	return ret;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -2958,6 +2854,7 @@ spc_allocate_topics()
 		}
 		szitopics = sizeof(SPC_TOPIC_ST) * t->n_topic;
 		spc_malloc(szitopics, t->arr_topic, SPC_TOPIC_ST);
+
 		if (!t->arr_topic) {
 			ret = SPC_LOG_TOPIC_MEMORY;
 			break;
@@ -2966,15 +2863,18 @@ spc_allocate_topics()
 		for (i = 0; i < t->n_topic; ++i) {
 			p1 = strstr(p0, ",");
 			if (!p1) {
-				snprintf(t->arr_topic[i].topic, SPC_TOPIC_SIZE,
-				    "%s", p0);
+				char *tpp = t->arr_topic[i].topic;
+				snprintf(tpp, SPC_TOPIC_SIZE, "%s", p0);
 				continue;
 			}
 			n = (int)(p1 - p0);
 			if (n > 0) {
-				snprintf(t->arr_topic[i].topic,
-				    SPC_MIN_AB(SPC_TOPIC_SIZE, n + 1), "%s",
-				    p0);
+				int szz = 0;
+				char *tpp = 0;
+				
+				szz = SPC_MIN_AB(SPC_TOPIC_SIZE, n + 1);
+				tpp = t->arr_topic[i].topic;
+				snprintf(tpp, szz, "%s", p0);
 			}
 			p1++;
 			p0 = p1;
@@ -3028,14 +2928,12 @@ spc_clean_sync_tool()
 		SPC_CloseHandle(t->sem_off);
 #else
 #ifdef __MACH__
-		ret = spc_osx_sync_del(); /* Clear semaphore of MAC OSX. */
+		/* Clear semaphore of MAC OSX. */
+		ret = spc_osx_sync_del();
 #endif
 #endif
 		if (t->isProcessMode) {
 			ret = spc_del_memory();
-			if (ret) {
-				spc_console_log("spc_del_memory, ret: %d", ret);
-			}
 		} else {
 			spc_free(t->buf);
 		}
@@ -3044,14 +2942,14 @@ spc_clean_sync_tool()
 	return ret;
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-LLU
+SPC_LLU
 spc_process_id()
 {
-	/*LLU ret = 0;*/
+	/*SPC_LLU ret = 0;*/
 #ifndef UNIX_LINUX
-	return (LLU)GetCurrentProcessId();
+	return (SPC_LLU)GetCurrentProcessId();
 #else
-	return (LLU)getpid();
+	return (SPC_LLU)getpid();
 #endif
 	/*return ret;*/
 }
