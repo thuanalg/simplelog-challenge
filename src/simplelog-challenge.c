@@ -2131,6 +2131,7 @@ spc_create_memory(void **output,
 	int ret = 0;
 	char *p = 0;
 	SPC_LOG_ST *t = &__spc_log_statiic__;
+
 	do {
 #ifndef UNIX_LINUX
 		HANDLE hMapFile = 0;
@@ -2148,7 +2149,7 @@ spc_create_memory(void **output,
 
 			if (!hMapFile) {
 				spc_err("CreateFileMappingA");
-				ret = 1;
+				ret = SPC_LOG_SHM_WIN32_CREATE;
 				break;
 			}
 			spc_console_log("hMapFile: 0x%p", hMapFile);
@@ -2156,7 +2157,7 @@ spc_create_memory(void **output,
 			hMapFile = OpenFileMappingA(
 				FILE_MAP_ALL_ACCESS, 0, shared_key);
 			if (!hMapFile) {
-				ret = 2;
+				ret = SPC_LOG_SHM_WIN32_OPEN;
 				spc_err("OpenFileMappingA");
 				break;
 			}
@@ -2167,7 +2168,7 @@ spc_create_memory(void **output,
 		p = (char *)MapViewOfFile(hMapFile, 
 			FILE_MAP_ALL_ACCESS, 0, 0, size_shared);
 		if (!p) {
-			ret = 3;
+			ret = SPC_LOG_SHM_WIN32_MAPVIEW;
 			spc_err("MapViewOfFile");
 			break;
 		}
@@ -3166,10 +3167,11 @@ spl_err_txt_init()
 	__spc_err_text__[SPC_LOG_PX_MTX_UNLOCK] = "SPC_LOG_PX_MTX_UNLOCK";
 	__spc_err_text__[SPC_LOG_PX_SPIN_LOCK] = "SPC_LOG_PX_SPIN_LOCK";
 	__spc_err_text__[SPC_LOG_PX_SPIN_UNLOCK] = "SPC_LOG_PX_SPIN_UNLOCK";
-
-
 	__spc_err_text__[SPC_LOG_MTX_WIN32_OPEN_ERROR] = "SPC_LOG_MTX_WIN32_OPEN_ERROR";
 	__spc_err_text__[SPC_LOG_SEM_WIN32_OPEN_ERROR] = "SPC_LOG_SEM_WIN32_OPEN_ERROR";
+	__spc_err_text__[SPC_LOG_SHM_WIN32_CREATE] = "SPC_LOG_SHM_WIN32_CREATE";
+	__spc_err_text__[SPC_LOG_SHM_WIN32_OPEN] = "SPC_LOG_SHM_WIN32_OPEN";
+	__spc_err_text__[SPC_LOG_SHM_WIN32_MAPVIEW] = "SPC_LOG_SHM_WIN32_MAPVIEW";
 
 	__spc_err_text__[SPC_END_ERROR] = "SPC_END_ERROR";
 }
