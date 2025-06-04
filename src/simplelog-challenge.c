@@ -484,7 +484,7 @@ spc_set_off(int isoff)
 			spc_rel_sem(t->sem_rwfile);
 		}
 
-		if (shouldWait = 1) {
+		if (shouldWait) {
 #ifndef UNIX_LINUX
 			errCode = (int)WaitForSingleObject(
 				t->sem_off, INFINITE);
