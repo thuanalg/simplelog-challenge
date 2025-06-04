@@ -2477,6 +2477,9 @@ spc_calculate_size()
 
 #ifndef UNIX_LINUX
 
+#define WIN32_MUTEX_RW	"Global\\%s_%s"
+#define WIN32_MUTEX_BUF "Global\\%s_%s_%0.2d"
+
 static int
 spc_win32_sync_create_mutex()
 {
@@ -2510,7 +2513,7 @@ spc_win32_sync_create_mutex()
 		if (t->isProcessMode && t->is_master) {
 			snprintf(nameobj, 
 				SPC_SHARED_NAME_LEN, 
-				"%s_%s", 
+				WIN32_MUTEX_RW, 
 				SPC_MTX_NAME_OFF, t->shared_key);
 
 			hd = CreateMutexA(0, 0, nameobj);
@@ -2524,7 +2527,7 @@ spc_win32_sync_create_mutex()
 			for (i = 0; i < t->ncpu; ++i) {
 				snprintf(nameobj, 
 					SPC_SHARED_NAME_LEN, 
-					"%s_%s_%0.2d", 
+					WIN32_MUTEX_BUF, 
 					SPC_MTX_NAME_OFF, t->shared_key, i);
 
 				hd = CreateMutexA(0, 0, nameobj);
@@ -2539,7 +2542,7 @@ spc_win32_sync_create_mutex()
 		}
 		/*(t->isProcessMode && !t->is_master) */
 		snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-			"%s_%s", 
+			WIN32_MUTEX_RW, 
 			SPC_MTX_NAME_OFF, t->shared_key);
 
 		hd = OpenMutexA(MUTEX_ALL_ACCESS, 0, nameobj);
@@ -2552,7 +2555,7 @@ spc_win32_sync_create_mutex()
 
 		for (i = 0; i < t->ncpu; ++i) {
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s_%0.2d", 
+				WIN32_MUTEX_BUF, 
 				SPC_MTX_NAME_OFF, t->shared_key, i);
 
 			hd = OpenMutexA(MUTEX_ALL_ACCESS, 0, nameobj);
@@ -2566,6 +2569,9 @@ spc_win32_sync_create_mutex()
 	} while (0);
 	return ret;
 }
+
+#define WIN32_SEM_RW	"Global\\%s_%s"
+#define WIN32_SEM_OFF	"Global\\%s_%s"
 
 static int
 spc_win32_sync_create_sem()
@@ -2597,7 +2603,7 @@ spc_win32_sync_create_sem()
 		if (t->isProcessMode && t->is_master) 
 		{
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
+				WIN32_SEM_RW, SPC_SEM_NAME_RW, t->shared_key);
 
 			hd = CreateSemaphoreA(0, 0, 1, nameobj);
 			if (!hd) {
@@ -2607,7 +2613,7 @@ spc_win32_sync_create_sem()
 			}
 			t->sem_rwfile = hd;
 			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
+				WIN32_SEM_OFF, SPC_SEM_NAME_OFF, t->shared_key);
 
 			hd = CreateSemaphoreA(0, 0, 1, nameobj);
 			if (!hd) {
@@ -2620,7 +2626,7 @@ spc_win32_sync_create_sem()
 		}
 
 		snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-			"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
+			WIN32_SEM_RW, SPC_SEM_NAME_RW, t->shared_key);
 
 		hd = OpenSemaphoreA(SEMAPHORE_ALL_ACCESS, 0, nameobj);
 		if (!hd) {
@@ -2630,7 +2636,8 @@ spc_win32_sync_create_sem()
 		}
 		t->sem_rwfile = hd;
 		snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-			"%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
+			WIN32_SEM_OFF, 
+			SPC_SEM_NAME_OFF, t->shared_key);
 
 		hd = OpenSemaphoreA(SEMAPHORE_ALL_ACCESS, 0, nameobj);
 		if (!hd) {
