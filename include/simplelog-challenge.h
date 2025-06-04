@@ -23,6 +23,8 @@
  *		<2025-Apr-20>
  *		<2025-Apr-22>
  *		<2025-May-29>
+ *		<2025-Jun-01>
+ *		<2025-Jun-04>
  * Decription:
  *		The (only) main header file to export 4 APIs: [spc_init_log_ext,
  *spclog, spclogtopic, spc_finish_log].
@@ -78,6 +80,9 @@ extern "C" {
 #define SPC_PATH_FOLDER                 (256 + 16)
 #define SPC_IDD_NAME                    32
 #define SPC_MILLION                     1000000
+#define SPC_RANGE_YEAR                  10000
+#define SPC_RANGE_MONTH                 13
+#define SPC_RANGE_DAY                   32
 #define SPC_FNAME_LEN                   (SPC_IDD_NAME + 32)
 #define SPC_TOPIC_SIZE                  32
 #define SPC_MEMO_PADDING                1024
@@ -89,19 +94,19 @@ extern "C" {
 #ifndef UNIX_LINUX
 #ifndef __SPC_STATIC_LOG__
 #ifdef EXPORT_DLL_API_SPC_LOG
-#define DLL_API_SPC_LOG         __declspec(dllexport)
+#define DLL_API_SPC_LOG                 __declspec(dllexport)
 #else
-#define DLL_API_SPC_LOG         __declspec(dllimport)
+#define DLL_API_SPC_LOG                 __declspec(dllimport)
 #endif
 #else
-#define DLL_API_SPC_LOG         
+#define DLL_API_SPC_LOG                 
 #endif
 #else
-#define DLL_API_SPC_LOG         
+#define DLL_API_SPC_LOG                 
 #endif /*! UNIX_LINUX */
 
 typedef enum __SPC_LOG_ERR_CODE__ {
-	SPC_NO_ERROR = 0,
+	SPC_NO_ERROR,
 	SPC_INIT_PATH_FOLDER_EMPTY_ERROR,
 	SPC_LOG_LEVEL_ERROR,
 	SPC_ERROR_CREATE_MUTEX,
@@ -168,6 +173,17 @@ typedef enum __SPC_LOG_ERR_CODE__ {
 	SPC_LOG_SEM_OSX_CREATED_ERROR,
 	SPC_LOG_SEM_INIT_OSX,
 	SPC_LOG_SEM_OSX_UNLINK_ERROR,
+	SPC_LOG_WIN32_MTX_LOCK,
+	SPC_LOG_WIN32_MTX_UNLOCK,
+	SPC_LOG_WIN32_SEM_WAIT,
+	SPC_LOG_WIN32_SEM_REL,
+	SPC_LOG_PX_SEM_WAIT, 
+	SPC_LOG_PX_SEM_REL,
+	SPC_LOG_PX_MTX_LOCK,
+	SPC_LOG_PX_MTX_UNLOCK,
+	SPC_LOG_PX_SPIN_LOCK,
+	SPC_LOG_PX_SPIN_UNLOCK,
+
 
 	SPC_END_ERROR,
 } SPC_LOG_ERR_CODE;
@@ -546,12 +562,7 @@ spc_finish_log();
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 DLL_API_SPC_LOG char *
-spc_fmt_now_ext(
-	char *fmtt, 
-	int len, int lv, 
-	const char *filename, 
-	const char *funcname, 
-	int line, unsigned short *r, int *);
+spc_fmt_now_ext(char *fmtt, int len, int lv, const char *filename, const char *funcname, int line, unsigned short *r, int *);
 
 DLL_API_SPC_LOG int
 spc_fmmt_now(char *fmtt, int len);
