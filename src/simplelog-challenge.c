@@ -463,6 +463,7 @@ spc_set_off(int isoff)
 	int ret = 0;
 	SPC_LOG_ST *t = &__spc_log_statiic__;
 	spc_mutex_lock(t->mtx_rw);
+	int shouldWait = 0;
 	do {
 		t->off = isoff;
 	} while (0);
@@ -473,17 +474,20 @@ spc_set_off(int isoff)
 		/*
 		spc_rel_sem(t->sem_rwfile);
 		*/
-		if (t->isProcessMode) {
-			if (t->is_master) {
-				spc_rel_sem(t->sem_rwfile);
-				spc_rel_sem(t->sem_off);
-			}
-		} else {
+		if (t->isProcessMode && t->is_master) {
+			shouldWait = 1;
+			spc_rel_sem(t->sem_rwfile);
+			spc_rel_sem(t->sem_off);
+		} 
+		else if (!t->isProcessMode) {
+			shouldWait = 1;
 			spc_rel_sem(t->sem_rwfile);
 		}
-		if (!t->isProcessMode || (t->isProcessMode && t->is_master)) {
+
+		if (shouldWait = 1) {
 #ifndef UNIX_LINUX
-			errCode = (int)WaitForSingleObject(t->sem_off, INFINITE);
+			errCode = (int)WaitForSingleObject(
+				t->sem_off, INFINITE);
 			if (errCode == WAIT_FAILED) {
 				spc_err("WaitForSingleObject");
 				ret = SPC_LOG_WIN32_SEM_WAIT;
@@ -1209,10 +1213,8 @@ spc_written_thread_routine(void *lpParam)
 	spc_rel_sem(__spc_log_statiic__.sem_rwfile);
 	if (!t->isProcessMode) {
 		spc_rel_sem(__spc_log_statiic__.sem_off);
-	} else {
-		if (t->is_master) {
-			spc_rel_sem(__spc_log_statiic__.sem_off);
-		}
+	} else if (t->is_master) {
+		spc_rel_sem(__spc_log_statiic__.sem_off);
 	}
 	return 0;
 }

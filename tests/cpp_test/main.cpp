@@ -123,8 +123,8 @@ posix_thread_routine(void *lpParam)
 			/*spclogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa); */
 		}
 	#if 1
-		if (count % 5000 == 0) {
-			Sleep(500);
+		if (count % 500 == 0) {
+			Sleep(50);
 		}
 	#endif
 		++count;
