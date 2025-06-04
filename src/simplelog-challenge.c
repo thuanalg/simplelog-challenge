@@ -279,8 +279,7 @@ spc_get_fname_now(char *name);
 static int
 spc_folder_sup(char *folder, 
 	spc_local_time_st *lctime, char *year_month);
-static int
-spc_local_time_now(spc_local_time_st *st_time);
+
 static int
 spc_stdz_topics(char *buff, int *inoutlen, int *, char **);
 

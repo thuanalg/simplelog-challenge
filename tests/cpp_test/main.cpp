@@ -124,7 +124,7 @@ posix_thread_routine(void *lpParam)
 		}
 	#if 1
 		if (count % 500 == 0) {
-			Sleep(50);
+			Sleep(100);
 		}
 	#endif
 		++count;

@@ -607,6 +607,9 @@ spc_update_processid();
 
 DLL_API_SPC_LOG const char *
 spc_err_txt(int i);
+
+DLL_API_SPC_LOG int
+spc_local_time_now(spc_local_time_st *st_time);
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #ifdef __cplusplus
