@@ -470,32 +470,25 @@ spc_set_off(int isoff)
 
 	if (isoff) {
 		int errCode = 0;
-		/*
 		spc_rel_sem(t->sem_rwfile);
-		*/
 		if (t->isProcessMode) {
-			if (t->is_master) {
-				spc_rel_sem(t->sem_rwfile);
+			if (!t->is_master) {
 				spc_rel_sem(t->sem_off);
 			}
-		} else {
-			spc_rel_sem(t->sem_rwfile);
 		}
-		if (!t->isProcessMode || (t->isProcessMode && t->is_master)) {
 #ifndef UNIX_LINUX
-			errCode = (int)WaitForSingleObject(t->sem_off, INFINITE);
-			if (errCode == WAIT_FAILED) {
-				spc_err("WaitForSingleObject");
-				ret = SPC_LOG_WIN32_SEM_WAIT;
-			}
-#else
-			errCode = SPC_sem_wait(t->sem_off);
-			if (errCode) {
-				spc_err("SPC_sem_wait");
-				ret = SPC_LOG_PX_SEM_WAIT;
-			}
-#endif
+		errCode = (int)WaitForSingleObject(t->sem_off, INFINITE);
+		if (errCode == WAIT_FAILED) {
+			spc_err("WaitForSingleObject");
+			ret = SPC_LOG_WIN32_SEM_WAIT;
 		}
+#else
+		errCode = SPC_sem_wait(t->sem_off);
+		if (errCode) {
+			spc_err("SPC_sem_wait");
+			ret = SPC_LOG_PX_SEM_WAIT;
+		}
+#endif
 #ifdef SPC_SHOW_CONSOLE
 		spc_console_log("------- errCode: %d\n", (int)errCode);
 #endif
@@ -2045,15 +2038,11 @@ spc_del_memory()
 	int ret = 0;
 	SPC_LOG_ST *t = &__spc_log_statiic__;
 	do {
-		
 #ifndef UNIX_LINUX
-		int isWell = 0;
-		if (t->is_master) {
-			isWell = (int)UnmapViewOfFile((void *)t->buf);
-			if (!isWell) {
-				spc_err("UnmapViewOfFile");
-				ret = SPC_LOG_SHM_WIN_UNMAP;
-			}
+		int isWell = (int)UnmapViewOfFile((void *)t->buf);
+		if (!isWell) {
+			spc_err("UnmapViewOfFile");
+			ret = SPC_LOG_SHM_WIN_UNMAP;
 		}
 		isWell = (int)CloseHandle((HANDLE)t->hd);
 		if (!isWell) {
@@ -2151,7 +2140,6 @@ spc_create_memory(void **output,
 				ret = 1;
 				break;
 			}
-			spc_console_log("hMapFile: 0x%p", hMapFile);
 		} else {
 			hMapFile = OpenFileMappingA(
 				FILE_MAP_ALL_ACCESS, 0, shared_key);
@@ -2476,7 +2464,6 @@ spc_calculate_size()
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #ifndef UNIX_LINUX
-
 static int
 spc_win32_sync_create_mutex()
 {
@@ -2486,6 +2473,7 @@ spc_win32_sync_create_mutex()
 	HANDLE hd = 0;
 	int i = 0;
 	do {
+
 		if (!t->isProcessMode) {
 			hd = CreateMutexA(0, 0, 0);
 			if (!hd) {
@@ -2507,10 +2495,10 @@ spc_win32_sync_create_mutex()
 			break;
 		}
 
-		if (t->isProcessMode && t->is_master) {
+		if (t->isProcessMode && t->is_master) 
+		{
 			snprintf(nameobj, 
-				SPC_SHARED_NAME_LEN, 
-				"%s_%s", 
+				SPC_SHARED_NAME_LEN, "%s_%s", 
 				SPC_MTX_NAME_OFF, t->shared_key);
 
 			hd = CreateMutexA(0, 0, nameobj);
@@ -2522,10 +2510,11 @@ spc_win32_sync_create_mutex()
 			t->mtx_rw = hd;
 
 			for (i = 0; i < t->ncpu; ++i) {
-				snprintf(nameobj, 
+				snprintf( nameobj, 
 					SPC_SHARED_NAME_LEN, 
 					"%s_%s_%0.2d", 
-					SPC_MTX_NAME_OFF, t->shared_key, i);
+					SPC_MTX_NAME_OFF, 
+					t->shared_key, i);
 
 				hd = CreateMutexA(0, 0, nameobj);
 				if (!hd) {
@@ -2536,11 +2525,11 @@ spc_win32_sync_create_mutex()
 				t->arr_mtx[i] = hd;
 			}
 			break;
-		}
+		} 	
 		/*(t->isProcessMode && !t->is_master) */
-		snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-			"%s_%s", 
-			SPC_MTX_NAME_OFF, t->shared_key);
+		snprintf(nameobj, 
+			SPC_SHARED_NAME_LEN, 
+			"%s_%s", SPC_MTX_NAME_OFF, t->shared_key);
 
 		hd = OpenMutexA(MUTEX_ALL_ACCESS, 0, nameobj);
 		if (!hd) {
@@ -2551,9 +2540,11 @@ spc_win32_sync_create_mutex()
 		t->mtx_rw = hd;
 
 		for (i = 0; i < t->ncpu; ++i) {
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
+			snprintf(nameobj, 
+				SPC_SHARED_NAME_LEN, 
 				"%s_%s_%0.2d", 
-				SPC_MTX_NAME_OFF, t->shared_key, i);
+				SPC_MTX_NAME_OFF, 
+				t->shared_key, i);
 
 			hd = OpenMutexA(MUTEX_ALL_ACCESS, 0, nameobj);
 			if (!hd) {
@@ -2571,12 +2562,14 @@ static int
 spc_win32_sync_create_sem()
 {
 	int ret = 0;
-
+	
 	SPC_LOG_ST *t = &__spc_log_statiic__;
 	char nameobj[SPC_SHARED_NAME_LEN];
 	HANDLE hd = 0;
 	do {
-		if (!t->isProcessMode) {
+
+		if (!t->isProcessMode) 
+		{
 			hd = CreateSemaphoreA(0, 0, 1, 0);
 			if (!hd) {
 				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
@@ -2617,12 +2610,12 @@ spc_win32_sync_create_sem()
 			}
 			t->sem_off = hd;
 			break;
-		}
+		} 
 
 		snprintf(nameobj, SPC_SHARED_NAME_LEN, 
 			"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
 
-		hd = OpenSemaphoreA(SEMAPHORE_ALL_ACCESS, 0, nameobj);
+		hd = OpenSemaphoreA(MUTEX_ALL_ACCESS, 0, nameobj);
 		if (!hd) {
 			ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
 			spc_err("CreateSemaphoreA");
@@ -2632,7 +2625,7 @@ spc_win32_sync_create_sem()
 		snprintf(nameobj, SPC_SHARED_NAME_LEN, 
 			"%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
 
-		hd = OpenSemaphoreA(SEMAPHORE_ALL_ACCESS, 0, nameobj);
+		hd = OpenSemaphoreA(0, 0, 1, nameobj);
 		if (!hd) {
 			ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
 			spc_err("CreateSemaphoreA");
@@ -2641,7 +2634,7 @@ spc_win32_sync_create_sem()
 		t->sem_off = hd;
 
 	} while (0);
-
+	
 	return ret;
 }
 
@@ -2665,100 +2658,104 @@ spc_win32_sync_create()
 		}
 		ret = spc_win32_sync_create_mutex();
 
-//		if (t->isProcessMode) {
-//			HANDLE hd = 0;
-//			int i = 0;
-//			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-//				"%s_%s", SPC_MTX_NAME_OFF, t->shared_key);
-//
-//			hd = CreateMutexA(0, 0, nameobj);
-//			if (!hd) {
-//				ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
-//				spc_err("CreateMutexA");
-//				break;
-//			}
-//			t->mtx_rw = hd;
-//
-//			for (i = 0; i < t->ncpu; ++i) {
-//				snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-//					"%s_%s_%0.2d", SPC_MTX_NAME_OFF, t->shared_key, i);
-//
-//				hd = CreateMutexA(0, 0, nameobj);
-//				if (!hd) {
-//					ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
-//					spc_err("CreateMutexA");
-//					break;
-//				}
-//				t->arr_mtx[i] = hd;
-//			}
-//		} 
-//		else {
-//			HANDLE hd = 0;
-//			int i = 0;
-//			hd = CreateMutexA(0, 0, 0);
-//			if (!hd) {
-//				ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
-//				spc_err("CreateMutexA");
-//				break;
-//			}
-//			t->mtx_rw = hd;
-//
-//			for (i = 0; i < t->ncpu; ++i) {
-//				hd = CreateMutexA(0, 0, 0);
-//				if (!hd) {
-//					ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
-//					spc_err("CreateMutexA");
-//					break;
-//				}
-//				t->arr_mtx[i] = hd;
-//			}
-//		}
+		if (t->isProcessMode) {
+			HANDLE hd = 0;
+			int i = 0;
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
+				"%s_%s", SPC_MTX_NAME_OFF, t->shared_key);
+			if (t->is_master) {
+				hd = CreateMutexA(0, 0, nameobj);
+				if (!hd) {
+					ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
+					spc_err("CreateMutexA");
+					break;
+				}
+				t->mtx_rw = hd;
+
+				for (i = 0; i < t->ncpu; ++i) {
+					snprintf(
+					    nameobj, SPC_SHARED_NAME_LEN, "%s_%s_%0.2d", SPC_MTX_NAME_OFF, t->shared_key, i);
+
+					hd = CreateMutexA(0, 0, nameobj);
+					if (!hd) {
+						ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
+						spc_err("CreateMutexA");
+						break;
+					}
+					t->arr_mtx[i] = hd;
+				}
+			} else {
+
+			}
+		} else {
+			HANDLE hd = 0;
+			int i = 0;
+			hd = CreateMutexA(0, 0, 0);
+			if (!hd) {
+				ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
+				spc_err("CreateMutexA");
+				break;
+			}
+			t->mtx_rw = hd;
+
+			for (i = 0; i < t->ncpu; ++i) {
+				hd = CreateMutexA(0, 0, 0);
+				if (!hd) {
+					ret = SPC_LOG_MTX_WIN32_CREATED_ERROR;
+					spc_err("CreateMutexA");
+					break;
+				}
+				t->arr_mtx[i] = hd;
+			}
+		}
+
 #endif
 		if (ret) {
 			break;
 		}
-//		if (t->isProcessMode) {
-//			HANDLE hd = 0;
-//			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-//				"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
-//
-//			hd = CreateSemaphoreA(0, 0, 1, nameobj);
-//			if (!hd) {
-//				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
-//				spc_err("CreateSemaphoreA");
-//				break;
-//			}
-//			t->sem_rwfile = hd;
-//			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-//				"%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
-//
-//			hd = CreateSemaphoreA(0, 0, 1, nameobj);
-//			if (!hd) {
-//				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
-//				spc_err("CreateSemaphoreA");
-//				break;
-//			}
-//			t->sem_off = hd;
-//		} else {
-//			HANDLE hd = 0;
-//			hd = CreateSemaphoreA(0, 0, 1, 0);
-//			if (!hd) {
-//				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
-//				spc_err("CreateSemaphoreA");
-//				break;
-//			}
-//			t->sem_rwfile = hd;
-//			hd = CreateSemaphoreA(0, 0, 1, 0);
-//			if (!hd) {
-//				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
-//				spc_err("CreateSemaphoreA");
-//				break;
-//			}
-//			t->sem_off = hd;
-//		}
+#if 0
+		if (t->isProcessMode) {
+			HANDLE hd = 0;
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
+				"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
 
-		ret = spc_win32_sync_create_sem();
+			hd = CreateSemaphoreA(0, 0, 1, nameobj);
+			if (!hd) {
+				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
+				spc_err("CreateSemaphoreA");
+				break;
+			}
+			t->sem_rwfile = hd;
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
+				"%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
+
+			hd = CreateSemaphoreA(0, 0, 1, nameobj);
+			if (!hd) {
+				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
+				spc_err("CreateSemaphoreA");
+				break;
+			}
+			t->sem_off = hd;
+		} else {
+			HANDLE hd = 0;
+			hd = CreateSemaphoreA(0, 0, 1, 0);
+			if (!hd) {
+				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
+				spc_err("CreateSemaphoreA");
+				break;
+			}
+			t->sem_rwfile = hd;
+			hd = CreateSemaphoreA(0, 0, 1, 0);
+			if (!hd) {
+				ret = SPC_LOG_SEM_WIN32_CREATED_ERROR;
+				spc_err("CreateSemaphoreA");
+				break;
+			}
+			t->sem_off = hd;
+		}
 	} while (0);
+#endif
+	ret = spc_win32_sync_create_sem();
 	return ret;
 }
 #else
@@ -3246,6 +3243,7 @@ spl_err_txt_init()
 	__spc_err_text__[SPC_LOG_PX_MTX_UNLOCK] = "SPC_LOG_PX_MTX_UNLOCK";
 	__spc_err_text__[SPC_LOG_PX_SPIN_LOCK] = "SPC_LOG_PX_SPIN_LOCK";
 	__spc_err_text__[SPC_LOG_PX_SPIN_UNLOCK] = "SPC_LOG_PX_SPIN_UNLOCK";
+	__spc_err_text__[SPC_LOG_MTX_WIN32_OPEN_ERROR] = "SPC_LOG_MTX_WIN32_OPEN_ERROR";
 
 	__spc_err_text__[SPC_END_ERROR] = "SPC_END_ERROR";
 }
