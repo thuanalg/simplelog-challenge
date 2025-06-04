@@ -2234,11 +2234,10 @@ spc_create_memory(void **output,
 		}
 #endif
 		t->hd = hMapFile;
-		if (t->isProcessMode) {
-			if (t->is_master) {
-				memset(p, 0, size_shared);
-			}
-		} else {
+		if (t->isProcessMode && t->is_master) {
+			memset(p, 0, size_shared);
+		}
+		else if (!t->isProcessMode) {
 			memset(p, 0, size_shared);
 		}
 		*output = (void *)p;
