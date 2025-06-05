@@ -122,6 +122,11 @@ posix_thread_routine(void *lpParam)
 			spclogtopic(SPC_LOG_INFO, topicindex - 1, s.c_str(), count);
 			/*spclogtopic(SPC_LOG_INFO, topicindex - 1, TEXT_PERFORMMANCE_TEXT"\t%s", count, aa); */
 		}
+	#if 1
+		if (count % 500 == 0) {
+			Sleep(100);
+		}
+	#endif
 		++count;
 	}
 	return 0;

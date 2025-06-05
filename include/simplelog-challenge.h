@@ -183,6 +183,11 @@ typedef enum __SPC_LOG_ERR_CODE__ {
 	SPC_LOG_PX_MTX_UNLOCK,
 	SPC_LOG_PX_SPIN_LOCK,
 	SPC_LOG_PX_SPIN_UNLOCK,
+	SPC_LOG_MTX_WIN32_OPEN_ERROR,
+	SPC_LOG_SEM_WIN32_OPEN_ERROR,
+	SPC_LOG_SHM_WIN32_CREATE,
+	SPC_LOG_SHM_WIN32_OPEN,
+	SPC_LOG_SHM_WIN32_MAPVIEW,
 
 
 	SPC_END_ERROR,
@@ -602,6 +607,9 @@ spc_update_processid();
 
 DLL_API_SPC_LOG const char *
 spc_err_txt(int i);
+
+DLL_API_SPC_LOG int
+spc_local_time_now(spc_local_time_st *st_time);
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #ifdef __cplusplus
