@@ -120,10 +120,13 @@
 			spc_console_log("CloseHandle %s", bl ? "DONE" : "ERROR");                                           \
 		(__obj) = 0;                                                                                                \
 	}
+#define spc_all(__fmt__, ...) spc_console_log("[A] -- " __fmt__, ##__VA_ARGS__)
 #define spc_err(__fmt__, ...) spc_console_log("[E] errcode: %d, " __fmt__, (int)GetLastError(), ##__VA_ARGS__)
 #else
 
+#define spc_all(__fmt__, ...) spc_console_log("[A] -- " __fmt__, ##__VA_ARGS__)
 #define spc_err(__fmt__, ...) spc_console_log("[E] errno: %d, errtext: %s: " __fmt__, errno, strerror(errno), ##__VA_ARGS__)
+
 
 #define SPC_sem_wait(__obj) sem_wait((sem_t *)(__obj))
 #define SPC_sem_post(__obj) sem_post((sem_t *)(__obj))
@@ -498,6 +501,7 @@ spc_set_off(int isoff)
 				ret = SPC_LOG_PX_SEM_WAIT;
 			}
 #endif
+			spc_milli_sleep(100);
 		}
 #ifdef SPC_SHOW_CONSOLE
 		spc_console_log("------- errCode: %d\n", (int)errCode);
@@ -1570,6 +1574,7 @@ spc_finish_log()
 	if (ret) {
 		spc_console_log("spc_set_off ret: %d", ret);
 	}
+	spc_all("Prepare spc_clean_sync_tool!");
 	ret = spc_clean_sync_tool();
 	if (ret) {
 		spc_console_log("spc_clean_sync_tool ret: %d", ret);
