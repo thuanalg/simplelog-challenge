@@ -473,19 +473,17 @@ spc_set_off(int isoff)
 
 	if (isoff) {
 		int errCode = 0;
-		/*
+		
 		spc_rel_sem(t->sem_rwfile);
-		*/
+#if 0		
 		if (t->isProcessMode && t->is_master) {
 			shouldWait = 1;
-			spc_rel_sem(t->sem_rwfile);
-			spc_rel_sem(t->sem_off);
 		} 
 		else if (!t->isProcessMode) {
 			shouldWait = 1;
-			spc_rel_sem(t->sem_rwfile);
 		}
-
+#endif
+		shouldWait = (!t->isProcessMode) ? 1 : (!!t->is_master);
 		if (shouldWait) {
 #ifndef UNIX_LINUX
 			errCode = (int)WaitForSingleObject(
@@ -501,7 +499,6 @@ spc_set_off(int isoff)
 				ret = SPC_LOG_PX_SEM_WAIT;
 			}
 #endif
-			spc_milli_sleep(100);
 		}
 #ifdef SPC_SHOW_CONSOLE
 		spc_console_log("------- errCode: %d\n", (int)errCode);
