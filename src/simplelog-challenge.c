@@ -464,45 +464,39 @@ spc_set_off(int isoff)
 {
 	int ret = 0;
 	SPC_LOG_ST *t = &__spc_log_statiic__;
-	spc_mutex_lock(t->mtx_rw);
 	int shouldWait = 0;
+
+	spc_mutex_lock(t->mtx_rw);
 	do {
 		t->off = isoff;
 	} while (0);
 	spc_mutex_unlock(t->mtx_rw);
 
-	if (isoff) {
+	shouldWait = (!t->isProcessMode) ? 1 : (!!t->is_master);
+	spc_rel_sem(t->sem_rwfile);
+
+	if (isoff && shouldWait) {
 		int errCode = 0;
-		
-		spc_rel_sem(t->sem_rwfile);
-#if 0		
-		if (t->isProcessMode && t->is_master) {
-			shouldWait = 1;
-		} 
-		else if (!t->isProcessMode) {
-			shouldWait = 1;
-		}
-#endif
-		shouldWait = (!t->isProcessMode) ? 1 : (!!t->is_master);
-		if (shouldWait) {
+
 #ifndef UNIX_LINUX
-			errCode = (int)WaitForSingleObject(
-				t->sem_off, INFINITE);
-			if (errCode == WAIT_FAILED) {
-				spc_err("WaitForSingleObject");
-				ret = SPC_LOG_WIN32_SEM_WAIT;
-			}
-#else
-			errCode = SPC_sem_wait(t->sem_off);
-			if (errCode) {
-				spc_err("SPC_sem_wait");
-				ret = SPC_LOG_PX_SEM_WAIT;
-			}
-#endif
+		errCode = (int)WaitForSingleObject(
+			t->sem_off, INFINITE);
+		if (errCode == WAIT_FAILED) {
+			spc_err("WaitForSingleObject");
+			ret = SPC_LOG_WIN32_SEM_WAIT;
 		}
+#else
+		errCode = SPC_sem_wait(t->sem_off);
+		if (errCode) {
+			spc_err("SPC_sem_wait");
+			ret = SPC_LOG_PX_SEM_WAIT;
+		}
+#endif
+
 #ifdef SPC_SHOW_CONSOLE
 		spc_console_log("------- errCode: %d\n", (int)errCode);
 #endif
+
 	}
 	return ret;
 }
