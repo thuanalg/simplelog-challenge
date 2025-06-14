@@ -1055,15 +1055,21 @@ spc_written_thread_routine(void *lpParam)
 			}
 #endif
 			do {
-				ret = spc_gen_file(t, &sz, t->file_limit_size, &(t->index));
+				ret = spc_gen_file(t, &sz, 
+					t->file_limit_size, &(t->index));
 				if (ret) {
-					spc_console_log("--spc_gen_file, ret: %d --\n", ret);
+					spc_console_log(
+						"--spc_gen_file, ret: %d --\n", ret);
 					continue;
 				}
-				ret = spc_gen_topics(t);
-				if (ret) {
-					spc_console_log("--spc_gen_topics, ret: %d --\n", ret);
-					continue;
+
+				if (t->n_topic) {
+					ret = spc_gen_topics(t);
+					if (ret) {
+						spc_console_log(
+							"--spc_gen_topics, ret: %d --\n", ret);
+						continue;
+					}
 				}
 
 				/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
@@ -1373,17 +1379,19 @@ spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 	int ferr = 0;
 	char yearmonth[16];
 
+	t->renew = SPC_NO_CHANGE_NAME;
+	ret = spc_local_time_now(&lt);
+
 	do {
-		t->renew = SPC_NO_CHANGE_NAME;
-		ret = spc_local_time_now(&lt);
+
 		if (ret) {
 			spc_console_log("spc_local_time_now: ret: %d.\n", ret);
 			break;
 		}
 
-		memcpy(&(t->lc_time_now), &lt, sizeof(spc_local_time_st));
 		plt = &(t->lc_time_now);
 		if (!t->fp) {
+			memcpy(&(t->lc_time_now), &lt, sizeof(spc_local_time_st));
 			memset(path, 0, sizeof(path));
 			memset(fmt_file_name, 0, sizeof(fmt_file_name));
 			spc_get_fname_now(fmt_file_name);
@@ -1458,10 +1466,13 @@ spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 			}
 			t->renew = SPC_NO_CHANGE_NAME;
 		} while (0);
+		
+		memcpy(&(t->lc_time_now), &lt, sizeof(spc_local_time_st));
+
 		if (!t->renew) {
 			break;
 		}
-		memcpy(&(t->lc_time_now), &lt, sizeof(spc_local_time_st));
+		
 		spc_get_fname_now(fmt_file_name);
 		ret = spc_folder_sup(t->folder, &(t->lc_time_now), yearmonth);
 		if (ret) {
