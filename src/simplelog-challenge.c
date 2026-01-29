@@ -25,6 +25,7 @@
  *		<2025-May-29>
  *		<2025-Jun-01>
  *		<2025-Jun-04>
+ *		<2026-Jan-29>
  * Decription:
  *		The (only one) main file to implement simplelog-challenge.
  */
@@ -126,7 +127,6 @@
 
 #define spc_all(__fmt__, ...) spc_console_log("[A] -- " __fmt__, ##__VA_ARGS__)
 #define spc_err(__fmt__, ...) spc_console_log("[E] errno: %d, errtext: %s: " __fmt__, errno, strerror(errno), ##__VA_ARGS__)
-
 
 #define SPC_sem_wait(__obj) sem_wait((sem_t *)(__obj))
 #define SPC_sem_post(__obj) sem_post((sem_t *)(__obj))
@@ -240,21 +240,9 @@ typedef enum __SPC_CHANGE_NAME_E__ {
 } SPC_CHANGE_NAME_E;
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-static const char*
-__spclog_pathfolder[] = {
-	SPCLOG_PATHFOLDR, 
-	SPCLOG_LEVEL, 
-	SPCLOG_BUFF_SIZE, 
-	SPC_MAX_SZ_MSG,
-    SPCLOG_ROT_SIZE, 
-	SPCLOG_TOPIC, 
-	SPCLOG_NCPU, 
-	SPCLOG_TRIGGER, 
-	SPCLOG_PROCESS_MODE, 
-	SPCLOG_SHARED_KEY, 
-	SPCLOG_MODE_STRAIGHT,
-    SPCLOG_END_CFG, 
-	0};
+static const char *__spclog_pathfolder[] = {SPCLOG_PATHFOLDR, SPCLOG_LEVEL, SPCLOG_BUFF_SIZE, SPC_MAX_SZ_MSG,
+    SPCLOG_ROT_SIZE, SPCLOG_TOPIC, SPCLOG_NCPU, SPCLOG_TRIGGER, SPCLOG_PROCESS_MODE, SPCLOG_SHARED_KEY, SPCLOG_MODE_STRAIGHT,
+    SPCLOG_END_CFG, 0};
 
 static SPC_LOG_ST __spc_log_statiic__;
 ;
@@ -280,8 +268,7 @@ spc_get_fname_now(char *name);
 static int
 spc_get_fname_now(char *name);
 static int
-spc_folder_sup(char *folder, 
-	spc_local_time_st *lctime, char *year_month);
+spc_folder_sup(char *folder, spc_local_time_st *lctime, char *year_month);
 
 static int
 spc_stdz_topics(char *buff, int *inoutlen, int *, char **);
@@ -403,9 +390,7 @@ spc_local_time_now(spc_local_time_st *stt)
 		stt->hour = (unsigned char)lt.wHour;
 		stt->minute = (unsigned char)lt.wMinute;
 		stt->sec = (unsigned char)lt.wSecond;
-		stt->nn = 
-			(unsigned int)lt.wMilliseconds * SPC_MILLION + 
-			counter.QuadPart % SPC_MILLION;
+		stt->nn = (unsigned int)lt.wMilliseconds * SPC_MILLION + counter.QuadPart % SPC_MILLION;
 #else
 		/* https://linux.die.net/man/3/localtime*/
 		/* https://linux.die.net/man/3/clock_gettime*/
@@ -420,8 +405,7 @@ spc_local_time_now(spc_local_time_st *stt)
 		//https://stackoverflow.com/questions/35031647/do-i-need-to-free-the-returned-pointer-from-localtime-function
 	      */
 #ifdef __MACH__
-		result = host_get_clock_service(
-			mach_host_self(), REALTIME_CLOCK, &cclock);
+		result = host_get_clock_service(mach_host_self(), REALTIME_CLOCK, &cclock);
 		if (result != KERN_SUCCESS) {
 			ret = SPC_LOG_MACH_CLOCK_SERVICE_ERROR;
 			spc_err("host_get_clock_service");
@@ -479,8 +463,7 @@ spc_set_off(int isoff)
 		int errCode = 0;
 
 #ifndef UNIX_LINUX
-		errCode = (int)WaitForSingleObject(
-			t->sem_off, INFINITE);
+		errCode = (int)WaitForSingleObject(t->sem_off, INFINITE);
 		if (errCode == WAIT_FAILED) {
 			spc_err("WaitForSingleObject");
 			ret = SPC_LOG_WIN32_SEM_WAIT;
@@ -496,7 +479,6 @@ spc_set_off(int isoff)
 #ifdef SPC_SHOW_CONSOLE
 		spc_console_log("------- errCode: %d\n", (int)errCode);
 #endif
-
 	}
 	return ret;
 }
@@ -513,8 +495,7 @@ spc_init_log_parse(char *buff, char *key, char *isEnd)
 				ret = SPC_INIT_PATH_FOLDER_EMPTY_ERROR;
 				break;
 			}
-			snprintf(__spc_log_statiic__.folder, 
-				SPC_PATH_FOLDER, "%s", buff);
+			snprintf(__spc_log_statiic__.folder, SPC_PATH_FOLDER, "%s", buff);
 			break;
 		}
 		if (strcmp(key, SPCLOG_LEVEL) == 0) {
@@ -564,9 +545,7 @@ spc_init_log_parse(char *buff, char *key, char *isEnd)
 			}
 			__spc_log_statiic__.file_limit_size = n;
 #ifdef SPC_SHOW_CONSOLE
-			spc_console_log(
-				"__spc_log_statiic__.file_limit_size: %d.\n", 
-				__spc_log_statiic__.file_limit_size);
+			spc_console_log("__spc_log_statiic__.file_limit_size: %d.\n", __spc_log_statiic__.file_limit_size);
 #endif
 			break;
 		}
@@ -631,16 +610,14 @@ spc_init_log_parse(char *buff, char *key, char *isEnd)
 			if (n < 1) {
 				break;
 			}
-			snprintf(__spc_log_statiic__.shared_key, 
-				SPC_SHARED_KEY_LEN, "%s", buff);
+			snprintf(__spc_log_statiic__.shared_key, SPC_SHARED_KEY_LEN, "%s", buff);
 			break;
 		}
 		if (strcmp(key, SPCLOG_MODE_STRAIGHT) == 0) {
 			int n = 0, sz = 0;
 			sz = sscanf(buff, "%d", &n);
 			t->mode_straight = n ? 1 : 0;
-			spc_console_log("buff %s, t->mode_straight: %d, sz: %d.", 
-				buff, t->mode_straight, sz);
+			spc_console_log("buff %s, t->mode_straight: %d, sz: %d.", buff, t->mode_straight, sz);
 			break;
 		}
 		if (strcmp(key, SPCLOG_END_CFG) == 0) {
@@ -663,8 +640,7 @@ spc_init_log_ext(SPC_INPUT_ARG *input)
 {
 	int ret = 0;
 	do {
-		memcpy(__spc_log_statiic__.id_name, 
-			input->id_name, SPC_IDD_NAME);
+		memcpy(__spc_log_statiic__.id_name, input->id_name, SPC_IDD_NAME);
 		__spc_log_statiic__.is_master = input->is_master;
 		/*
 		__spc_log_statiic__.mode_straight = input->mode_straight;
@@ -702,8 +678,7 @@ spc_init_log(char *pathcfg)
 	char isEnd = 0;
 	__spc_log_statiic__.ncpu = 1;
 	do {
-		snprintf(__spc_process_id, 
-			32, "[pid \t %llu]\t", spc_process_id());
+		snprintf(__spc_process_id, 32, "[pid \t %llu]\t", spc_process_id());
 
 		__spc_process_id_len = (int)strlen(__spc_process_id);
 
@@ -860,6 +835,96 @@ spc_mutex_lock(void *obj)
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int
+spc_mutex_trylock(void *obj)
+{
+	int ret = 0;
+#ifndef UNIX_LINUX
+	DWORD err = 0;
+#else
+	int err = 0;
+#endif
+	do {
+		if (!obj) {
+			ret = SPC_LOG_MUTEX_NULL_ERROR;
+			break;
+		}
+#ifndef UNIX_LINUX
+#ifndef SPC_USING_SPIN_LOCK
+		err = WaitForSingleObject(obj, INFINITE);
+		if (err != WAIT_OBJECT_0) {
+			spc_err("WaitForSingleObject");
+			ret = SPC_LOG_WIN32_MTX_LOCK;
+			break;
+		}
+#else
+		SPC_LockSpinlock(obj);
+#endif
+#else
+#ifndef SPC_USING_SPIN_LOCK
+		SPC_pthread_mutex_lock((pthread_mutex_t *)obj, err);
+		if (err) {
+			ret = SPC_LOG_PX_MTX_LOCK;
+			spc_err("SPC_pthread_mutex_lock");
+		}
+#else
+		err = pthread_spin_lock((pthread_spinlock_t *)obj);
+		if (err) {
+			ret = SPC_LOG_PX_SPIN_LOCK;
+			spc_err("pthread_spin_lock");
+		}
+#endif
+
+#endif
+	} while (0);
+	return ret;
+}
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+int
+spc_mutex_trylock(void *obj)
+{
+	int ret = 0;
+#ifndef UNIX_LINUX
+	DWORD err = 0;
+#else
+	int err = 0;
+#endif
+	do {
+		if (!obj) {
+			ret = SPC_LOG_MUTEX_NULL_ERROR;
+			break;
+		}
+#ifndef UNIX_LINUX
+#ifndef SPC_USING_SPIN_LOCK
+		err = WaitForSingleObject(obj, INFINITE);
+		if (err != WAIT_OBJECT_0) {
+			spc_err("WaitForSingleObject");
+			ret = SPC_LOG_WIN32_MTX_LOCK;
+			break;
+		}
+#else
+		SPC_LockSpinlock(obj);
+#endif
+#else
+#ifndef SPC_USING_SPIN_LOCK
+		SPC_pthread_mutex_lock((pthread_mutex_t *)obj, err);
+		if (err) {
+			ret = SPC_LOG_PX_MTX_LOCK;
+			spc_err("SPC_pthread_mutex_lock");
+		}
+#else
+		err = pthread_spin_lock((pthread_spinlock_t *)obj);
+		if (err) {
+			ret = SPC_LOG_PX_SPIN_LOCK;
+			spc_err("pthread_spin_lock");
+		}
+#endif
+
+#endif
+	} while (0);
+	return ret;
+}
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+int
 spc_mutex_unlock(void *obj)
 {
 	int ret = 0;
@@ -942,18 +1007,11 @@ spc_get_fname_now(char *name)
 	spc_local_time_now(&lt);
 	if (name) {
 		if (__spc_log_statiic__.id_name[0]) {
-			snprintf(name, SPC_FNAME_LEN, 
-				"%.4d-%.2d-%.2d-%s", 
-				lt.year + SPC_YEAR_PADDING,
-			    (int)lt.month + SPC_MONTH_PADDING, 
-				(int)lt.day, 
-				(char *)__spc_log_statiic__.id_name);
+			snprintf(name, SPC_FNAME_LEN, "%.4d-%.2d-%.2d-%s", lt.year + SPC_YEAR_PADDING,
+			    (int)lt.month + SPC_MONTH_PADDING, (int)lt.day, (char *)__spc_log_statiic__.id_name);
 		} else {
-			snprintf(name, SPC_FNAME_LEN, 
-				"%.4d-%.2d-%.2d-simplelog", 
-				lt.year + SPC_YEAR_PADDING,
-			    (int)lt.month + SPC_MONTH_PADDING, 
-				(int)lt.day);
+			snprintf(name, SPC_FNAME_LEN, "%.4d-%.2d-%.2d-simplelog", lt.year + SPC_YEAR_PADDING,
+			    (int)lt.month + SPC_MONTH_PADDING, (int)lt.day);
 		}
 	}
 	return ret;
@@ -1055,19 +1113,16 @@ spc_written_thread_routine(void *lpParam)
 			}
 #endif
 			do {
-				ret = spc_gen_file(t, &sz, 
-					t->file_limit_size, &(t->index));
+				ret = spc_gen_file(t, &sz, t->file_limit_size, &(t->index));
 				if (ret) {
-					spc_console_log(
-						"--spc_gen_file, ret: %d --\n", ret);
+					spc_console_log("--spc_gen_file, ret: %d --\n", ret);
 					continue;
 				}
 
 				if (t->n_topic) {
 					ret = spc_gen_topics(t);
 					if (ret) {
-						spc_console_log(
-							"--spc_gen_topics, ret: %d --\n", ret);
+						spc_console_log("--spc_gen_topics, ret: %d --\n", ret);
 						continue;
 					}
 				}
@@ -1083,14 +1138,12 @@ spc_written_thread_routine(void *lpParam)
 					spc_mutex_lock(t->arr_mtx[i]);
 					/*
 					//do { */
-					if (SPC_CASTGEN(main_src_thrd_buf[i])->pl > 0) 
-					{
+					if (SPC_CASTGEN(main_src_thrd_buf[i])->pl > 0) {
 						memcpy(only_cast->data + only_cast->pl,
 						    SPC_CASTGEN(main_src_thrd_buf[i])->data,
 						    SPC_CASTGEN(main_src_thrd_buf[i])->pl);
 
-						only_cast->pl += SPC_CASTGEN(
-							main_src_thrd_buf[i])->pl;
+						only_cast->pl += SPC_CASTGEN(main_src_thrd_buf[i])->pl;
 
 						SPC_CASTGEN(main_src_thrd_buf[i])->pl = 0;
 					}
@@ -1099,8 +1152,7 @@ spc_written_thread_routine(void *lpParam)
 				}
 
 				if (only_cast->pl > 0) {
-					k = (int)fwrite(only_cast->data, 
-						1, only_cast->pl, t->fp);
+					k = (int)fwrite(only_cast->data, 1, only_cast->pl, t->fp);
 					only_cast->pl = 0;
 					sz += k;
 					SPC_FFLUSH((t->fp), err);
@@ -1120,10 +1172,8 @@ spc_written_thread_routine(void *lpParam)
 							spc_mutex_lock(t->arr_mtx[j]);
 							/*//do */
 							if (SPC_CASTGEN(src)->pl > 0) {
-								memcpy(
-									only_cast->data + only_cast->pl,
-								    SPC_CASTGEN(src)->data, 
-									SPC_CASTGEN(src)->pl);
+								memcpy(only_cast->data + only_cast->pl,
+								    SPC_CASTGEN(src)->data, SPC_CASTGEN(src)->pl);
 
 								only_cast->pl += SPC_CASTGEN(src)->pl;
 								SPC_CASTGEN(src)->pl = 0;
@@ -1133,10 +1183,8 @@ spc_written_thread_routine(void *lpParam)
 						}
 
 						if (only_cast->pl) {
-							k = (int)fwrite( only_cast->data, 
-								1, 
-								only_cast->pl, 
-								(FILE *)(t->arr_topic[i].fp));
+							k = (int)fwrite(
+							    only_cast->data, 1, only_cast->pl, (FILE *)(t->arr_topic[i].fp));
 
 							t->arr_topic[i].fizize += k;
 							only_cast->pl = 0;
@@ -1227,8 +1275,7 @@ spc_simple_log_thread(SPC_LOG_ST *t)
 #ifndef UNIX_LINUX
 		HANDLE hd = 0;
 		DWORD thread_id = 0;
-		hd = CreateThread(NULL, 0, 
-			spc_written_thread_routine, t, 0, &thread_id);
+		hd = CreateThread(NULL, 0, spc_written_thread_routine, t, 0, &thread_id);
 		if (!hd) {
 			ret = SPC_LOG_CREATE_THREAD_ERROR;
 			break;
@@ -1237,8 +1284,7 @@ spc_simple_log_thread(SPC_LOG_ST *t)
 		pthread_t idd = 0;
 		int err = 0;
 		tzset();
-		err = pthread_create(&idd, 0, 
-			spc_written_thread_routine, t);
+		err = pthread_create(&idd, 0, spc_written_thread_routine, t);
 		if (err) {
 			ret = SPC_LOG_CREATE_THREAD_ERROR;
 			break;
@@ -1250,9 +1296,7 @@ spc_simple_log_thread(SPC_LOG_ST *t)
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 char *
 spc_fmt_now_ext(
-    char *fmtt, int len, int lv, 
-	const char *filename, const char *funcname, 
-	int line, unsigned short *r, int *outlen)
+    char *fmtt, int len, int lv, const char *filename, const char *funcname, int line, unsigned short *r, int *outlen)
 {
 	/*
 	SPC_LOG_ST *t = &__spc_log_statiic__;
@@ -1270,9 +1314,8 @@ spc_fmt_now_ext(
 		return p;
 	}
 #if 1
-	*r = __spc_log_statiic__.mode_straight ? 
-		(threadiid % __spc_log_statiic__.ncpu) : 
-			(stt.nn % __spc_log_statiic__.ncpu);
+	*r =
+	    __spc_log_statiic__.mode_straight ? (threadiid % __spc_log_statiic__.ncpu) : (stt.nn % __spc_log_statiic__.ncpu);
 #endif
 
 #if 0
@@ -1282,11 +1325,8 @@ spc_fmt_now_ext(
 	*r = (threadiid % __spc_log_statiic__.ncpu);
 #endif
 #endif
-	n = sprintf(fmtt, 
-		SPC_FMT_DATE_ADDING_X "[%c] [tid\t%llu]\t", 
-		stt.year + SPC_YEAR_PADDING,
-	    stt.month + SPC_MONTH_PADDING, stt.day, 
-		stt.hour, stt.minute, stt.sec, (int)stt.nn,
+	n = sprintf(fmtt, SPC_FMT_DATE_ADDING_X "[%c] [tid\t%llu]\t", stt.year + SPC_YEAR_PADDING,
+	    stt.month + SPC_MONTH_PADDING, stt.day, stt.hour, stt.minute, stt.sec, (int)stt.nn,
 	    spc_text_gb_c[lv % SPC_LOG_PEAK], threadiid);
 
 	if (n < 1) {
@@ -1303,8 +1343,7 @@ spc_fmt_now_ext(
 	 *outlen += snprintf(fmtt + n, len - n,
 	 "[%s:%s:%d] [r: %d]\t", filename, funcname, line, (int)*r);
 	 */
-	*outlen += snprintf(fmtt + n, SPC_RL_BUF - n, 
-		"[%s:%s:%d] ", filename, funcname, line);
+	*outlen += snprintf(fmtt + n, SPC_RL_BUF - n, "[%s:%s:%d] ", filename, funcname, line);
 	if (*outlen > len) {
 		spc_malloc((*outlen + 1), p, char);
 		if (!p) {
@@ -1317,8 +1356,7 @@ spc_fmt_now_ext(
 		 "[%s:%s:%d] [r: %d]\t", filename,
 		 funcname, line, (int)*r);
 		 */
-		*outlen += snprintf(fmtt + n, SPC_RL_BUF - n, 
-			"[%s:%s:%d] ", filename, funcname, line);
+		*outlen += snprintf(fmtt + n, SPC_RL_BUF - n, "[%s:%s:%d] ", filename, funcname, line);
 	}
 
 	return p;
@@ -1347,17 +1385,13 @@ spc_fmmt_now(char *fmtt, int len)
 		memset(buff1, 0, 20);
 
 		n = snprintf(
-		    buff, 20, SPC_FMT_DATE_ADDING, 
-			stt.year + SPC_YEAR_PADDING, 
-			stt.month + SPC_MONTH_PADDING, stt.day);
+		    buff, 20, SPC_FMT_DATE_ADDING, stt.year + SPC_YEAR_PADDING, stt.month + SPC_MONTH_PADDING, stt.day);
 		if (n < 1) {
 			ret = SPC_LOG_PRINTF_ERROR;
 			break;
 		}
-		n = snprintf(buff1, 20, 
-			SPC_FMT_HOUR_ADDING, stt.hour, stt.minute, stt.sec);
-		n = snprintf(fmtt, len, 
-			SPC_FMT_MILL_ADDING, buff, buff1, (int)stt.nn);
+		n = snprintf(buff1, 20, SPC_FMT_HOUR_ADDING, stt.hour, stt.minute, stt.sec);
+		n = snprintf(fmtt, len, SPC_FMT_MILL_ADDING, buff, buff1, (int)stt.nn);
 
 	} while (0);
 	return ret;
@@ -1383,7 +1417,6 @@ spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 	ret = spc_local_time_now(&lt);
 
 	do {
-
 		if (ret) {
 			spc_console_log("spc_local_time_now: ret: %d.\n", ret);
 			break;
@@ -1395,8 +1428,7 @@ spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 			memset(path, 0, sizeof(path));
 			memset(fmt_file_name, 0, sizeof(fmt_file_name));
 			spc_get_fname_now(fmt_file_name);
-			ret = spc_folder_sup(
-				t->folder, &(t->lc_time_now), yearmonth);
+			ret = spc_folder_sup(t->folder, &(t->lc_time_now), yearmonth);
 			if (ret) {
 				spc_console_log("spc_folder_sup: ret: %d.\n", ret);
 				break;
@@ -1405,13 +1437,9 @@ spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 				int err = 0;
 				int cszize = 0;
 				snprintf(
-				    path, SPC_FULLPATH_LEN, 
-					SPC_FILE_NAME_FMT, t->folder, 
-					yearmonth, fmt_file_name, *index);
+				    path, SPC_FULLPATH_LEN, SPC_FILE_NAME_FMT, t->folder, yearmonth, fmt_file_name, *index);
 
-				snprintf(t->path_template, 
-					SPC_TEMPLATE_LEN, 
-					SPC_FILE_NAME_FMT_TOPIC, t->folder, yearmonth,
+				snprintf(t->path_template, SPC_TEMPLATE_LEN, SPC_FILE_NAME_FMT_TOPIC, t->folder, yearmonth,
 				    fmt_file_name);
 
 				spc_standardize_path(path);
@@ -1466,27 +1494,22 @@ spc_gen_file(SPC_LOG_ST *t, int *sz, int limit, int *index)
 			}
 			t->renew = SPC_NO_CHANGE_NAME;
 		} while (0);
-		
+
 		memcpy(&(t->lc_time_now), &lt, sizeof(spc_local_time_st));
 
 		if (!t->renew) {
 			break;
 		}
-		
+
 		spc_get_fname_now(fmt_file_name);
 		ret = spc_folder_sup(t->folder, &(t->lc_time_now), yearmonth);
 		if (ret) {
 			spc_console_log("spc_folder_sup: ret: %d.\n", ret);
 			break;
 		}
-		snprintf(path, SPC_FULLPATH_LEN, 
-			SPC_FILE_NAME_FMT, t->folder, 
-			yearmonth, fmt_file_name, *index);
+		snprintf(path, SPC_FULLPATH_LEN, SPC_FILE_NAME_FMT, t->folder, yearmonth, fmt_file_name, *index);
 
-		snprintf(t->path_template, 
-			SPC_TEMPLATE_LEN, 
-			SPC_FILE_NAME_FMT_TOPIC, 
-			t->folder, yearmonth, fmt_file_name);
+		snprintf(t->path_template, SPC_TEMPLATE_LEN, SPC_FILE_NAME_FMT_TOPIC, t->folder, yearmonth, fmt_file_name);
 
 		SPC_FCLOSE(t->fp, ferr);
 		if (ferr) {
@@ -1537,9 +1560,9 @@ spc_rel_sem(void *sem)
 			break;
 		}
 #ifndef UNIX_LINUX
-		
+
 		rs = ReleaseSemaphore(sem, 1, 0);
-		if(!rs) {
+		if (!rs) {
 			DWORD dwerr = GetLastError();
 			if (dwerr == ERROR_TOO_MANY_POSTS) {
 				break;
@@ -1557,7 +1580,7 @@ spc_rel_sem(void *sem)
 		}
 		*/
 		err = SPC_sem_post(sem);
-		if(err) {
+		if (err) {
 			ret = SPC_LOG_PX_SEM_REL;
 			spc_err("SPC_sem_post");
 		}
@@ -1645,8 +1668,7 @@ spc_folder_sup(char *folder, spc_local_time_st *lctime, char *year_month)
 				break;
 			}
 		}
-		snprintf(path, SPC_PATH_FOLDER, 
-			"%s/%.4d/%.2d", folder, tyear, tmonth);
+		snprintf(path, SPC_PATH_FOLDER, "%s/%.4d/%.2d", folder, tyear, tmonth);
 
 		result = CreateDirectoryA(path, 0);
 		if (!result) {
@@ -1685,8 +1707,7 @@ spc_folder_sup(char *folder, spc_local_time_st *lctime, char *year_month)
 			}
 		}
 		memset(&buf, 0, sizeof(buf));
-		snprintf(path, SPC_PATH_FOLDER, 
-			"%s/%.4d/%.2d", folder, tyear, tmonth);
+		snprintf(path, SPC_PATH_FOLDER, "%s/%.4d/%.2d", folder, tyear, tmonth);
 
 		err = stat(path, &buf);
 		if (!S_ISDIR(buf.st_mode)) {
@@ -1827,9 +1848,7 @@ spc_gen_topics(SPC_LOG_ST *t)
 			}
 			do {
 				int err = 0;
-				snprintf(path, SPC_FULLPATH_LEN, 
-					"%s-%s-%.7d.log", 
-					t->path_template, t->arr_topic[i].topic,
+				snprintf(path, SPC_FULLPATH_LEN, "%s-%s-%.7d.log", t->path_template, t->arr_topic[i].topic,
 				    t->arr_topic[i].index);
 
 				SPC_FFOPEN(t->arr_topic[i].fp, path, "a+");
@@ -1871,12 +1890,8 @@ spc_gen_topics(SPC_LOG_ST *t)
 					}
 					t->arr_topic[i].index = 0;
 					t->arr_topic[i].fizize = 0;
-					snprintf(path, 
-						SPC_FULLPATH_LEN, 
-						"%s-%s-%.7d.log", 
-						t->path_template,
-					    t->arr_topic[i].topic, 
-						t->arr_topic[i].index);
+					snprintf(path, SPC_FULLPATH_LEN, "%s-%s-%.7d.log", t->path_template,
+					    t->arr_topic[i].topic, t->arr_topic[i].index);
 					/*
 					//t->arr_topic[i].fp = fopen(path,
 					"a+");
@@ -1909,9 +1924,7 @@ spc_gen_topics(SPC_LOG_ST *t)
 
 				t->arr_topic[i].fizize = 0;
 
-				snprintf(path, SPC_FULLPATH_LEN, 
-					"%s-%s-%.7d.log", t->path_template, 
-					t->arr_topic[i].topic,
+				snprintf(path, SPC_FULLPATH_LEN, "%s-%s-%.7d.log", t->path_template, t->arr_topic[i].topic,
 				    t->arr_topic[i].index);
 				/*
 				//t->arr_topic[i].fp = fopen(path, "a+");
@@ -2053,7 +2066,6 @@ spc_del_memory()
 	int ret = 0;
 	SPC_LOG_ST *t = &__spc_log_statiic__;
 	do {
-		
 #ifndef UNIX_LINUX
 		int isWell = 0;
 		if (t->is_master) {
@@ -2078,8 +2090,7 @@ spc_del_memory()
 				spc_err("pthread_spin_destroy/mtx_rw");
 			}
 			for (i = 0; i < t->ncpu; ++i) {
-				ret = pthread_spin_destroy(
-					(pthread_spinlock_t *)t->arr_mtx[i]);
+				ret = pthread_spin_destroy((pthread_spinlock_t *)t->arr_mtx[i]);
 				if (ret) {
 					spc_err("pthread_spin_destroy/arr_mtx");
 				}
@@ -2087,14 +2098,12 @@ spc_del_memory()
 #else
 			/* Clean Mutex */
 			/* https://linux.die.net/man/3/pthread_mutex_destroy */
-			ret = pthread_mutex_destroy(
-				(pthread_mutex_t *)t->mtx_rw);
+			ret = pthread_mutex_destroy((pthread_mutex_t *)t->mtx_rw);
 			if (ret) {
 				spc_err("pthread_mutex_destroy/arr_mtx");
 			}
 			for (i = 0; i < t->ncpu; ++i) {
-				ret = pthread_mutex_destroy(
-					(pthread_mutex_t *)t->arr_mtx[i]);
+				ret = pthread_mutex_destroy((pthread_mutex_t *)t->arr_mtx[i]);
 				if (ret) {
 					spc_err("pthread_mutex_destroy/arr_mtx");
 				}
@@ -2132,9 +2141,7 @@ spc_del_memory()
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 int
-spc_create_memory(void **output, 
-	char *shared_key, 
-	int size_shared, char isCreating)
+spc_create_memory(void **output, char *shared_key, int size_shared, char isCreating)
 {
 	int ret = 0;
 	char *p = 0;
@@ -2150,10 +2157,7 @@ spc_create_memory(void **output,
 		}
 		if (isCreating) {
 			hMapFile =
-			    CreateFileMappingA(
-					INVALID_HANDLE_VALUE, 
-					NULL, PAGE_READWRITE, 
-					0, size_shared, shared_key);
+			    CreateFileMappingA(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, size_shared, shared_key);
 
 			if (!hMapFile) {
 				spc_err("CreateFileMappingA");
@@ -2162,8 +2166,7 @@ spc_create_memory(void **output,
 			}
 			spc_console_log("hMapFile: 0x%p", hMapFile);
 		} else {
-			hMapFile = OpenFileMappingA(
-				FILE_MAP_ALL_ACCESS, 0, shared_key);
+			hMapFile = OpenFileMappingA(FILE_MAP_ALL_ACCESS, 0, shared_key);
 			if (!hMapFile) {
 				ret = SPC_LOG_SHM_WIN32_OPEN;
 				spc_err("OpenFileMappingA");
@@ -2173,8 +2176,7 @@ spc_create_memory(void **output,
 		if (ret) {
 			break;
 		}
-		p = (char *)MapViewOfFile(hMapFile, 
-			FILE_MAP_ALL_ACCESS, 0, 0, size_shared);
+		p = (char *)MapViewOfFile(hMapFile, FILE_MAP_ALL_ACCESS, 0, 0, size_shared);
 		if (!p) {
 			ret = SPC_LOG_SHM_WIN32_MAPVIEW;
 			spc_err("MapViewOfFile");
@@ -2186,9 +2188,7 @@ spc_create_memory(void **output,
 		if (isCreating) {
 			int retry = 0;
 			while (1) {
-				hMapFile = shm_open(shared_key, 
-					SPC_LOG_UNIX_CREATE_MODE, 
-					SPC_LOG_UNIX__SHARED_MODE);
+				hMapFile = shm_open(shared_key, SPC_LOG_UNIX_CREATE_MODE, SPC_LOG_UNIX__SHARED_MODE);
 
 				if (hMapFile < 0) {
 					if (retry) {
@@ -2206,9 +2206,7 @@ spc_create_memory(void **output,
 				break;
 			}
 		} else {
-			hMapFile = shm_open(shared_key, 
-				SPC_LOG_UNIX_OPEN_MODE, 
-				SPC_LOG_UNIX__SHARED_MODE);
+			hMapFile = shm_open(shared_key, SPC_LOG_UNIX_OPEN_MODE, SPC_LOG_UNIX__SHARED_MODE);
 
 			if (hMapFile < 0) {
 				spc_err("shm_open, key: %s", shared_key);
@@ -2230,22 +2228,19 @@ spc_create_memory(void **output,
 			}
 		}
 
-		p = (char *)mmap(0, size_shared, 
-			SPC_LOG_UNIX_PROT_FLAGS, MAP_SHARED, hMapFile, 0);
+		p = (char *)mmap(0, size_shared, SPC_LOG_UNIX_PROT_FLAGS, MAP_SHARED, hMapFile, 0);
 		/* p = (char*)mmap(0, size_shared,
 			PROT_WRITE, MAP_SHARED, hMapFile, 0); //PROT_WRITE */
 		if (p == MAP_FAILED || p == 0) {
 			ret = SPC_LOG_SHM_UNIX_MAP_FAILED;
-			spc_err(", mmap: %d, size_shared: %d", 
-				hMapFile, (int)size_shared) p = 0;
+			spc_err(", mmap: %d, size_shared: %d", hMapFile, (int)size_shared) p = 0;
 			break;
 		}
 #endif
 		t->hd = hMapFile;
 		if (t->isProcessMode && t->is_master) {
 			memset(p, 0, size_shared);
-		}
-		else if (!t->isProcessMode) {
+		} else if (!t->isProcessMode) {
 			memset(p, 0, size_shared);
 		}
 		*output = (void *)p;
@@ -2345,9 +2340,7 @@ spc_calculate_size()
 		/*mtxsize: mutex size.*/
 		/*semsize: sem size.*/
 		/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-		spc_console_log(
-			"buf size: %d, mtxsize: %d, semsize: %d", 
-			(int)k, (int)mtxsize, (int)semsize);
+		spc_console_log("buf size: %d, mtxsize: %d, semsize: %d", (int)k, (int)mtxsize, (int)semsize);
 
 		n = k + mtxsize + semsize;
 		t->map_mem_size = n;
@@ -2355,8 +2348,7 @@ spc_calculate_size()
 		/* // int spc_create_memory(void** output,
 			char* shared_key, int size_shared, char isCreating) { */
 		if (t->isProcessMode) {
-			spc_create_memory((void **)&buff, 
-			t->shared_key, n, t->is_master);
+			spc_create_memory((void **)&buff, t->shared_key, n, t->is_master);
 		} else {
 			spc_malloc(n, buff, char);
 		}
@@ -2485,8 +2477,8 @@ spc_calculate_size()
 
 #ifndef UNIX_LINUX
 
-#define WIN32_MUTEX_RW	"Global\\%s_%s"
-#define WIN32_MUTEX_BUF "Global\\%s_%s_%0.2d"
+#define WIN32_MUTEX_RW            "Global\\%s_%s"
+#define WIN32_MUTEX_BUF           "Global\\%s_%s_%0.2d"
 
 static int
 spc_win32_sync_create_mutex()
@@ -2519,10 +2511,7 @@ spc_win32_sync_create_mutex()
 		}
 
 		if (t->isProcessMode && t->is_master) {
-			snprintf(nameobj, 
-				SPC_SHARED_NAME_LEN, 
-				WIN32_MUTEX_RW, 
-				SPC_MTX_NAME_OFF, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, WIN32_MUTEX_RW, SPC_MTX_NAME_OFF, t->shared_key);
 
 			hd = CreateMutexA(0, 0, nameobj);
 			if (!hd) {
@@ -2533,10 +2522,7 @@ spc_win32_sync_create_mutex()
 			t->mtx_rw = hd;
 
 			for (i = 0; i < t->ncpu; ++i) {
-				snprintf(nameobj, 
-					SPC_SHARED_NAME_LEN, 
-					WIN32_MUTEX_BUF, 
-					SPC_MTX_NAME_OFF, t->shared_key, i);
+				snprintf(nameobj, SPC_SHARED_NAME_LEN, WIN32_MUTEX_BUF, SPC_MTX_NAME_OFF, t->shared_key, i);
 
 				hd = CreateMutexA(0, 0, nameobj);
 				if (!hd) {
@@ -2549,9 +2535,7 @@ spc_win32_sync_create_mutex()
 			break;
 		}
 		/*(t->isProcessMode && !t->is_master) */
-		snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-			WIN32_MUTEX_RW, 
-			SPC_MTX_NAME_OFF, t->shared_key);
+		snprintf(nameobj, SPC_SHARED_NAME_LEN, WIN32_MUTEX_RW, SPC_MTX_NAME_OFF, t->shared_key);
 
 		hd = OpenMutexA(MUTEX_ALL_ACCESS, 0, nameobj);
 		if (!hd) {
@@ -2562,9 +2546,7 @@ spc_win32_sync_create_mutex()
 		t->mtx_rw = hd;
 
 		for (i = 0; i < t->ncpu; ++i) {
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				WIN32_MUTEX_BUF, 
-				SPC_MTX_NAME_OFF, t->shared_key, i);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, WIN32_MUTEX_BUF, SPC_MTX_NAME_OFF, t->shared_key, i);
 
 			hd = OpenMutexA(MUTEX_ALL_ACCESS, 0, nameobj);
 			if (!hd) {
@@ -2578,8 +2560,8 @@ spc_win32_sync_create_mutex()
 	return ret;
 }
 
-#define WIN32_SEM_RW	"Global\\%s_%s"
-#define WIN32_SEM_OFF	"Global\\%s_%s"
+#define WIN32_SEM_RW              "Global\\%s_%s"
+#define WIN32_SEM_OFF             "Global\\%s_%s"
 
 static int
 spc_win32_sync_create_sem()
@@ -2608,10 +2590,8 @@ spc_win32_sync_create_sem()
 			break;
 		}
 
-		if (t->isProcessMode && t->is_master) 
-		{
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				WIN32_SEM_RW, SPC_SEM_NAME_RW, t->shared_key);
+		if (t->isProcessMode && t->is_master) {
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, WIN32_SEM_RW, SPC_SEM_NAME_RW, t->shared_key);
 
 			hd = CreateSemaphoreA(0, 0, 1, nameobj);
 			if (!hd) {
@@ -2620,8 +2600,7 @@ spc_win32_sync_create_sem()
 				break;
 			}
 			t->sem_rwfile = hd;
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				WIN32_SEM_OFF, SPC_SEM_NAME_OFF, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, WIN32_SEM_OFF, SPC_SEM_NAME_OFF, t->shared_key);
 
 			hd = CreateSemaphoreA(0, 0, 1, nameobj);
 			if (!hd) {
@@ -2633,8 +2612,7 @@ spc_win32_sync_create_sem()
 			break;
 		}
 
-		snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-			WIN32_SEM_RW, SPC_SEM_NAME_RW, t->shared_key);
+		snprintf(nameobj, SPC_SHARED_NAME_LEN, WIN32_SEM_RW, SPC_SEM_NAME_RW, t->shared_key);
 
 		hd = OpenSemaphoreA(SEMAPHORE_ALL_ACCESS, 0, nameobj);
 		if (!hd) {
@@ -2643,9 +2621,7 @@ spc_win32_sync_create_sem()
 			break;
 		}
 		t->sem_rwfile = hd;
-		snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-			WIN32_SEM_OFF, 
-			SPC_SEM_NAME_OFF, t->shared_key);
+		snprintf(nameobj, SPC_SHARED_NAME_LEN, WIN32_SEM_OFF, SPC_SEM_NAME_OFF, t->shared_key);
 
 		hd = OpenSemaphoreA(SEMAPHORE_ALL_ACCESS, 0, nameobj);
 		if (!hd) {
@@ -2704,8 +2680,7 @@ spc_osx_sync_del()
 			break;
 		}
 		if ((t->isProcessMode && t->is_master) || !t->isProcessMode) {
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s", SPC_SEM_NAME_RW, t->shared_key);
 
 			if (sem_close((sem_t *)t->sem_rwfile) == -1) {
 				spc_err("sem_close");
@@ -2717,8 +2692,7 @@ spc_osx_sync_del()
 			}
 			t->sem_rwfile = 0;
 
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
 
 			if (sem_close((sem_t *)t->sem_off) == -1) {
 				spc_err("sem_close");
@@ -2730,8 +2704,7 @@ spc_osx_sync_del()
 			}
 			t->sem_off = 0;
 		} else {
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s", SPC_SEM_NAME_RW, t->shared_key);
 
 			if (sem_close((sem_t *)t->sem_rwfile) == -1) {
 				spc_err("sem_close");
@@ -2739,8 +2712,7 @@ spc_osx_sync_del()
 			}
 			t->sem_rwfile = 0;
 
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
 
 			if (sem_close((sem_t *)t->sem_off) == -1) {
 				spc_err("sem_close");
@@ -2761,9 +2733,7 @@ spc_osx_sync_sem_create(char *nameobj, int *pret)
 
 	do {
 		ret = 0;
-		hd = sem_open(nameobj, 
-			SPC_LOG_UNIX_CREATE_MODE, 
-			SPC_LOG_UNIX__SHARED_MODE, 1);
+		hd = sem_open(nameobj, SPC_LOG_UNIX_CREATE_MODE, SPC_LOG_UNIX__SHARED_MODE, 1);
 		if (hd != SEM_FAILED) {
 			break;
 		}
@@ -2802,8 +2772,7 @@ spc_osx_sync_create()
 
 		if ((t->isProcessMode && t->is_master) || !t->isProcessMode) {
 			sem_t *hd = 0;
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s", SPC_SEM_NAME_RW, t->shared_key);
 			hd = spc_osx_sync_sem_create(nameobj, &ret);
 
 			if (ret) {
@@ -2811,8 +2780,7 @@ spc_osx_sync_create()
 			}
 			t->sem_rwfile = hd;
 
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
 			hd = spc_osx_sync_sem_create(nameobj, &ret);
 			if (ret) {
 				break;
@@ -2821,8 +2789,7 @@ spc_osx_sync_create()
 			sem_wait(hd);
 		} else {
 			sem_t *hd = 0;
-			snprintf(nameobj, SPC_SHARED_NAME_LEN, 
-				"%s_%s", SPC_SEM_NAME_RW, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s", SPC_SEM_NAME_RW, t->shared_key);
 			hd = sem_open(nameobj, SPC_LOG_UNIX_OPEN_MODE);
 			if (hd == SEM_FAILED) {
 				spc_err("sem_open");
@@ -2831,9 +2798,7 @@ spc_osx_sync_create()
 			}
 			t->sem_rwfile = hd;
 
-			snprintf(nameobj, 
-				SPC_SHARED_NAME_LEN, "%s_%s", 
-				SPC_SEM_NAME_OFF, t->shared_key);
+			snprintf(nameobj, SPC_SHARED_NAME_LEN, "%s_%s", SPC_SEM_NAME_OFF, t->shared_key);
 			hd = sem_open(nameobj, SPC_LOG_UNIX_OPEN_MODE);
 			if (hd == SEM_FAILED) {
 				spc_err("sem_open");
@@ -2908,8 +2873,7 @@ spc_mtx_init(void *obj, char shared)
 			spc_err("pthread_mutexattr_setpshared");
 			break;
 		}
-		err = pthread_mutexattr_setpshared(
-			&psharedm, PTHREAD_PROCESS_SHARED);
+		err = pthread_mutexattr_setpshared(&psharedm, PTHREAD_PROCESS_SHARED);
 
 		if (err) {
 			ret = SPC_LOG_MTX_ATT_SHARED_MODE_SET;

@@ -36,7 +36,7 @@
 #include <string.h>
 /*strrchr*/
 
-#if 0
+#if 1
 #ifndef UNIX_LINUX
 #define UNIX_LINUX                      
 #endif
@@ -46,6 +46,12 @@
 #ifndef SPC_USING_SPIN_LOCK
 #define SPC_USING_SPIN_LOCK             
 #endif /* !SPC_USING_SPIN_LOCK */
+#endif
+
+#ifndef SPC_CRITICAL_MISSION
+#define _spc_mutex_lock                 spc_mutex_lock
+#else
+#define _spc_mutex_lock                 spc_mutex_trylock
 #endif
 
 #if 0
@@ -177,7 +183,7 @@ typedef enum __SPC_LOG_ERR_CODE__ {
 	SPC_LOG_WIN32_MTX_UNLOCK,
 	SPC_LOG_WIN32_SEM_WAIT,
 	SPC_LOG_WIN32_SEM_REL,
-	SPC_LOG_PX_SEM_WAIT, 
+	SPC_LOG_PX_SEM_WAIT,
 	SPC_LOG_PX_SEM_REL,
 	SPC_LOG_PX_MTX_LOCK,
 	SPC_LOG_PX_MTX_UNLOCK,
@@ -188,7 +194,6 @@ typedef enum __SPC_LOG_ERR_CODE__ {
 	SPC_LOG_SHM_WIN32_CREATE,
 	SPC_LOG_SHM_WIN32_OPEN,
 	SPC_LOG_SHM_WIN32_MAPVIEW,
-
 
 	SPC_END_ERROR,
 } SPC_LOG_ERR_CODE;
@@ -365,8 +370,8 @@ typedef struct __SPC_INPUT_ARG__ {
 		SPC_LOG_ST *__t__ = spc_control_obj();                                                                      \
 		if (__t__->llevel <= (__lv__) && ___fmttt___[0]) {                                                          \
 			;                                                                                                   \
-			;                                                                                                   \
 			int __outlen__ = 0;                                                                                 \
+			int __err__ = 0;                                                                                    \
 			;                                                                                                   \
 			const char *__pfn__ = 0; /*char __isOof = 0;*/                                                      \
 			;                                                                                                   \
@@ -384,45 +389,44 @@ typedef struct __SPC_INPUT_ARG__ {
 			;                                                                                                   \
 			{                                                                                                   \
 				do {                                                                                        \
-					;                                                                                   \
 					int __len__ = 0;                                                                    \
-					;                                                                                   \
-                                                                                                                            \
-					;                                                                                   \
-					;                                                                                   \
-					;                                                                                   \
-					spc_mutex_lock(__t__->arr_mtx[__r__]);                                              \
-					;                                                                                   \
-					if (__t__->range > SPC_KEYBUF(__t__, __r__)->pl) {                                  \
-						;                                                                           \
-						memcpy(SPC_KEYBUF(__t__, __r__)->data + SPC_KEYBUF(__t__, __r__)->pl,       \
-						    __pprefmt__, __outlen__);                                               \
-						;                                                                           \
-						SPC_KEYBUF(__t__, __r__)->pl += __outlen__;                                 \
-						;                                                                           \
-						__len__ =                                                                   \
-						    snprintf(SPC_KEYBUF(__t__, __r__)->data + SPC_KEYBUF(__t__, __r__)->pl, \
-							__t__->krange - SPC_KEYBUF(__t__, __r__)->pl, ___fmttt___,          \
-							##__VA_ARGS__);                                                     \
-						;                                                                           \
-						if (__len__ > 0) {                                                          \
-							; /*spc_console_log("len:                                           \
-							     %d", len);*/                                                   \
+					do {                                                                                \
+						__err__ = _spc_mutex_lock(__t__->arr_mtx[__r__]);                           \
+						if (__err__) {                                                              \
+							break;                                                              \
+						}                                                                           \
+						if (__t__->range > SPC_KEYBUF(__t__, __r__)->pl) {                          \
 							;                                                                   \
-							;                                                                   \
-							__outlen__ = SPC_MIN_AB(                                            \
-							    __len__, __t__->krange - SPC_KEYBUF(__t__, __r__)->pl);         \
-							;                                                                   \
-							; /*spc_console_log("outlen:                                        \
-							     %d", outlen);*/                                                \
+							memcpy(                                                             \
+							    SPC_KEYBUF(__t__, __r__)->data + SPC_KEYBUF(__t__, __r__)->pl,  \
+							    __pprefmt__, __outlen__);                                       \
 							;                                                                   \
 							SPC_KEYBUF(__t__, __r__)->pl += __outlen__;                         \
 							;                                                                   \
-						};                                                                          \
-					}                                                                                   \
+							__len__ = snprintf(                                                 \
+							    SPC_KEYBUF(__t__, __r__)->data + SPC_KEYBUF(__t__, __r__)->pl,  \
+							    __t__->krange - SPC_KEYBUF(__t__, __r__)->pl, ___fmttt___,      \
+							    ##__VA_ARGS__);                                                 \
+							;                                                                   \
+							if (__len__ > 0) {                                                  \
+								; /*spc_console_log("len:                                   \
+								     %d", len);*/                                           \
+								;                                                           \
+								;                                                           \
+								__outlen__ = SPC_MIN_AB(                                    \
+								    __len__, __t__->krange - SPC_KEYBUF(__t__, __r__)->pl); \
+								;                                                           \
+								; /*spc_console_log("outlen:                                \
+								     %d", outlen);*/                                        \
+								;                                                           \
+								SPC_KEYBUF(__t__, __r__)->pl += __outlen__;                 \
+								;                                                           \
+							};                                                                  \
+						}                                                                           \
                                                                                                                             \
-					spc_mutex_unlock(__t__->arr_mtx[__r__]);                                            \
-                                                                                                                            \
+						spc_mutex_unlock(__t__->arr_mtx[__r__]);                                    \
+						break;                                                                      \
+					} while (0);                                                                        \
 					if (__len__ > 0)                                                                    \
 						break;                                                                      \
 					;                                                                                   \
@@ -454,6 +458,7 @@ typedef struct __SPC_INPUT_ARG__ {
 			;                                                                                                   \
 			short __tpp__ = 0;                                                                                  \
 			int __len__ = 0;                                                                                    \
+			int __err__ = 0;                                                                                    \
 			unsigned short __r__ = 0;                                                                           \
 			;                                                                                                   \
 			const char *__pfn__ = 0;                                                                            \
@@ -476,56 +481,50 @@ typedef struct __SPC_INPUT_ARG__ {
 			    __tnow__, SPC_RL_BUF, __lv__, __pfn__, __FUNCTION__, __LINE__, &__r__, &__outlen__);            \
 			;                                                                                                   \
 			do {                                                                                                \
-				;                                                                                           \
-				;                                                                                           \
-				spc_mutex_lock(__t__->arr_mtx[__r__]);                                                      \
-				/*do                                                                                        \
-				{*/                                                                                         \
-				/*if(t->arr_topic){*/;                                                                      \
-				;                                                                                           \
-				;                                                                                           \
-				;                                                                                           \
-				if (__t__->range > SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl) {                   \
-					;                                                                                   \
-					memcpy(SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +                      \
-						   SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,                     \
-					    __pprefmt__, __outlen__);                                                       \
-					;                                                                                   \
-					SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;                  \
-					;                                                                                   \
-					;                                                                                   \
-					__len__ = snprintf(SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +          \
-							       SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,         \
-					    __t__->krange - SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,            \
-					    ___fmttt___, ##__VA_ARGS__);                                                    \
-					;                                                                                   \
-					;                                                                                   \
-					if (__len__ > 0) {                                                                  \
-						; /*spc_console_log("len: %d",                                              \
-						     len);*/                                                                \
+				do {                                                                                        \
+					__err__ = _spc_mutex_lock(__t__->arr_mtx[__r__]);                                   \
+					if (__err__) {                                                                      \
+						break;                                                                      \
+					};                                                                                  \
+					if (__t__->range > SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl) {           \
 						;                                                                           \
-						;                                                                           \
-						__outlen__ = SPC_MIN_AB(__len__,                                            \
-						    __t__->krange - SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl);   \
-						; /*spc_console_log("outlen:                                                \
-						     %d", outlen);*/                                                        \
-						;                                                                           \
-						;                                                                           \
+						memcpy(SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +              \
+							   SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,             \
+						    __pprefmt__, __outlen__);                                               \
 						;                                                                           \
 						SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;          \
+						;                                                                           \
+						;                                                                           \
+						__len__ = snprintf(SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->data +  \
+								       SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl, \
+						    __t__->krange - SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl,    \
+						    ___fmttt___, ##__VA_ARGS__);                                            \
+						;                                                                           \
+						;                                                                           \
+						if (__len__ > 0) {                                                          \
+							; /*spc_console_log("len: %d",                                      \
+							     len);*/                                                        \
+							;                                                                   \
+							;                                                                   \
+							__outlen__ = SPC_MIN_AB(__len__,                                    \
+							    __t__->krange -                                                 \
+								SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl);       \
+							; /*spc_console_log("outlen:                                        \
+							     %d", outlen);*/                                                \
+							;                                                                   \
+							;                                                                   \
+							;                                                                   \
+							SPC_ST_LOGBUFTOPIC_RANGE(__t__, __tpp__, __r__)->pl += __outlen__;  \
+						}                                                                           \
 					}                                                                                   \
-				}                                                                                           \
-				/*}*/                                                                                       \
-				/*}                                                                                         \
-				while(0);*/                                                                                 \
-				spc_mutex_unlock(__t__->arr_mtx[__r__]);                                                    \
+					spc_mutex_unlock(__t__->arr_mtx[__r__]);                                            \
+					break;                                                                              \
+				} while (0);                                                                                \
 				if (__len__ > 0)                                                                            \
 					break;                                                                              \
 				;                                                                                           \
-				;                                                                                           \
 				__r__++;                                                                                    \
 				__r__ %= __t__->ncpu;                                                                       \
-				;                                                                                           \
 				continue;                                                                                   \
 			} while (1);                                                                                        \
 			if (!__t__->trigger_thread)                                                                         \
@@ -574,6 +573,9 @@ spc_fmmt_now(char *fmtt, int len);
 
 DLL_API_SPC_LOG int
 spc_mutex_lock(void *mtx);
+
+DLL_API_SPC_LOG int
+spc_mutex_trylock(void *mtx);
 
 DLL_API_SPC_LOG int
 spc_mutex_unlock(void *mtx);
