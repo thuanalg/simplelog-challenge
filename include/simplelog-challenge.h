@@ -48,10 +48,14 @@
 #endif /* !SPC_USING_SPIN_LOCK */
 #endif
 
+#if 1
+	#define SPC_CRITICAL_MISSION
+#endif
+
 #ifndef SPC_CRITICAL_MISSION
-#define _spc_mutex_lock                 spc_mutex_lock
+	#define _spc_mutex_lock                 spc_mutex_lock
 #else
-#define _spc_mutex_lock                 spc_mutex_trylock
+	#define _spc_mutex_lock                 spc_mutex_trylock
 #endif
 
 #if 0
