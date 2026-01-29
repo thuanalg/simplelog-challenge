@@ -880,51 +880,6 @@ spc_mutex_trylock(void *obj)
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int
-spc_mutex_trylock(void *obj)
-{
-	int ret = 0;
-#ifndef UNIX_LINUX
-	DWORD err = 0;
-#else
-	int err = 0;
-#endif
-	do {
-		if (!obj) {
-			ret = SPC_LOG_MUTEX_NULL_ERROR;
-			break;
-		}
-#ifndef UNIX_LINUX
-#ifndef SPC_USING_SPIN_LOCK
-		err = WaitForSingleObject(obj, INFINITE);
-		if (err != WAIT_OBJECT_0) {
-			spc_err("WaitForSingleObject");
-			ret = SPC_LOG_WIN32_MTX_LOCK;
-			break;
-		}
-#else
-		SPC_LockSpinlock(obj);
-#endif
-#else
-#ifndef SPC_USING_SPIN_LOCK
-		SPC_pthread_mutex_lock((pthread_mutex_t *)obj, err);
-		if (err) {
-			ret = SPC_LOG_PX_MTX_LOCK;
-			spc_err("SPC_pthread_mutex_lock");
-		}
-#else
-		err = pthread_spin_lock((pthread_spinlock_t *)obj);
-		if (err) {
-			ret = SPC_LOG_PX_SPIN_LOCK;
-			spc_err("pthread_spin_lock");
-		}
-#endif
-
-#endif
-	} while (0);
-	return ret;
-}
-/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
-int
 spc_mutex_unlock(void *obj)
 {
 	int ret = 0;
