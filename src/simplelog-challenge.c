@@ -2835,7 +2835,15 @@ spc_mtx_init(void *obj, char shared)
 		#else
 			#warning "Robust mutexes are not supported on this POSIX 200809L."
 		#endif
-
+#if 0
+int rc = pthread_mutex_lock(&my_mutex);
+if (rc == EOWNERDEAD) {
+    // 1. Repair shared data here
+    // 2. Make it consistent
+    pthread_mutex_consistent(&my_mutex);
+}
+https://man7.org/linux/man-pages/man3/pthread_mutexattr_setrobust.3.html
+#endif
 		#endif
 		if (err) {
 			ret = SPC_LOG_MTX_ATT_SHARED_MODE;
