@@ -2831,6 +2831,7 @@ spc_mtx_init(void *obj, char shared)
 			#pragma message "Robust mutex support enabled - 200809L."
 			#endif
 			pthread_mutexattr_setrobust(&psharedm, PTHREAD_MUTEX_ROBUST);
+			/*getconf _POSIX_VERSION*/
 		#else
 			#warning "Robust mutexes are not supported on this POSIX 200809L."
 		#endif
