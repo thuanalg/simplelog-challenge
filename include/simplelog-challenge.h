@@ -48,7 +48,7 @@
 #endif /* !SPC_USING_SPIN_LOCK */
 #endif
 
-#if 1
+#if 0
 	#define SPC_CRITICAL_MISSION
 #endif
 

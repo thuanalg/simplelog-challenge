@@ -173,7 +173,7 @@ main(int argc, char *argv[])
 #else
 	fork();
 	fork();
-	fork();
+	//fork();
 #endif
 	spc_update_processid();
 	if (!ismaster) {

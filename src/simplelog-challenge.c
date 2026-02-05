@@ -2798,6 +2798,7 @@ spc_spinlock_init(pthread_spinlock_t *mtx, char shared)
 #endif
 #endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+
 int
 spc_mtx_init(void *obj, char shared)
 {
@@ -2805,7 +2806,7 @@ spc_mtx_init(void *obj, char shared)
 	int err = 0;
 	SPC_LOG_ST *t = &__spc_log_statiic__;
 	pthread_mutex_t *mtx = (pthread_mutex_t *)obj;
-	pthread_mutexattr_t psharedm;
+	pthread_mutexattr_t psharedm = {0};
 
 	do {
 		if (t->isProcessMode && !t->is_master) {
@@ -2823,6 +2824,18 @@ spc_mtx_init(void *obj, char shared)
 		}
 
 		err = pthread_mutexattr_init(&psharedm);
+
+		#ifdef _GNU_SOURCE
+		#if defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L)
+			#if 0
+			#pragma message "Robust mutex support enabled - 200809L."
+			#endif
+			pthread_mutexattr_setrobust(&psharedm, PTHREAD_MUTEX_ROBUST);
+		#else
+			#warning "Robust mutexes are not supported on this POSIX 200809L."
+		#endif
+
+		#endif
 		if (err) {
 			ret = SPC_LOG_MTX_ATT_SHARED_MODE;
 			spc_err("pthread_mutexattr_setpshared");
@@ -3011,6 +3024,7 @@ spc_process_id()
 	/*return ret;*/
 }
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+#if 0
 static const char *__spc_err_text__[SPC_END_ERROR + 1];
 
 void
@@ -3101,6 +3115,7 @@ spl_err_txt_init()
 
 	__spc_err_text__[SPC_END_ERROR] = "SPC_END_ERROR";
 }
+
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 const char *
 spc_err_txt(int i)
@@ -3113,6 +3128,7 @@ spc_err_txt(int i)
 	}
 	return __spc_err_text__[i];
 }
+#endif
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #ifndef UNIX_LINUX

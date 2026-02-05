@@ -1,6 +1,6 @@
 target=libsimplelog-challenge.so
 debugFlag=-g -fPIC -Wall -shared -Wextra -Wformat -Werror=format
-releaseFlag=-fPIC -Wall -shared -Wextra -Wformat -Werror=format
+releaseFlag=-fPIC -Wall -shared -Wextra -Wformat -Werror=format -s
 LIBS+=-lpthread
 src=../simplelog-challenge.c
 INC=-I../ -I../../include
