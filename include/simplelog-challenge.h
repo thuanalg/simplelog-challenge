@@ -31,35 +31,47 @@
  */
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 #ifndef ___SPC_SIMEPLE_LOG__
-#define ___SPC_SIMEPLE_LOG__            
+#define ___SPC_SIMEPLE_LOG__               
 #include <stdio.h>
 #include <string.h>
 /*strrchr*/
 
 #if 1
+
 #ifndef UNIX_LINUX
-#define UNIX_LINUX                      
+#define UNIX_LINUX                         
+
 #endif
+#endif
+
+#if 1
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#endif
+
+#if 1
+#define SPC_TEST_DEAD_LOCK_FORK_POSIX_2008 1
 #endif
 
 #if 0
 #ifndef SPC_USING_SPIN_LOCK
-#define SPC_USING_SPIN_LOCK             
+#define SPC_USING_SPIN_LOCK                
 #endif /* !SPC_USING_SPIN_LOCK */
 #endif
 
 #if 0
-	#define SPC_CRITICAL_MISSION
+#define SPC_CRITICAL_MISSION               
 #endif
 
 #ifndef SPC_CRITICAL_MISSION
-	#define _spc_mutex_lock                 spc_mutex_lock
+#define _spc_mutex_lock                    spc_mutex_lock
 #else
-	#define _spc_mutex_lock                 spc_mutex_trylock
+#define _spc_mutex_lock                    spc_mutex_trylock
 #endif
 
 #if 0
-#define __UNIX_LINUX_CPP11_AND_NEWERS__ 
+#define __UNIX_LINUX_CPP11_AND_NEWERS__    
 #endif
 
 #ifndef __UNIX_LINUX_CPP11_AND_NEWERS__
@@ -71,48 +83,48 @@ extern "C" {
 #endif
 
 #ifndef SPC_LLU
-#define SPC_LLU                         unsigned long long
+#define SPC_LLU                            unsigned long long
 #endif
 
-#define SPC_LOG_BASE                    0
-#define SPC_LOG_DEBUG                   1
-#define SPC_LOG_INFO                    2
-#define SPC_LOG_WARNING                 3
-#define SPC_LOG_ERROR                   4
-#define SPC_LOG_FATAL                   5
-#define SPC_LOG_PEAK                    6
+#define SPC_LOG_BASE                       0
+#define SPC_LOG_DEBUG                      1
+#define SPC_LOG_INFO                       2
+#define SPC_LOG_WARNING                    3
+#define SPC_LOG_ERROR                      4
+#define SPC_LOG_FATAL                      5
+#define SPC_LOG_PEAK                       6
 
 #if 0
-#define SPC_RL_BUF                      50
+#define SPC_RL_BUF                         50
 #endif
 
-#define SPC_RL_BUF                      256
-#define SPC_PATH_FOLDER                 (256 + 16)
-#define SPC_IDD_NAME                    32
-#define SPC_MILLION                     1000000
-#define SPC_RANGE_YEAR                  10000
-#define SPC_RANGE_MONTH                 13
-#define SPC_RANGE_DAY                   32
-#define SPC_FNAME_LEN                   (SPC_IDD_NAME + 32)
-#define SPC_TOPIC_SIZE                  32
-#define SPC_MEMO_PADDING                1024
-#define SPC_SHARED_KEY_LEN              32
-#define SPC_SHARED_NAME_LEN             64
-#define SPC_TEMPLATE_LEN                (SPC_PATH_FOLDER + SPC_FNAME_LEN + 32)
-#define SPC_FULLPATH_LEN                (SPC_TEMPLATE_LEN + 32 + 16)
+#define SPC_RL_BUF                         256
+#define SPC_PATH_FOLDER                    (256 + 16)
+#define SPC_IDD_NAME                       32
+#define SPC_MILLION                        1000000
+#define SPC_RANGE_YEAR                     10000
+#define SPC_RANGE_MONTH                    13
+#define SPC_RANGE_DAY                      32
+#define SPC_FNAME_LEN                      (SPC_IDD_NAME + 32)
+#define SPC_TOPIC_SIZE                     32
+#define SPC_MEMO_PADDING                   1024
+#define SPC_SHARED_KEY_LEN                 32
+#define SPC_SHARED_NAME_LEN                64
+#define SPC_TEMPLATE_LEN                   (SPC_PATH_FOLDER + SPC_FNAME_LEN + 32)
+#define SPC_FULLPATH_LEN                   (SPC_TEMPLATE_LEN + 32 + 16)
 
 #ifndef UNIX_LINUX
 #ifndef __SPC_STATIC_LOG__
 #ifdef EXPORT_DLL_API_SPC_LOG
-#define DLL_API_SPC_LOG                 __declspec(dllexport)
+#define DLL_API_SPC_LOG                    __declspec(dllexport)
 #else
-#define DLL_API_SPC_LOG                 __declspec(dllimport)
+#define DLL_API_SPC_LOG                    __declspec(dllimport)
 #endif
 #else
-#define DLL_API_SPC_LOG                 
+#define DLL_API_SPC_LOG                    
 #endif
 #else
-#define DLL_API_SPC_LOG                 
+#define DLL_API_SPC_LOG                    
 #endif /*! UNIX_LINUX */
 
 typedef enum __SPC_LOG_ERR_CODE__ {
@@ -190,6 +202,8 @@ typedef enum __SPC_LOG_ERR_CODE__ {
 	SPC_LOG_PX_SEM_WAIT,
 	SPC_LOG_PX_SEM_REL,
 	SPC_LOG_PX_MTX_LOCK,
+	SPC_LOG_PX_MTX_CONSIS,
+	SPC_LOG_PX_MTX_UNLOCK_CONSIS,
 	SPC_LOG_PX_MTX_UNLOCK,
 	SPC_LOG_PX_SPIN_LOCK,
 	SPC_LOG_PX_SPIN_UNLOCK,
@@ -219,8 +233,8 @@ typedef struct __SPC_GENERIC_DATA__ {
 	char data[0]; /*Generic data */
 } spc_gen_data_st;
 
-#define spc_uchar                       unsigned char
-#define spc_uint                        unsigned int
+#define spc_uchar                          unsigned char
+#define spc_uint                           unsigned int
 
 typedef struct __spc_local_time_st__ {
 	spc_uint year;
@@ -321,9 +335,10 @@ typedef struct __SPC_INPUT_ARG__ {
 		__FILLE__(pfn);                                                                                             \
 		spc_fmmt_now(buf, 1024);                                                                                    \
 		fprintf(stdout,                                                                                             \
-		    "[%s] [%s:%s:%d] [thid: %llu] "___fmttt___                                                              \
+		    "[%s] [%s:%s:%d] [thid: %llu] [pid: %llu] "___fmttt___                                                              \
 		    "\n",                                                                                                   \
-		    (char *)buf, (char *)pfn, (char *)__FUNCTION__, (int)__LINE__, spc_get_threadid(), ##__VA_ARGS__);      \
+		    (char *)buf, (char *)pfn, (char *)__FUNCTION__, \
+			(int)__LINE__, spc_get_threadid(), spc_process_id(), ##__VA_ARGS__);      \
 	}
 #else
 #define spc_console_log(___fmttt___, ...)                                                                                   \
@@ -554,14 +569,14 @@ spc_init_log_ext(SPC_INPUT_ARG *input);
  * Export name:	spclog
  * Sample:		spclog(SPC_LOG_INFO, "Hello spclog: %llu", time(0));
  */
-#define spclog                          __spc_log_buf_level__
+#define spclog                             __spc_log_buf_level__
 
 /*
  * Export name:	spclogtopic
  * Sample:		spclogtopic(SPC_LOG_INFO, 0, "Hello spclog: %llu",
  * time(0));
  */
-#define spclogtopic                     __spc_log_buf_topic_level__
+#define spclogtopic                        __spc_log_buf_topic_level__
 
 /* Please demo with spc_finish_log */
 DLL_API_SPC_LOG int
@@ -616,6 +631,14 @@ spc_err_txt(int i);
 
 DLL_API_SPC_LOG int
 spc_local_time_now(spc_local_time_st *st_time);
+
+#if defined(_GNU_SOURCE) && defined(_POSIX_C_SOURCE) && \
+	(_POSIX_C_SOURCE >= 200809L) &&    \
+    defined(SPC_TEST_DEAD_LOCK_FORK_POSIX_2008)
+DLL_API_SPC_LOG int
+spc_test_deadlock();
+#endif
+
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 
 #ifdef __cplusplus

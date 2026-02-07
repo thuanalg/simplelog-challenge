@@ -789,6 +789,57 @@ spc_init_log(char *pathcfg)
 }
 
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
+/* https://man7.org/linux/man-pages/man3/pthread_mutexattr_setrobust.3.html */
+int
+spc_mtxl_err(void *obj, int err)
+{
+	int ret = 0;
+	do {
+		if (!err) {
+			break;
+		}
+		if (!obj) {
+			break;
+		}
+#ifndef UNIX_LINUX
+#else
+#ifndef SPC_USING_SPIN_LOCK
+#if defined(_GNU_SOURCE) && defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L)
+		if (err != EOWNERDEAD) {
+			ret = SPC_LOG_PX_MTX_LOCK;
+			break;
+		}
+		err = pthread_mutex_consistent((pthread_mutex_t *)obj);
+		if (err) {
+			ret = SPC_LOG_PX_MTX_CONSIS;
+			spc_err("pthread_mutex_consistent");
+			break;
+		}
+		err = pthread_mutex_unlock((pthread_mutex_t *)obj);
+		if (err) {
+			ret = SPC_LOG_PX_MTX_UNLOCK_CONSIS;
+			spc_err("pthread_mutex_unlock consis");
+			break;
+		}
+		SPC_pthread_mutex_lock(obj, err);
+		if (err) {
+			ret = SPC_LOG_PX_MTX_LOCK;
+			break;
+		}
+		spc_err(">>>>>>>>>>>>>>>>>>>>> relock-ok");
+		break;
+#else
+		ret = SPC_LOG_PX_MTX_LOCK;
+		break;
+#endif
+#else
+#endif
+#endif
+
+	} while (0);
+	return ret;
+}
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+*/
 int
 spc_mutex_lock(void *obj)
 {
@@ -818,8 +869,9 @@ spc_mutex_lock(void *obj)
 #ifndef SPC_USING_SPIN_LOCK
 		SPC_pthread_mutex_lock((pthread_mutex_t *)obj, err);
 		if (err) {
-			ret = SPC_LOG_PX_MTX_LOCK;
-			spc_err("SPC_pthread_mutex_lock");
+			/*ret = SPC_LOG_PX_MTX_LOCK;*/
+			spc_err("SPC_pthread_mutex_lock, err: %d", err);
+			ret = spc_mtxl_err(obj, err);
 		}
 #else
 		err = pthread_spin_lock((pthread_spinlock_t *)obj);
@@ -2825,26 +2877,18 @@ spc_mtx_init(void *obj, char shared)
 
 		err = pthread_mutexattr_init(&psharedm);
 
-		#ifdef _GNU_SOURCE
-		#if defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L)
-			#if 0
-			#pragma message "Robust mutex support enabled - 200809L."
-			#endif
-			pthread_mutexattr_setrobust(&psharedm, PTHREAD_MUTEX_ROBUST);
-			/*getconf _POSIX_VERSION*/
-		#else
-			#warning "Robust mutexes are not supported on this POSIX 200809L."
-		#endif
+#ifdef _GNU_SOURCE
+#if defined(_POSIX_C_SOURCE) && (_POSIX_C_SOURCE >= 200809L)
 #if 0
-int rc = pthread_mutex_lock(&my_mutex);
-if (rc == EOWNERDEAD) {
-    // 1. Repair shared data here
-    // 2. Make it consistent
-    pthread_mutex_consistent(&my_mutex);
-}
-https://man7.org/linux/man-pages/man3/pthread_mutexattr_setrobust.3.html
+#pragma message "Robust mutex support enabled - 200809L."
 #endif
-		#endif
+		pthread_mutexattr_setrobust(&psharedm, PTHREAD_MUTEX_ROBUST);
+		/*getconf _POSIX_VERSION*/
+#else
+#warning "Robust mutexes are not supported on this POSIX 200809L."
+#endif
+
+#endif
 		if (err) {
 			ret = SPC_LOG_MTX_ATT_SHARED_MODE;
 			spc_err("pthread_mutexattr_setpshared");
@@ -3032,6 +3076,31 @@ spc_process_id()
 #endif
 	/*return ret;*/
 }
+/*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
+#if defined(_GNU_SOURCE) && defined(_POSIX_C_SOURCE) && \
+	(_POSIX_C_SOURCE >= 200809L) &&  \
+    defined(SPC_TEST_DEAD_LOCK_FORK_POSIX_2008)
+int
+spc_test_deadlock()
+{
+	int ret = 0;
+	SPC_LOG_ST *t = &__spc_log_statiic__;
+	int i  = 0;
+	int err  = 0;
+	spc_console_log("spc_test_deadlock");
+	do {
+		for(i = 0; i < t->ncpu; ++i) {
+			err = pthread_mutex_lock(
+				(pthread_mutex_t*) t->arr_mtx[i]);
+			if(err) {
+				spc_err("err: %d", err);
+			}
+		}
+	} while (0);
+	return ret;
+}
+#endif
+
 /*+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-+-*/
 #if 0
 static const char *__spc_err_text__[SPC_END_ERROR + 1];
