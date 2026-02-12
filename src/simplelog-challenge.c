@@ -819,21 +819,21 @@ spc_mtxl_err(void *obj, int err)
 		err = pthread_mutex_consistent((pthread_mutex_t *)obj);
 		if (err) {
 			ret = SPC_LOG_PX_MTX_CONSIS;
-			spc_err("pthread_mutex_consistent");
+			spc_err(">>>>>>>>>>>>>>>>>>>>> pthread_mutex_consistent");
 			break;
 		}
 		err = pthread_mutex_unlock((pthread_mutex_t *)obj);
 		if (err) {
 			ret = SPC_LOG_PX_MTX_UNLOCK_CONSIS;
-			spc_err("pthread_mutex_unlock consis");
+			spc_err(">>>>>>>>>>>>>>>>>>>>> pthread_mutex_unlock consis");
 			break;
 		}
 		SPC_pthread_mutex_lock(obj, err);
 		if (err) {
-			ret = SPC_LOG_PX_MTX_LOCK;
+			ret = SPC_LOG_PX_MTX_UNLOCK;
+			spc_err(">>>>>>>>>>>>>>>>>>>>> relock-error");
 			break;
-		}
-		spc_err(">>>>>>>>>>>>>>>>>>>>> relock-ok");
+		}		
 		break;
 #else
 		ret = SPC_LOG_PX_MTX_LOCK;
