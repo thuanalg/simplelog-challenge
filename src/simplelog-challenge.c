@@ -3099,11 +3099,12 @@ spc_test_deadlock()
 		for(i = 0; i < t->ncpu; ++i) {
 			err = pthread_mutex_lock(
 				(pthread_mutex_t*) t->arr_mtx[i]);
-				exit(1);
+				
 			if(err) {
 				spc_err("err: %d", err);
 			}
 		}
+		exit(1);
 	} while (0);
 	return ret;
 }
