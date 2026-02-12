@@ -168,7 +168,7 @@ main(int argc, char *argv[])
 	*/
 	input.is_master = ismaster ? 1 : 0;
 	ret = spc_init_log_ext(&input);
-#if 0
+#if 1
 	fork();
 #else
 	fork();

@@ -15,6 +15,7 @@ debug:
 	gcc ${debugFlag} -o ${target} ${src} ${LIBS} ${CFLAGS} ${INC}
 	gcc -g -o simple_c_example  ${SRCTEST_PREFIX}/c_test/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
 	gcc -g -o simple_c_fork  ${SRCTEST_PREFIX}/fork/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
+	gcc -g -o simple_c_fork_deadlock  ${SRCTEST_PREFIX}/fork/deadlock_main.c ${src} ${LIBS} ${INC} ${CFLAGS} -D SPC_TEST_DEAD_LOCK_FORK_POSIX_2008 
 	g++ -g -o simple_cpp_example  ${SRCTEST_PREFIX}/cpp_test/main.cpp ${LIBS} ${CPPFLAGS} ${INC} -L./ -lsimplelog-challenge
 	g++ -g -o simple_cpp_example_direct  ${SRCTEST_PREFIX}/cpp_test/main.cpp ${src} ${LIBS} ${INC} ${CPPFLAGS}
 
@@ -22,6 +23,7 @@ release:
 	gcc ${releaseFlag} -o ${target} ${src} ${LIBS} ${CFLAGS} ${INC}
 	gcc -o simple_c_example  ${SRCTEST_PREFIX}/c_test/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
 	gcc -o simple_c_fork  ${SRCTEST_PREFIX}/fork/main.c ${src} ${LIBS} ${INC} ${CFLAGS}
+	gcc -o simple_c_fork_deadlock  ${SRCTEST_PREFIX}/fork/deadlock_main.c ${src} ${LIBS} ${INC} ${CFLAGS} -D SPC_TEST_DEAD_LOCK_FORK_POSIX_2008 
 	g++ -o simple_cpp_example  ${SRCTEST_PREFIX}/cpp_test/main.cpp ${LIBS} ${INC} ${CPPFLAGS} -L./ -lsimplelog-challenge
 	g++ -o simple_cpp_example_direct  ${SRCTEST_PREFIX}/cpp_test/main.cpp ${src} ${LIBS} ${INC} ${CPPFLAGS}
 

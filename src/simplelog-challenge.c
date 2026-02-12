@@ -795,12 +795,19 @@ spc_mtxl_err(void *obj, int err)
 {
 	int ret = 0;
 	do {
+		if(!__spc_log_statiic__.isProcessMode) {
+			break;
+		}
+		if(!__spc_log_statiic__.is_master) {
+			break;
+		}
 		if (!err) {
 			break;
 		}
 		if (!obj) {
 			break;
 		}
+
 #ifndef UNIX_LINUX
 #else
 #ifndef SPC_USING_SPIN_LOCK
@@ -870,7 +877,7 @@ spc_mutex_lock(void *obj)
 		SPC_pthread_mutex_lock((pthread_mutex_t *)obj, err);
 		if (err) {
 			/*ret = SPC_LOG_PX_MTX_LOCK;*/
-			spc_err("SPC_pthread_mutex_lock, err: %d", err);
+			spc_err("\n----------------------------------------------------------SPC_pthread_mutex_lock, err: %d\n", err);
 			ret = spc_mtxl_err(obj, err);
 		}
 #else
@@ -3092,6 +3099,7 @@ spc_test_deadlock()
 		for(i = 0; i < t->ncpu; ++i) {
 			err = pthread_mutex_lock(
 				(pthread_mutex_t*) t->arr_mtx[i]);
+				exit(1);
 			if(err) {
 				spc_err("err: %d", err);
 			}

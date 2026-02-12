@@ -25,6 +25,7 @@
  *		<2025-May-29>
  *		<2025-Jun-01>
  *		<2025-Jun-04>
+ *		<2026-Feb-12>
  * Decription:
  *		The (only) main header file to export 4 APIs: [spc_init_log_ext,
  *spclog, spclogtopic, spc_finish_log].
