@@ -209,6 +209,7 @@ main(int argc, char *argv[])
 #endif
 	spc_update_processid();
 	if (!ismaster) {
+		spc_sleep(1);
 		spc_console_log("====================Start.\n");
 		dotest();
 		spc_console_log("==================End.\n");
